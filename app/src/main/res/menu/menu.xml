@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/mainFragment"
+        android:title="Home"
+        android:enabled="true"
+        android:icon="@drawable/home"
+        app:showAsAction="always"/>
+
+    <item
+        android:id="@+id/ArtistsFragment"
+        android:title="Artists"
+        android:icon="@drawable/artist"
+        app:showAsAction="always"/>
+
+    <item
+        android:id="@+id/GalleryFragment"
+        android:title="Gallery"
+        android:icon="@drawable/gallery"
+        app:showAsAction="always"/>
+
+    <item
+        android:id="@+id/ShowFragment"
+        android:title="Show"
+        app:showAsAction="always"
+        android:icon="@drawable/show"/>
+
+</menu>
