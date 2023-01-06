@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.sowoon.data.entity.Gallery
 import com.example.sowoon.databinding.FragmentMainBinding
 import com.google.gson.Gson
 
