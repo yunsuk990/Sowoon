@@ -4,4 +4,5 @@ data class Gallery(
     var title: String,
     var artist: String,
     var info: String,
-    var coverImg: Int?)
+    var coverImg: Int?,
+    var size: String? = null)
