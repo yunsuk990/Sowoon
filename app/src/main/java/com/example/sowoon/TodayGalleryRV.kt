@@ -3,6 +3,7 @@ package com.example.sowoon
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import com.example.sowoon.data.entity.Gallery
 import com.example.sowoon.databinding.ItemTodayalbumBinding
 
 class TodayGalleryRV: RecyclerView.Adapter<TodayGalleryRV.ViewHolder>() {
