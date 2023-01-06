@@ -23,10 +23,10 @@ class ArtistsFragment : Fragment() {
 
 
         val adapter = ArtistsProfileRV()
-        val profile1 = Profile("정은숙", "홍익대학교", "한국미술대회 1위")
+        val profile1 = Profile("정은숙", 58,"홍익대학교", "한국미술대회 1위")
         adapter.addProfile(profile1)
         binding.artistsRv.adapter = adapter
-        binding.artistsRv.layoutManager = LinearLayoutManager(context, GridLayoutManager.HORIZONTAL, false)
+        binding.artistsRv.layoutManager = LinearLayoutManager(context, GridLayoutManager.VERTICAL, false)
 
         adapter.itemClickListener(object: ArtistsProfileRV.MyItemClickOnListener{
             override fun profileClick(profile: Profile) {
