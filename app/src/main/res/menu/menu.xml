@@ -22,9 +22,9 @@
         app:showAsAction="always"/>
 
     <item
-        android:id="@+id/ShowFragment"
-        android:title="Show"
+        android:id="@+id/SettingFragment"
+        android:title="Setting"
         app:showAsAction="always"
-        android:icon="@drawable/show"/>
+        android:icon="@drawable/setting"/>
 
 </menu>
