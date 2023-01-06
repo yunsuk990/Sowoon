@@ -43,9 +43,9 @@ class MainActivity : AppCompatActivity() {
                         .commitNowAllowingStateLoss()
                     return@setOnItemSelectedListener true
                 }
-                R.id.ShowFragment -> {
+                R.id.SettingFragment -> {
                     supportFragmentManager.beginTransaction()
-                        .replace(R.id.main_frame, ShowFragment())
+                        .replace(R.id.main_frame, SettingFragment())
                         .commitNowAllowingStateLoss()
                     return@setOnItemSelectedListener true
                 }
