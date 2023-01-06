@@ -1,4 +1,4 @@
-package com.example.sowoon
+package com.example.sowoon.data.entity
 
 data class Gallery(
     var title: String,
