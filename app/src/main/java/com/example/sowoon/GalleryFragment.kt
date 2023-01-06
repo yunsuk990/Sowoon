@@ -19,8 +19,4 @@ class GalleryFragment : Fragment() {
         binding = FragmentGalleryBinding.inflate(inflater, container, false)
         return binding.root
     }
-
-
-
-
 }
