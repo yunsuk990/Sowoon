@@ -5,18 +5,17 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import com.example.sowoon.databinding.FragmentMainBinding
-import com.example.sowoon.databinding.FragmentShowBinding
+import com.example.sowoon.databinding.FragmentSettingBinding
 
-class ShowFragment : Fragment() {
+class SettingFragment : Fragment() {
 
-    lateinit var binding: FragmentShowBinding
+    lateinit var binding: FragmentSettingBinding
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        binding = FragmentShowBinding.inflate(inflater, container, false)
+        binding = FragmentSettingBinding.inflate(inflater, container, false)
         return binding.root
     }
 
