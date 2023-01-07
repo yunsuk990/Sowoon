@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.BaseAdapter
 import com.example.sowoon.data.entity.Gallery
+import com.example.sowoon.databinding.ItemArtistgalleryBinding
 
 class GalleryGVAdapter: BaseAdapter() {
 
@@ -26,11 +27,9 @@ class GalleryGVAdapter: BaseAdapter() {
     }
 
     override fun getView(p0: Int, p1: View?, p2: ViewGroup?): View {
-        if(p1 == null){
-            var inflater: LayoutInflater = p2?.context?.getSystemService(LAYOUT_INFLATER_SERVICE) as LayoutInflater
-            p1 = inflater.inflate(R.layout.item_artistgallery, p2, false)
-        }
-        return p1
+        var binding = ItemArtistgalleryBinding.inflate(LayoutInflater.from(p2?.context), p2, false)
+        binding.galleryIv.setImageResource(galleryList[p0].coverImg!!)
+        return binding.root
     }
 
     fun addGallery(gallerys: ArrayList<Gallery>){
