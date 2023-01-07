@@ -15,6 +15,7 @@
 
         <ImageView
             android:id="@+id/profile_iv"
+            android:layout_marginTop="20dp"
             android:layout_width="150dp"
             android:layout_height="150dp"
             android:scaleType="fitXY"
@@ -26,6 +27,7 @@
 
         <ImageView
             android:id="@+id/profile_artist_artwork_iv"
+            android:layout_marginTop="20dp"
             android:layout_width="150dp"
             android:layout_height="150dp"
             android:scaleType="fitXY"
