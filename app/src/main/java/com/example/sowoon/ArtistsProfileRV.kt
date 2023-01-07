@@ -12,6 +12,7 @@ class ArtistsProfileRV: RecyclerView.Adapter<ArtistsProfileRV.ViewHolder>() {
 
     interface MyItemClickOnListener {
         fun profileClick(profile: Profile)
+        fun profileArtworkClick(profile: Profile)
     }
 
     private lateinit var mItemClickListener: MyItemClickOnListener
@@ -23,6 +24,8 @@ class ArtistsProfileRV: RecyclerView.Adapter<ArtistsProfileRV.ViewHolder>() {
     inner class ViewHolder(val binding: ItemArtistsprofileBinding): RecyclerView.ViewHolder(binding.root){
         fun bind(profile: Profile){
             binding.profileArtistNameTv.text = profile.name
+            binding.profileArtistArtworkTv.text = profile.bestArtwork?.title
+            binding.profileArtistArtworkInfoTv.text = profile.bestArtwork?.info
         }
     }
 
@@ -35,6 +38,9 @@ class ArtistsProfileRV: RecyclerView.Adapter<ArtistsProfileRV.ViewHolder>() {
         holder.bind(profileList[position])
         holder.binding.artistsProfile.setOnClickListener{
             mItemClickListener.profileClick(profileList[position])
+        }
+        holder.binding.profileArtistArtworkIv.setOnClickListener {
+            mItemClickListener.profileArtworkClick(profileList[position])
         }
     }
 
