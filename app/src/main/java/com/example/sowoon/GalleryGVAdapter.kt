@@ -13,6 +13,16 @@ class GalleryGVAdapter: BaseAdapter() {
 
     val galleryList = ArrayList<Gallery>()
 
+    interface MyItemClickListener {
+        fun artworkClick(gallery: Gallery)
+    }
+
+    private lateinit var mItemClickListener: MyItemClickListener
+
+    fun itemClickListener(itemClick: MyItemClickListener){
+        mItemClickListener = itemClick
+    }
+
     override fun getCount(): Int {
         return galleryList.size
     }
@@ -29,6 +39,9 @@ class GalleryGVAdapter: BaseAdapter() {
     override fun getView(p0: Int, p1: View?, p2: ViewGroup?): View {
         var binding = ItemArtistgalleryBinding.inflate(LayoutInflater.from(p2?.context), p2, false)
         binding.galleryIv.setImageResource(galleryList[p0].coverImg!!)
+        binding.galleryIv.setOnClickListener {
+            mItemClickListener.artworkClick(galleryList[p0])
+        }
         return binding.root
     }
 
