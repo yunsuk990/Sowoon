@@ -1,5 +1,6 @@
 package com.example.sowoon
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -16,7 +17,19 @@ class SettingFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         binding = FragmentSettingBinding.inflate(inflater, container, false)
+
+        initClickListener()
         return binding.root
+    }
+
+    private fun initClickListener(){
+        binding.settingLoginTv.setOnClickListener {
+            startActivity(Intent(context, LoginActivity::class.java))
+        }
+
+        binding.settingSignupTv.setOnClickListener {
+            startActivity(Intent(context, SignUpActivity::class.java))
+        }
     }
 
 
