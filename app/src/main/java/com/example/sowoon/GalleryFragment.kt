@@ -22,7 +22,11 @@ class GalleryFragment : Fragment() {
         var gridView = binding.galleryGv
         var gridViewAdapter = GalleryGVAdapter()
 
-        var expGallery: MutableList<Gallery> = arrayListOf(Gallery("소운", "정은숙", "2020년 작품", R.drawable.galleryexp3), Gallery("소운", "정은숙", "2020년 작품", R.drawable.galleryexp1))
+        var expGallery: MutableList<Gallery> = arrayListOf(Gallery("소운", "정은숙", "2020년 작품", R.drawable.galleryexp3), Gallery("소운", "정은숙", "2020년 작품", R.drawable.galleryexp1),
+            Gallery("소운", "정은숙", "2020년 작품", R.drawable.galleryexp1), Gallery("소운", "정은숙", "2020년 작품", R.drawable.galleryexp2), Gallery("소운", "정은숙", "2020년 작품", R.drawable.galleryexp3),
+            Gallery("소운", "정은숙", "2020년 작품", R.drawable.galleryexp3), Gallery("소운", "정은숙", "2020년 작품", R.drawable.galleryexp2), Gallery("소운", "정은숙", "2020년 작품", R.drawable.galleryexp1),
+            Gallery("소운", "정은숙", "2020년 작품", R.drawable.galleryexp3), Gallery("소운", "정은숙", "2020년 작품", R.drawable.galleryexp2), Gallery("소운", "정은숙", "2020년 작품", R.drawable.galleryexp1))
+
         gridViewAdapter.addGallery(expGallery as ArrayList<Gallery>)
         gridViewAdapter.itemClickListener(object: GalleryGVAdapter.MyItemClickListener{
             override fun artworkClick(gallery: Gallery) {
