@@ -49,13 +49,50 @@
     </com.google.android.material.textfield.TextInputLayout>
 
     <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/signup_password_et"
+        android:id="@+id/signup_name_et"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="15dp"
+        android:layout_marginEnd="15dp"
+        android:layout_marginTop="20dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/signup_id_et">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:hint="이름"
+            android:inputType="textPersonName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/signup_age_et"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
         app:layout_constraintEnd_toEndOf="@+id/signup_id_et"
-        app:layout_constraintStart_toStartOf="@+id/signup_id_et"
-        app:layout_constraintTop_toBottomOf="@+id/signup_id_et">
+        app:layout_constraintStart_toStartOf="@+id/signup_name_et"
+        app:layout_constraintTop_toBottomOf="@+id/signup_name_et">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:hint="나이"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="number" />
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/signup_password_et"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        app:layout_constraintEnd_toEndOf="@+id/signup_age_et"
+        app:layout_constraintStart_toStartOf="@+id/signup_age_et"
+        app:layout_constraintTop_toBottomOf="@+id/signup_age_et">
 
         <com.google.android.material.textfield.TextInputEditText
             android:hint="비밀번호"
