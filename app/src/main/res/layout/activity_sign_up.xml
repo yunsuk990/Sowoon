@@ -41,6 +41,7 @@
         app:layout_constraintTop_toBottomOf="@+id/signup_tv">
 
         <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/id_et"
             android:hint="아이디(이메일)"
             android:inputType="textEmailAddress"
             android:layout_width="match_parent"
@@ -60,6 +61,7 @@
         app:layout_constraintTop_toBottomOf="@+id/signup_id_et">
 
         <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/name_et"
             android:hint="이름"
             android:inputType="textPersonName"
             android:layout_width="match_parent"
@@ -77,6 +79,7 @@
         app:layout_constraintTop_toBottomOf="@+id/signup_name_et">
 
         <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/age_et"
             android:hint="나이"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -95,6 +98,7 @@
         app:layout_constraintTop_toBottomOf="@+id/signup_age_et">
 
         <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/password_et"
             android:hint="비밀번호"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -112,6 +116,7 @@
         app:layout_constraintTop_toBottomOf="@+id/signup_password_et">
 
         <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/passwordcheck_et"
             android:hint="비밀번호 확인"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
