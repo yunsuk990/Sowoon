@@ -35,7 +35,7 @@ class LoginActivity : AppCompatActivity() {
         var password = binding.loginPasswordEt.toString()
 
         //DB 조회..
-        var expUser = User(1, "yunsuk990@naver.com", "최윤석",25, "yunsuk123")
+        var expUser = User("yunsuk990@naver.com", "최윤석","25", "yunsuk123")
 
         if(expUser != null){
             saveJwt(expUser.id)
