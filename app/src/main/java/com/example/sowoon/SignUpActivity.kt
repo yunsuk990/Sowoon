@@ -1,5 +1,6 @@
 package com.example.sowoon
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Toast
@@ -34,13 +35,9 @@ class SignUpActivity : AppCompatActivity() {
 
         if(database.userDao().getUser(email, password) == null){
             database.userDao().insertUser(User(email, binding.nameEt.text.toString(), age, password))
+            startActivity(Intent(applicationContext, LoginActivity::class.java))
         }else{
             Toast.makeText(applicationContext, "이미 가입되어 있는 계정입니다.", Toast.LENGTH_SHORT).show()
         }
-
-        //var expUser = User("yunsuk990@naver.com", "최윤석","25", "yunsuk123")
-        //DB중복 아이디 확인.. 없으면 회원가입
-
-
     }
 }
