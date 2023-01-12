@@ -4,13 +4,16 @@ import android.content.Intent
 import android.content.SharedPreferences
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.widget.Toast
 import com.example.sowoon.data.entity.User
+import com.example.sowoon.database.AppDatabase
 import com.example.sowoon.databinding.ActivityLoginBinding
 
 class LoginActivity : AppCompatActivity() {
 
     lateinit var binding: ActivityLoginBinding
+    lateinit var database: AppDatabase
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -23,22 +26,26 @@ class LoginActivity : AppCompatActivity() {
     }
 
     private fun login(){
-        if(binding.loginIdEt.toString().isEmpty()){
+        if(binding.idEt.toString().isEmpty()){
             Toast.makeText(this, "이메일을 입력해주세요.", Toast.LENGTH_SHORT).show()
             return
         }
-        if(binding.loginPasswordEt.toString().isEmpty()){
+        if(binding.passwordEt.toString().isEmpty()){
             Toast.makeText(this, "비밀번호를 입력해주세요.", Toast.LENGTH_SHORT).show()
             return
         }
-        var email = binding.loginIdEt.toString()
-        var password = binding.loginPasswordEt.toString()
+        var email = binding.idEt.text.toString()
+        var password = binding.passwordEt.text.toString()
+        Log.d("email", email)
+        Log.d("password", password)
 
-        //DB 조회..
-        var expUser = User("yunsuk990@naver.com", "최윤석","25", "yunsuk123")
 
-        if(expUser != null){
-            saveJwt(expUser.id)
+        database = AppDatabase.getInstance(applicationContext)!!
+        var user = database.userDao().getUser(email, password)
+        Log.d("user", user.toString())
+
+        if(user != null){
+            saveJwt(user.id)
             startMainActivity()
         }else{
             Toast.makeText(this, "회원정보가 존재하지 않습니다.", Toast.LENGTH_SHORT).show()
@@ -53,6 +60,7 @@ class LoginActivity : AppCompatActivity() {
         val spf = getSharedPreferences("auth", MODE_PRIVATE)
         val editor = spf.edit()
         editor.putInt("jwt", jwt)
+        Log.d("jwt", jwt.toString())
         editor.apply()
     }
 }
