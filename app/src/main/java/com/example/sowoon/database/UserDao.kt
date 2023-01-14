@@ -1,6 +1,7 @@
 package com.example.sowoon.database
 
 import androidx.room.Dao
+import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.Query
 import com.example.sowoon.data.entity.User
@@ -13,5 +14,8 @@ interface UserDao {
 
     @Query("SELECT * FROM UserTable WHERE email=:email  AND password = :password")
     fun getUser(email: String, password: String): User?
+
+    @Delete
+    fun deleteUser(user: User)
 
 }
