@@ -9,11 +9,13 @@ import android.widget.Toast
 import com.example.sowoon.data.entity.User
 import com.example.sowoon.database.AppDatabase
 import com.example.sowoon.databinding.ActivityLoginBinding
+import com.google.gson.Gson
 
 class LoginActivity : AppCompatActivity() {
 
     lateinit var binding: ActivityLoginBinding
     lateinit var database: AppDatabase
+    lateinit var gson: Gson
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -46,6 +48,7 @@ class LoginActivity : AppCompatActivity() {
 
         if(user != null){
             saveJwt(user.id)
+            saveUser(user)
             startMainActivity()
         }else{
             Toast.makeText(this, "회원정보가 존재하지 않습니다.", Toast.LENGTH_SHORT).show()
@@ -61,6 +64,15 @@ class LoginActivity : AppCompatActivity() {
         val editor = spf.edit()
         editor.putInt("jwt", jwt)
         Log.d("jwt", jwt.toString())
+        editor.apply()
+    }
+
+    private fun saveUser(user: User){
+        gson = Gson()
+        var userJson = gson.toJson(user)
+        val spf = getSharedPreferences("userProfile", MODE_PRIVATE)
+        val editor = spf.edit()
+        editor.putString("user", userJson)
         editor.apply()
     }
 }
