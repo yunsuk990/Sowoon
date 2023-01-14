@@ -75,7 +75,9 @@ class SettingFragment : Fragment() {
 
         binding.settingSignupArtistTv.setOnClickListener {
             if(jwt != 0){
-
+                (context as MainActivity).supportFragmentManager.beginTransaction()
+                    .replace(R.id.main_frame, SettingMyInfoFragment())
+                    .commitNowAllowingStateLoss()
             }else{
                 Toast.makeText(context, "로그인 후 이용하시기 바랍니다.", Toast.LENGTH_SHORT).show()
             }
