@@ -38,8 +38,8 @@ class SettingMyInfoFragment : Fragment() {
     private fun initInfo(user: User){
         binding.myInfoName.text = user.name
         binding.myInfoAgeInput.text = user.age
-        binding.myInfoSchoolInput.text = user.school
-        binding.myInfoAwardsInput.text = user.awards
+//        binding.myInfoSchoolInput.text = user.school
+//        binding.myInfoAwardsInput.text = user.awards
     }
 
 }
