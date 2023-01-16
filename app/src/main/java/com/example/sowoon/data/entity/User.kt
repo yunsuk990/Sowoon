@@ -9,6 +9,5 @@ data class User(
     var name: String,
     var age: String,
     var password: String,
-    //Type Converter 적용
     @PrimaryKey(autoGenerate = true) var id: Int = 0
 )
