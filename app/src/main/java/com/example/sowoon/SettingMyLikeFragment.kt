@@ -19,4 +19,11 @@ class SettingMyLikeFragment : Fragment() {
         binding = FragmentSettingMyLikeBinding.inflate(inflater, container, false)
         return binding.root
     }
+
+    private fun initGridView(){
+        var adapter = MyLikeGVAdapter()
+        binding.myLikeGv.adapter = adapter
+        binding.myLikeGv.layout
+
+    }
 }
