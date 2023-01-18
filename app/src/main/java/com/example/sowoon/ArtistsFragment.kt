@@ -26,8 +26,6 @@ class ArtistsFragment : Fragment() {
         var exampleGallery = Gallery("소운", "정은숙", "2020년 작품", R.drawable.galleryexp3)
 
         val adapter = ArtistsProfileRV()
-        val profile1 = Profile("정은숙", 58,"홍익대학교", "한국미술대회 1위",null, exampleGallery)
-        adapter.addProfile(profile1)
         binding.artistsRv.adapter = adapter
         binding.artistsRv.layoutManager = LinearLayoutManager(context, GridLayoutManager.VERTICAL, false)
 
