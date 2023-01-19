@@ -62,14 +62,18 @@
 
             <ImageView
                 android:id="@+id/myInfo_bestArtwork_iv"
-                android:layout_marginLeft="15dp"
                 android:layout_width="180dp"
                 android:layout_height="280dp"
-                android:scaleType="fitXY"
-                android:src="@drawable/galleryexp1"
+                android:layout_marginLeft="15dp"
+                android:layout_marginRight="20dp"
+                android:elevation="20dp"
+                android:scaleType="centerInside"
+                android:src="@drawable/add"
+                android:background="@color/white"
+                app:layout_constraintBottom_toBottomOf="@+id/myInfo_iv"
+                app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@+id/myInfo_iv"
-                app:layout_constraintTop_toTopOf="@+id/myInfo_iv"
-                app:layout_constraintBottom_toBottomOf="@+id/myInfo_iv"/>
+                app:layout_constraintTop_toTopOf="@+id/myInfo_iv" />
 
 
             <TextView
