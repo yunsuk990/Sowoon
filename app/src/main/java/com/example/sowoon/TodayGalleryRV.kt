@@ -29,7 +29,7 @@ class TodayGalleryRV: RecyclerView.Adapter<TodayGalleryRV.ViewHolder>() {
 
     inner class ViewHolder(val binding: ItemTodayalbumBinding): RecyclerView.ViewHolder(binding.root){
         fun bind(gallery: Gallery){
-            binding.todayAlbumIv.setImageResource(gallery.coverImg!!)
+            binding.todayAlbumIv.setImageResource(gallery.GalleryId!!)
             binding.todayAlbumTitle.text = gallery.title
             binding.todayAlbumArtist.text = gallery.artist
             binding.todayAlbumInfo.text= gallery.info
