@@ -29,10 +29,8 @@ class HomeFragment : Fragment() {
         binding.mainTodayAlbumRv.layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL,false )
 
         //테스트 이미지
-        val gallery1 = Gallery("모나리자", "모나리자", "모나리자가 1900년대 그린작품" , R.drawable.galleryexp1)
-        val gallery2 = Gallery("모나리자", "모나리자", "모나리자가 1900년대 그린작품",R.drawable.galleryexp2)
-        val gallery3 = Gallery("모나리자", "모나리자", "모나리자가 1900년대 그린작품",R.drawable.galleryexp3)
-        val galleryList: MutableList<Gallery> = arrayListOf(gallery1, gallery2, gallery3)
+        val gallery1 = Gallery(R.drawable.galleryexp3, 1, "모나리자","정은숙", "2020년 작품",null, 10)
+        val galleryList: MutableList<Gallery> = arrayListOf(gallery1)
         todayGalleryAdapter.addGallery(galleryList as ArrayList<Gallery>)
 
         todayGalleryAdapter.setMyItemClickListener(object: TodayGalleryRV.MyItemOnClickListener{
