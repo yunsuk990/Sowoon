@@ -2,12 +2,14 @@ package com.example.sowoon
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import com.example.sowoon.data.entity.Profile
 import com.example.sowoon.data.entity.User
 import com.example.sowoon.database.AppDatabase
 import com.example.sowoon.databinding.FragmentSettingBinding
@@ -18,6 +20,7 @@ class SettingFragment : Fragment() {
     lateinit var binding: FragmentSettingBinding
     lateinit var database: AppDatabase
     lateinit var gson: Gson
+    lateinit var user: User
     var jwt: Int = -1
 
     override fun onCreateView(
@@ -28,6 +31,7 @@ class SettingFragment : Fragment() {
         binding = FragmentSettingBinding.inflate(inflater, container, false)
         database = AppDatabase.getInstance(requireContext())!!
         jwt = getJwt()!!
+        user = User()!!
         initClickListener()
         return binding.root
     }
@@ -67,14 +71,6 @@ class SettingFragment : Fragment() {
 
         binding.settingMyInfoTv.setOnClickListener {
             if(jwt != 0){
-
-            }else{
-                Toast.makeText(context, "로그인 후 이용하시기 바랍니다.", Toast.LENGTH_SHORT).show()
-            }
-        }
-
-        binding.settingSignupArtistTv.setOnClickListener {
-            if(jwt != 0){
                 (context as MainActivity).supportFragmentManager.beginTransaction()
                     .replace(R.id.main_frame, SettingMyInfoFragment())
                     .commitNowAllowingStateLoss()
@@ -83,10 +79,32 @@ class SettingFragment : Fragment() {
             }
         }
 
+        binding.settingSignupArtistTv.setOnClickListener {
+            if(jwt != 0){
+                Log.d("ifArtist", user?.ifArtist!!.toString())
+                if(user?.ifArtist!!){
+                    Toast.makeText(context, "이미 화가 등록 되어있습니다.",Toast.LENGTH_SHORT).show()
+                }else{
+                    var profile = Profile(
+                        "",
+                        "",
+                        "",
+                         ArrayList(),
+                        null,
+                        jwt
+                    )
+                    database.profileDao().insertProfile(profile)
+                    database.userDao().ifArtistRegist(jwt,true)
+                }
+            }else{
+                Toast.makeText(context, "로그인 후 이용하시기 바랍니다.", Toast.LENGTH_SHORT).show()
+            }
+        }
+
         //회원탈퇴
         binding.settingQuitTv.setOnClickListener {
             if(jwt != 0){
-                database.userDao().deleteUser(getUser()!!)
+                database.userDao().deleteUser(User()!!)
                 removeJwt()
                 startActivity(Intent(context, MainActivity::class.java))
             }else{
@@ -117,11 +135,10 @@ class SettingFragment : Fragment() {
         editor.apply()
     }
 
-    private fun getUser(): User? {
+    private fun User(): User? {
         gson = Gson()
         val spf =
             requireActivity().getSharedPreferences("userProfile", AppCompatActivity.MODE_PRIVATE)
-        var user = spf.getString("user", null)
-        return gson.fromJson(user, User::class.java)
+        return gson.fromJson(spf.getString("user", null), User::class.java)
     }
 }
