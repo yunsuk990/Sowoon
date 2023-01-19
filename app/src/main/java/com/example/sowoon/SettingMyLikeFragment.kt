@@ -20,10 +20,10 @@ class SettingMyLikeFragment : Fragment() {
         return binding.root
     }
 
-    private fun initGridView(){
-        var adapter = MyLikeGVAdapter()
-        binding.myLikeGv.adapter = adapter
-        binding.myLikeGv.layout
-
-    }
+//    private fun initGridView(){
+//        var adapter = MyLikeGVAdapter()
+//        binding.myLikeGv.adapter = adapter
+//        binding.myLikeGv.layout
+//
+//    }
 }
