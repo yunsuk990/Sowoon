@@ -38,7 +38,7 @@ class GalleryGVAdapter: BaseAdapter() {
 
     override fun getView(p0: Int, p1: View?, p2: ViewGroup?): View {
         var binding = ItemArtistgalleryBinding.inflate(LayoutInflater.from(p2?.context), p2, false)
-        binding.galleryIv.setImageResource(galleryList[p0].coverImg!!)
+        binding.galleryIv.setImageResource(galleryList[p0].GalleryId!!)
         binding.galleryIv.setOnClickListener {
             mItemClickListener.artworkClick(galleryList[p0])
         }
