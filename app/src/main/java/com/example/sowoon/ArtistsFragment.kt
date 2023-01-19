@@ -7,25 +7,27 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.room.Database
 import com.example.sowoon.data.entity.Gallery
 import com.example.sowoon.data.entity.Profile
+import com.example.sowoon.database.AppDatabase
 import com.example.sowoon.databinding.FragmentArtistsBinding
 import com.google.gson.Gson
 
 class ArtistsFragment : Fragment() {
 
     lateinit var binding: FragmentArtistsBinding
+    lateinit var database: AppDatabase
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         binding = FragmentArtistsBinding.inflate(inflater, container, false)
+        database = AppDatabase.getInstance(requireContext())!!
 
-        //example gallery
-        var exampleGallery = Gallery("소운", "정은숙", "2020년 작품", R.drawable.galleryexp3)
-
-        val adapter = ArtistsProfileRV()
+        val adapter = ArtistsProfileRV(database.profileDao().getAllProfile() as ArrayList<Profile>)
         binding.artistsRv.adapter = adapter
         binding.artistsRv.layoutManager = LinearLayoutManager(context, GridLayoutManager.VERTICAL, false)
 
