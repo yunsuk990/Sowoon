@@ -29,7 +29,7 @@ class GalleryInfoFragment : Fragment() {
     }
 
     private fun setGallery(gallery: Gallery){
-        binding.galleryInfoIv.setImageResource(gallery.coverImg!!)
+        binding.galleryInfoIv.setImageResource(gallery.GalleryId!!)
         binding.todayAlbumTitle.text = gallery.title
         binding.todayAlbumArtist.text = gallery.artist
         binding.todayAlbumInfo.text = gallery.info
