@@ -6,9 +6,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.sowoon.data.entity.Profile
 import com.example.sowoon.databinding.ItemArtistsprofileBinding
 
-class ArtistsProfileRV: RecyclerView.Adapter<ArtistsProfileRV.ViewHolder>() {
-
-    private val profileList = ArrayList<Profile>()
+class ArtistsProfileRV(private val profileList: ArrayList<Profile>): RecyclerView.Adapter<ArtistsProfileRV.ViewHolder>() {
 
     interface MyItemClickOnListener {
         fun profileClick(profile: Profile)
@@ -23,9 +21,10 @@ class ArtistsProfileRV: RecyclerView.Adapter<ArtistsProfileRV.ViewHolder>() {
 
     inner class ViewHolder(val binding: ItemArtistsprofileBinding): RecyclerView.ViewHolder(binding.root){
         fun bind(profile: Profile){
+
             binding.profileArtistNameTv.text = profile.name
-            binding.profileArtistArtworkTv.text = profile.bestArtwork?.title
-            binding.profileArtistArtworkInfoTv.text = profile.bestArtwork?.info
+//            binding.profileArtistArtworkTv.text = profile.bestArtwork?.title
+//            binding.profileArtistArtworkInfoTv.text = profile.bestArtwork?.info
         }
     }
 
