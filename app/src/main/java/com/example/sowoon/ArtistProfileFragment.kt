@@ -29,7 +29,6 @@ class ArtistProfileFragment : Fragment() {
     }
 
     private fun setProfile(profile: Profile){
-        binding.artistsProfileName.text = profile.name
         binding.artistsProfileSchoolInput.text = profile.school
         binding.artistsProfileAwardsInput.text = profile.awards
     }
