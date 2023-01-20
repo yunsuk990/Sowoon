@@ -15,7 +15,7 @@ interface ProfileDao {
     fun getProfile(userId: Int): Profile?
 
     @Query("SELECT * FROM ProfileTable ")
-    fun getAllProfile(): List<Profile>?
+    fun getAllProfile(): MutableList<Profile>?
 
 
 
