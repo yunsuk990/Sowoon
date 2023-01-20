@@ -1,12 +1,16 @@
 package com.example.sowoon
 
+import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.sowoon.data.entity.Profile
+import com.example.sowoon.database.AppDatabase
 import com.example.sowoon.databinding.ItemArtistsprofileBinding
 
-class ArtistsProfileRV(private val profileList: ArrayList<Profile>): RecyclerView.Adapter<ArtistsProfileRV.ViewHolder>() {
+class ArtistsProfileRV(private val profileList: ArrayList<Profile>, var context: Context): RecyclerView.Adapter<ArtistsProfileRV.ViewHolder>() {
+
+    lateinit var database: AppDatabase
 
     interface MyItemClickOnListener {
         fun profileClick(profile: Profile)
@@ -21,10 +25,11 @@ class ArtistsProfileRV(private val profileList: ArrayList<Profile>): RecyclerVie
 
     inner class ViewHolder(val binding: ItemArtistsprofileBinding): RecyclerView.ViewHolder(binding.root){
         fun bind(profile: Profile){
-
+            database = AppDatabase.getInstance(context!!)!!
+            var gallery = database.galleryDao().getGallery(profile.bestArtwork!!)
             binding.profileArtistNameTv.text = profile.name
-//            binding.profileArtistArtworkTv.text = profile.bestArtwork?.title
-//            binding.profileArtistArtworkInfoTv.text = profile.bestArtwork?.info
+            binding.profileArtistArtworkTv.text = gallery.title
+            binding.profileArtistArtworkInfoTv.text = gallery.info
         }
     }
 
