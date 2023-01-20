@@ -18,4 +18,7 @@ interface GalleryDao {
     @Query("SELECT * FROM GalleryTable")
     fun getAllGallery(): List<Gallery>
 
+    @Query("SELECT * FROM GalleryTable WHERE GalleryId = :galleryId")
+    fun getGallery(galleryId: Int): Gallery
+
 }
