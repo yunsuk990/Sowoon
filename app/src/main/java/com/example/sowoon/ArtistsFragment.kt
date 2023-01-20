@@ -5,6 +5,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.room.Database
@@ -27,7 +28,9 @@ class ArtistsFragment : Fragment() {
         binding = FragmentArtistsBinding.inflate(inflater, container, false)
         database = AppDatabase.getInstance(requireContext())!!
 
-        val adapter = ArtistsProfileRV(database.profileDao().getAllProfile() as ArrayList<Profile>)
+        val adapter = ArtistsProfileRV(database.profileDao().getAllProfile() as ArrayList<Profile>,
+            requireContext()
+        )
         binding.artistsRv.adapter = adapter
         binding.artistsRv.layoutManager = LinearLayoutManager(context, GridLayoutManager.VERTICAL, false)
 
@@ -43,6 +46,7 @@ class ArtistsFragment : Fragment() {
         return binding.root
     }
 
+    //화가 프로필 클릭 시
     private fun profileArtist(profile: Profile){
         (context as MainActivity).supportFragmentManager.beginTransaction()
             .replace(R.id.main_frame, ArtistProfileFragment().apply {
@@ -55,16 +59,24 @@ class ArtistsFragment : Fragment() {
             .commitNowAllowingStateLoss()
     }
 
+    //화가 대표작 클릭 시
     private fun profileArtwork(profile: Profile){
         (context as MainActivity).supportFragmentManager.beginTransaction()
             .replace(R.id.main_frame, GalleryInfoFragment().apply {
                 arguments = Bundle().apply {
-                    val gallery = profile.bestArtwork
+                    val bestArtwork = profile.bestArtwork
+                    val gallery = database.galleryDao().getGallery(bestArtwork!!)
                     val gson = Gson()
                     val galleryJson = gson.toJson(gallery)
                     putString("gallery", galleryJson)
                 }
             })
             .commitNowAllowingStateLoss()
+    }
+
+    private fun getJwt(): Int? {
+        val spf = activity?.getSharedPreferences("auth", AppCompatActivity.MODE_PRIVATE)
+        var jwt = spf?.getInt("jwt", 0)
+        return jwt
     }
 }
