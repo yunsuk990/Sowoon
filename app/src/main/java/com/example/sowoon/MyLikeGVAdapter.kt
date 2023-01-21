@@ -7,11 +7,17 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.BaseAdapter
 import com.example.sowoon.data.entity.Gallery
+import com.example.sowoon.database.AppDatabase
 import com.example.sowoon.databinding.ItemArtistgalleryBinding
 
-class MyLikeGVAdapter: BaseAdapter() {
+class MyLikeGVAdapter(private val context: Context): BaseAdapter() {
 
+    lateinit var database: AppDatabase
     val galleryList = ArrayList<Gallery>()
+    init {
+        database = AppDatabase.getInstance(context!!)!!
+        //galleryList.addAll()
+    }
 
     interface MyItemClickListener {
         fun artworkClick(gallery: Gallery)
