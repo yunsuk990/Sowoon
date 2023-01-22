@@ -51,11 +51,48 @@
                 android:orientation="vertical"
                 app:layout_constraintTop_toBottomOf="@+id/galleryInfo_iv"
                 app:layout_constraintStart_toStartOf="@+id/galleryInfo_iv">
+
+
+                <ImageView
+                    android:id="@+id/gallery_info_heart_iv"
+                    android:src="@drawable/blankheart"
+                    android:scaleType="fitXY"
+                    android:layout_width="22dp"
+                    android:layout_height="22dp" />
+
+                <LinearLayout
+                    android:orientation="horizontal"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:text="좋아요"
+                        android:textColor="@color/black"
+                        android:textStyle="bold"
+                        android:layout_marginTop="5dp"
+                        android:textSize="16sp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" />
+
+                    <TextView
+                        android:id="@+id/gallery_info_likeCount_tv"
+                        android:text="224"
+                        android:textColor="@color/black"
+                        android:textStyle="bold"
+                        android:layout_marginTop="5dp"
+                        android:layout_marginLeft="7dp"
+                        android:textSize="16sp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" />
+
+                </LinearLayout>
+
                 <TextView
                     android:id="@+id/today_album_title"
                     android:text="제목"
                     android:textStyle="bold"
                     android:textSize="16sp"
+                    android:layout_marginTop="5dp"
                     android:textColor="@color/black"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content" />
