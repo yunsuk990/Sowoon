@@ -18,6 +18,16 @@ class RoomConverter {
         return null
     }
 
+    @TypeConverter
+    fun intToList(value: ArrayList<Int>?): String? {
+        return Gson().toJson(value)
+    }
+
+    @TypeConverter
+    fun ListToInt(value: String?): ArrayList<Int>? {
+        return Gson().fromJson(value, Array<Int>::class.java) as ArrayList<Int>
+    }
+
 //    @TypeConverter
 //    fun galleryToJson(value: Gallery?): String? {
 //        return Gson().toJson(value)
