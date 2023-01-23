@@ -16,6 +16,7 @@ class GalleryInfoFragment : Fragment() {
 
     lateinit var binding: FragmentGalleryInfoBinding
     lateinit var database: AppDatabase
+    var galleryId: Int = -1
     private var gson = Gson()
 
     override fun onCreateView(
@@ -28,8 +29,9 @@ class GalleryInfoFragment : Fragment() {
 
         val galleryJson = arguments?.getString("gallery")
         val gallery = gson.fromJson(galleryJson, Gallery::class.java)
+        galleryId = gallery.GalleryId
         setGallery(gallery)
-
+        initClickListener()
         return binding.root
     }
 
@@ -54,13 +56,25 @@ class GalleryInfoFragment : Fragment() {
     }
 
     private fun initClickListener() {
-        if(getJwt() == 0){
+        var jwt = getJwt()
+        if(jwt == 0){
             Toast.makeText(context, "로그인 후 이용해주시길 바랍니다.", Toast.LENGTH_SHORT).show()
         }else{
             binding.galleryInfoHeartIv.setOnClickListener {
-                
+                var likeList: ArrayList<Int> = (database.userDao().getLikeGallery(jwt)!!)
+                var galleryLikeCount: Int = database.galleryDao().getlikeGallery(galleryId)
+                if(binding.galleryInfoHeartIv.resources == resources.getDrawable(R.drawable.fullheart)){
+                    likeList = likeList.remove(galleryId) as ArrayList<Int>
+                    galleryLikeCount = galleryLikeCount - 1
+                    binding.galleryInfoHeartIv.setImageResource(R.drawable.blankheart)
+                }else{
+                    binding.galleryInfoHeartIv.setImageResource(R.drawable.fullheart)
+                    likeList = likeList.add(galleryId) as ArrayList<Int>
+                    galleryLikeCount = galleryLikeCount + 1
+                }
+                database.userDao().addLikeGallery(jwt, likeList)
+                database.galleryDao().setlikeGallery(galleryId, galleryLikeCount)
             }
         }
     }
-
 }
