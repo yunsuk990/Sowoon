@@ -19,13 +19,26 @@ class RoomConverter {
     }
 
     @TypeConverter
-    fun intToList(value: ArrayList<Int>?): String? {
-        return Gson().toJson(value)
+    fun gettingListFromString(genreIds: String): ArrayList<Int> {
+        val list = ArrayList<Int>()
+
+        val array = genreIds.split(",".toRegex()).dropLastWhile {
+            it.isEmpty()
+        }.toTypedArray()
+
+        for (s in array) {
+            if (s.isNotEmpty()) {
+                list.add(s.toInt())
+            }
+        }
+        return list
     }
 
     @TypeConverter
-    fun ListToInt(value: String?): ArrayList<Int>? {
-        return Gson().fromJson(value, Array<Int>::class.java) as ArrayList<Int>
+    fun writingStringFromList(list: ArrayList<Int>?): String {
+        var genreIds=""
+        for (i in list!!) genreIds += ",$i"
+        return genreIds
     }
 
 //    @TypeConverter
