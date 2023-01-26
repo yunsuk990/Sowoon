@@ -82,6 +82,7 @@ class SettingFragment : Fragment() {
 
         binding.settingSignupArtistTv.setOnClickListener {
             if(jwt != 0){
+                user = database.userDao().getUser(user.email, user.password)!!
                 Log.d("ifArtist", user?.ifArtist!!.toString())
                 if(user?.ifArtist!!){
                     Toast.makeText(context, "이미 화가 등록 되어있습니다.",Toast.LENGTH_SHORT).show()
