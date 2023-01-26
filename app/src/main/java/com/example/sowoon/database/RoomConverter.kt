@@ -18,28 +18,27 @@ class RoomConverter {
         return null
     }
 
+
     @TypeConverter
-    fun gettingListFromString(genreIds: String): ArrayList<Int> {
-        val list = ArrayList<Int>()
+    fun fromListIntToString(intList: List<Int>? = null): String? {
+        if(intList == null) return null
+        return intList.toString()
+    }
+    @TypeConverter
+    fun toListIntFromString(stringList: String? = null): List<Int>? {
+        if(stringList == null) return null
+        val result = ArrayList<Int>()
+        val split =stringList!!.replace("[","").replace("]","").replace(" ","").split(",")
+        for (n in split) {
+            try {
+                result.add(n.toInt())
+            } catch (e: Exception) {
 
-        val array = genreIds.split(",".toRegex()).dropLastWhile {
-            it.isEmpty()
-        }.toTypedArray()
-
-        for (s in array) {
-            if (s.isNotEmpty()) {
-                list.add(s.toInt())
             }
         }
-        return list
+        return result
     }
 
-    @TypeConverter
-    fun writingStringFromList(list: ArrayList<Int>?): String {
-        var genreIds=""
-        for (i in list!!) genreIds += ",$i"
-        return genreIds
-    }
 
 //    @TypeConverter
 //    fun galleryToJson(value: Gallery?): String? {
