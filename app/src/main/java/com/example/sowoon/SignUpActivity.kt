@@ -35,7 +35,7 @@ class SignUpActivity : AppCompatActivity() {
         var age = binding.ageEt.text.toString()
 
         if(database.userDao().getUser(email, password) == null){
-            database.userDao().insertUser(User(email, name, age, password))
+            database.userDao().insertUser(User(email, name, age, password,false,null))
             startActivity(Intent(applicationContext, LoginActivity::class.java))
         }else{
             Toast.makeText(applicationContext, "이미 가입되어 있는 계정입니다.", Toast.LENGTH_SHORT).show()
