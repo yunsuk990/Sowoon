@@ -9,7 +9,7 @@ import com.example.sowoon.data.entity.Gallery
 import com.example.sowoon.data.entity.Profile
 import com.example.sowoon.data.entity.User
 
-@Database(entities = [User::class, Profile::class, Gallery::class], version = 10)
+@Database(entities = [User::class, Profile::class, Gallery::class], version = 11)
 @TypeConverters(RoomConverter::class)
 abstract class AppDatabase(): RoomDatabase() {
 
