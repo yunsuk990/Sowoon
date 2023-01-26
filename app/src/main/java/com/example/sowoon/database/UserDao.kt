@@ -1,14 +1,10 @@
 package com.example.sowoon.database
 
-import androidx.room.Dao
-import androidx.room.Delete
-import androidx.room.Insert
-import androidx.room.Query
-import androidx.room.TypeConverter
-import androidx.room.TypeConverters
+import androidx.room.*
 import com.example.sowoon.data.entity.User
 
 @Dao
+@SuppressWarnings(RoomWarnings.CURSOR_MISMATCH)
 interface UserDao {
 
     @Insert
@@ -24,9 +20,7 @@ interface UserDao {
     fun ifArtistRegist(id: Int, bool: Boolean)
 
     @Query("UPDATE UserTable SET likeGallery=:likeGallery WHERE id=:id")
-    fun addLikeGallery(id: Int, likeGallery: ArrayList<Int>?)
+    fun addLikeGallery(id: Int, likeGallery: List<Int>?)
 
-    @Query("SELECT likeGallery FROM UserTable WHERE id=:id")
-    fun getLikeGallery(id: Int): ArrayList<Int>?
 
 }
