@@ -12,7 +12,7 @@ data class User(
     var age: String,
     var password: String,
     var ifArtist: Boolean = false,
-    var likeGallery: ArrayList<Int> = ArrayList(),
+    var likeGallery: List<Int>?,
     @PrimaryKey(autoGenerate = true) var id: Int = 0
 )
 
