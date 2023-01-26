@@ -1,6 +1,7 @@
 package com.example.sowoon
 
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -74,8 +75,11 @@ class GalleryFragment : Fragment() {
     }
 
     private fun addGallery(){
-        if(user?.ifArtist!!){
-            var exp = Gallery(R.drawable.galleryexp3, jwt , "모나리자","정은숙", "2020년 작품",null, 10)
+        user = database.userDao().getUser(user!!.email, user!!.password)
+        Log.d("ifArtist", user?.ifArtist.toString())
+        if(user?.ifArtist == true){
+            //사용자가 사진 등록
+            var exp = Gallery(R.drawable.galleryexp3, jwt , "모나리자","정은숙", "2020년 작품",null, 0)
             database.galleryDao().insertGallery(exp)
         }else{
             Toast.makeText(context, "화가 등록 후 이용 가능합니다.", Toast.LENGTH_SHORT).show()
