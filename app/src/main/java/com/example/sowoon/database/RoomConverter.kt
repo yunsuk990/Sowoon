@@ -20,15 +20,15 @@ class RoomConverter {
 
 
     @TypeConverter
-    fun fromListIntToString(intList: List<Int>? = null): String? {
+    fun fromListIntToString(intList: ArrayList<Int>? = null): String? {
         if(intList == null) return null
         return intList.toString()
     }
     @TypeConverter
-    fun toListIntFromString(stringList: String? = null): List<Int>? {
+    fun toListIntFromString(stringList: String? = null): ArrayList<Int>? {
         if(stringList == null) return null
         val result = ArrayList<Int>()
-        val split =stringList!!.replace("[","").replace("]","").replace(" ","").split(",")
+        val split = stringList!!.replace("[","").replace("]","").replace(" ","").split(",")
         for (n in split) {
             try {
                 result.add(n.toInt())
