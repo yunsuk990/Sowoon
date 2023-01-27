@@ -20,7 +20,7 @@ interface UserDao {
     fun ifArtistRegist(id: Int, bool: Boolean)
 
     @Query("UPDATE UserTable SET likeGallery=:likeGallery WHERE id=:id")
-    fun addLikeGallery(id: Int, likeGallery: List<Int>?)
+    fun addLikeGallery(id: Int, likeGallery: ArrayList<Int>?)
 
 
 }
