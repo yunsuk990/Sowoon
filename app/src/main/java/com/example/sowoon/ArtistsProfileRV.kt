@@ -3,10 +3,13 @@ package com.example.sowoon
 import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.RecyclerView
 import com.example.sowoon.data.entity.Profile
+import com.example.sowoon.data.entity.User
 import com.example.sowoon.database.AppDatabase
 import com.example.sowoon.databinding.ItemArtistsprofileBinding
+import com.google.gson.Gson
 
 class ArtistsProfileRV(private val profileList: ArrayList<Profile>, var context: Context): RecyclerView.Adapter<ArtistsProfileRV.ViewHolder>() {
 
@@ -14,7 +17,7 @@ class ArtistsProfileRV(private val profileList: ArrayList<Profile>, var context:
 
     interface MyItemClickOnListener {
         fun profileClick(profile: Profile)
-        fun profileArtworkClick(profile: Profile)
+        fun profileArtworkClick(profile: Profile, database: AppDatabase)
     }
 
     private lateinit var mItemClickListener: MyItemClickOnListener
@@ -44,7 +47,7 @@ class ArtistsProfileRV(private val profileList: ArrayList<Profile>, var context:
             mItemClickListener.profileClick(profileList[position])
         }
         holder.binding.profileArtistArtworkIv.setOnClickListener {
-            mItemClickListener.profileArtworkClick(profileList[position])
+            mItemClickListener.profileArtworkClick(profileList[position], database)
         }
     }
 
