@@ -27,6 +27,7 @@ class GalleryInfoFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         binding = FragmentGalleryInfoBinding.inflate(inflater, container, false)
+        Log.d("database", "database")
         database = AppDatabase.getInstance(requireContext())!!
         user = User()
 
@@ -73,16 +74,17 @@ class GalleryInfoFragment : Fragment() {
                 var galleryLikeCount: Int = database.galleryDao().getlikeCount(galleryId)!!
 
                 if(likeList?.contains(galleryId) == true){
-                    likeList = likeList?.remove(galleryId) as? ArrayList<Int>
+                    likeList?.remove(galleryId)
                     galleryLikeCount -= 1
                     binding.galleryInfoHeartIv.setImageResource(R.drawable.blankheart)
                 }else{
-                    binding.galleryInfoHeartIv.setImageResource(R.drawable.fullheart)
                     likeList?.add(galleryId)
                     galleryLikeCount += 1
+                    binding.galleryInfoHeartIv.setImageResource(R.drawable.fullheart)
+
                 }
                 Log.d("LikeList", likeList.toString())
-                database.userDao().addLikeGallery(jwt, likeList) //오류
+                database.userDao().addLikeGallery(jwt, likeList)
                 database.galleryDao().setlikeCount(galleryId, galleryLikeCount)
             }
     }
