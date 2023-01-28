@@ -27,6 +27,17 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
+            <ImageView
+                android:id="@+id/artists_profile_iv"
+                android:layout_width="250dp"
+                android:layout_height="280dp"
+                android:layout_marginTop="20dp"
+                android:scaleType="fitXY"
+                android:src="@drawable/galleryexp1"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/artists_profile_tv" />
+
             <TextView
                 android:id="@+id/artists_profile_name"
                 android:layout_width="wrap_content"
@@ -37,17 +48,29 @@
                 android:textSize="18sp"
                 android:textStyle="bold"
                 app:layout_constraintStart_toStartOf="@+id/artists_profile_tv"
-                app:layout_constraintTop_toBottomOf="@+id/artists_profile_tv" />
+                app:layout_constraintTop_toBottomOf="@+id/artists_profile_iv" />
 
-            <ImageView
-                android:id="@+id/artists_profile_iv"
-                android:layout_width="250dp"
-                android:layout_height="280dp"
-                android:layout_marginTop="10dp"
-                android:scaleType="fitXY"
-                android:src="@drawable/galleryexp1"
-                app:layout_constraintStart_toStartOf="@+id/artists_profile_tv"
+
+            <TextView
+                android:id="@+id/artists_profile_age"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:text="나이"
+                android:textColor="@color/black"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                app:layout_constraintStart_toStartOf="@+id/artists_profile_name"
                 app:layout_constraintTop_toBottomOf="@+id/artists_profile_name" />
+
+            <TextView
+                android:id="@+id/artists_profile_age_input"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:hint="나이"
+                app:layout_constraintStart_toStartOf="@+id/artists_profile_age"
+                app:layout_constraintTop_toBottomOf="@+id/artists_profile_age" />
 
             <TextView
                 android:id="@+id/artists_profile_school"
@@ -58,8 +81,8 @@
                 android:textColor="@color/black"
                 android:textSize="16sp"
                 android:textStyle="bold"
-                app:layout_constraintStart_toStartOf="@+id/artists_profile_iv"
-                app:layout_constraintTop_toBottomOf="@+id/artists_profile_iv" />
+                app:layout_constraintStart_toStartOf="@+id/artists_profile_age_input"
+                app:layout_constraintTop_toBottomOf="@+id/artists_profile_age_input" />
 
             <TextView
                 android:id="@+id/artists_profile_school_input"
