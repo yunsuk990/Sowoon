@@ -9,8 +9,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import com.example.sowoon.data.entity.Gallery
-import com.example.sowoon.data.entity.Profile
 import com.example.sowoon.data.entity.User
 import com.example.sowoon.database.AppDatabase
 import com.example.sowoon.databinding.FragmentSettingBinding
@@ -88,18 +86,19 @@ class SettingFragment : Fragment() {
                     Toast.makeText(context, "이미 화가 등록 되어있습니다.",Toast.LENGTH_SHORT).show()
                 }else{
                     //예시 갤러리
-                    var expgallery = ArrayList<Gallery>()
-                    expgallery.add(Gallery(R.drawable.galleryexp3, jwt , "모나리자","정은숙", "2020년 작품",null, 10))
-                    var profile = Profile(
-                        "",
-                        "",
-                        "",
-                        expgallery,
-                        R.drawable.galleryexp3,
-                        jwt
-                    )
-                    database.profileDao().insertProfile(profile)
-                    database.userDao().ifArtistRegist(jwt,true)
+//                    var expgallery = ArrayList<Gallery>()
+//                    expgallery.add(Gallery(R.drawable.galleryexp3, jwt , "모나리자","정은숙", "2020년 작품",null, 10))
+//                    var profile = Profile(
+//                        "",
+//                        "",
+//                        "",
+//                        expgallery,
+//                        R.drawable.galleryexp3,
+//                        jwt
+//                    )
+//                    database.profileDao().insertProfile(profile)
+//                    database.userDao().ifArtistRegist(jwt,true)
+                    startActivity(Intent(activity, RegistArtistActivity::class.java))
                 }
             }else{
                 Toast.makeText(context, "로그인 후 이용하시기 바랍니다.", Toast.LENGTH_SHORT).show()
