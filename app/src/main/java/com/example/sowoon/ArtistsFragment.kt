@@ -39,8 +39,8 @@ class ArtistsFragment : Fragment() {
                 profileArtist(profile)
             }
 
-            override fun profileArtworkClick(profile: Profile) {
-                profileArtwork(profile)
+            override fun profileArtworkClick(profile: Profile, database: AppDatabase) {
+                profileArtwork(profile, database)
             }
         })
         return binding.root
@@ -60,7 +60,7 @@ class ArtistsFragment : Fragment() {
     }
 
     //화가 대표작 클릭 시
-    private fun profileArtwork(profile: Profile){
+    private fun profileArtwork(profile: Profile, database: AppDatabase){
         (context as MainActivity).supportFragmentManager.beginTransaction()
             .replace(R.id.main_frame, GalleryInfoFragment().apply {
                 arguments = Bundle().apply {
@@ -72,11 +72,5 @@ class ArtistsFragment : Fragment() {
                 }
             })
             .commitNowAllowingStateLoss()
-    }
-
-    private fun getJwt(): Int? {
-        val spf = activity?.getSharedPreferences("auth", AppCompatActivity.MODE_PRIVATE)
-        var jwt = spf?.getInt("jwt", 0)
-        return jwt
     }
 }
