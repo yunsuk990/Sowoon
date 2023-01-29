@@ -7,15 +7,14 @@ import com.google.gson.Gson
 class RoomConverter {
     @TypeConverter
     fun listToJson(value: MutableList<Gallery>?): String? {
+        if (value == null) return null
         return Gson().toJson(value)
     }
 
     @TypeConverter
     fun jsonToList(value: String?): MutableList<Gallery>? {
-        if(value != null){
-            return Gson().fromJson(value, Array<Gallery>::class.java).toList() as MutableList<Gallery>
-        }
-        return null
+        if(value == null) return null
+        return Gson().fromJson(value, Array<Gallery>::class.java).toList() as? MutableList<Gallery>
     }
 
 
