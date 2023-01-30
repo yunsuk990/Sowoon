@@ -110,6 +110,15 @@ class SettingFragment : Fragment() {
             if(jwt != 0){
                 database.userDao().deleteUser(User()!!)
                 removeJwt()
+                var use = database.userDao().getUser(user.email, user.password)
+                var likeGallery = use?.likeGallery
+                if (likeGallery != null) {
+                    for( i in likeGallery){
+                        var gallery = database.galleryDao().getGallery(i)
+                        var likecount = gallery.like - 1
+                        database.galleryDao().setlikeCount(i, likecount)
+                    }
+                }
                 startActivity(Intent(context, MainActivity::class.java))
             }else{
                 Toast.makeText(context, "로그인 후 이용하시기 바랍니다.", Toast.LENGTH_SHORT).show()
