@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.RecyclerView
+import com.example.sowoon.data.entity.Gallery
 import com.example.sowoon.data.entity.Profile
 import com.example.sowoon.data.entity.User
 import com.example.sowoon.database.AppDatabase
@@ -29,10 +30,15 @@ class ArtistsProfileRV(private val profileList: ArrayList<Profile>, var context:
     inner class ViewHolder(val binding: ItemArtistsprofileBinding): RecyclerView.ViewHolder(binding.root){
         fun bind(profile: Profile){
             database = AppDatabase.getInstance(context!!)!!
-            var gallery = database.galleryDao().getGallery(profile.bestArtwork!!)
+            var bestArtwork: Int? = profile.bestArtwork
+            var gallery: Gallery? = null
+            if(bestArtwork != null){
+                gallery = database.galleryDao().getGallery(bestArtwork)
+                binding.profileArtistArtworkIv.setImageResource(bestArtwork)
+            }
             binding.profileArtistNameTv.text = profile.name
-            binding.profileArtistArtworkTv.text = gallery.title
-            binding.profileArtistArtworkInfoTv.text = gallery.info
+            binding.profileArtistArtworkTv.text = gallery?.title
+            binding.profileArtistArtworkInfoTv.text = gallery?.info
         }
     }
 
