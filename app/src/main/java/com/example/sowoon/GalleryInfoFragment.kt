@@ -6,6 +6,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.example.sowoon.data.entity.Gallery
 import com.example.sowoon.data.entity.User
@@ -68,24 +69,27 @@ class GalleryInfoFragment : Fragment() {
     private fun initClickListener(use: User?) {
             var jwt = getJwt()
             binding.galleryInfoHeartIv.setOnClickListener {
+                if(getJwt() != 0){
+                    var likeList: ArrayList<Int>? = use?.likeGallery as? ArrayList<Int>
+                    if(likeList == null) likeList = ArrayList()
+                    var galleryLikeCount: Int = database.galleryDao().getlikeCount(galleryId)!!
 
-                var likeList: ArrayList<Int>? = use?.likeGallery as? ArrayList<Int>
-                if(likeList == null) likeList = ArrayList()
-                var galleryLikeCount: Int = database.galleryDao().getlikeCount(galleryId)!!
+                    if(likeList?.contains(galleryId) == true){
+                        likeList?.remove(galleryId)
+                        galleryLikeCount -= 1
+                        binding.galleryInfoHeartIv.setImageResource(R.drawable.blankheart)
+                    }else{
+                        likeList?.add(galleryId)
+                        galleryLikeCount += 1
+                        binding.galleryInfoHeartIv.setImageResource(R.drawable.fullheart)
 
-                if(likeList?.contains(galleryId) == true){
-                    likeList?.remove(galleryId)
-                    galleryLikeCount -= 1
-                    binding.galleryInfoHeartIv.setImageResource(R.drawable.blankheart)
+                    }
+                    Log.d("LikeList", likeList.toString())
+                    database.userDao().addLikeGallery(jwt, likeList)
+                    database.galleryDao().setlikeCount(galleryId, galleryLikeCount)
                 }else{
-                    likeList?.add(galleryId)
-                    galleryLikeCount += 1
-                    binding.galleryInfoHeartIv.setImageResource(R.drawable.fullheart)
-
+                    Toast.makeText(context, "로그인 후 이용해주시길 바랍니다.", Toast.LENGTH_SHORT).show()
                 }
-                Log.d("LikeList", likeList.toString())
-                database.userDao().addLikeGallery(jwt, likeList)
-                database.galleryDao().setlikeCount(galleryId, galleryLikeCount)
             }
     }
 
