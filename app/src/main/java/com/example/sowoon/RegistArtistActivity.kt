@@ -35,7 +35,7 @@ class RegistArtistActivity : AppCompatActivity() {
         }
         var school = binding.myInfoSchoolInput.text.toString()
         var awards = binding.myInfoAwardsInput.text.toString()
-        // var bestArtwork = binding.myInfoBestArtworkIv.drawable
+        //var bestArtwork = binding.myInfoBestArtworkIv
         var profile: Profile = Profile(school,awards,getName(), null, null, getJwt()!!)
         database.profileDao().insertProfile(profile)
         database.userDao().ifArtistRegist(jwt!!,true)
