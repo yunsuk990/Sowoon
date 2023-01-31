@@ -45,7 +45,7 @@ class SettingMyInfoFragment : Fragment() {
 
     private fun initInfo(user: User){
         var user = database.userDao().getUser(user.email, user.password)
-        if(user?.ifArtist == true){
+        if(user?.ifArtist!!){
             var profile = database.profileDao().getProfile(user.id)
             var bestartwork = profile?.bestArtwork
             binding.myInfoName.text = user.name
