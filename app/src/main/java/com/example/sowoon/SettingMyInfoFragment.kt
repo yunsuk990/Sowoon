@@ -1,5 +1,6 @@
 package com.example.sowoon
 
+import android.net.Uri
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -8,6 +9,7 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.net.toUri
 import com.example.sowoon.data.entity.Gallery
 import com.example.sowoon.data.entity.User
 import com.example.sowoon.database.AppDatabase
@@ -30,12 +32,12 @@ class SettingMyInfoFragment : Fragment() {
         binding = FragmentSettingMyInfoBinding.inflate(inflater, container, false)
         database = AppDatabase.getInstance(requireContext())!!
 
-        var user: User = getUser()
+        var user: User = User()
         initInfo(user)
         return binding.root
     }
 
-    private fun getUser(): User {
+    private fun User(): User {
         gson = Gson()
         val spf =
             requireActivity().getSharedPreferences("userProfile", AppCompatActivity.MODE_PRIVATE)
@@ -58,18 +60,18 @@ class SettingMyInfoFragment : Fragment() {
                 binding.myInfoBestArtworkIv.setImageResource(R.drawable.add)
                 binding.myInfoBestArtworkIv.setOnClickListener {
                     //예시 삽입,, 나중에 앨범에서 이미지 가져오기
-                    var expgallery = R.drawable.galleryexp2
+                    var expgallery = R.drawable.galleryexp2 as Uri
                     binding.myInfoBestArtworkIv.scaleType = (ImageView.ScaleType.FIT_XY)
-                    binding.myInfoBestArtworkIv.setImageResource(expgallery)
+                    binding.myInfoBestArtworkIv.setImageURI(expgallery)
                     //DB에 삽입
-                    profile?.bestArtwork = expgallery
+                    profile?.bestArtwork = expgallery.toString()
                     database.profileDao().updateProfile(profile!!)
                     //사진 설명 정보 삽입
                     //database.galleryDao().insertGallery()
                 }
             }else{
                 binding.myInfoBestArtworkIv.scaleType = (ImageView.ScaleType.FIT_XY)
-                binding.myInfoBestArtworkIv.setImageResource(profile?.bestArtwork!!)
+                binding.myInfoBestArtworkIv.setImageURI(profile?.bestArtwork!!.toUri())
             }
 
         }else{
