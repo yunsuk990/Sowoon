@@ -2,10 +2,12 @@ package com.example.sowoon
 
 import android.content.Context
 import android.content.Context.LAYOUT_INFLATER_SERVICE
+import android.net.Uri
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.BaseAdapter
+import androidx.core.net.toUri
 import com.example.sowoon.data.entity.Gallery
 import com.example.sowoon.databinding.ItemArtistgalleryBinding
 
@@ -36,9 +38,11 @@ class GalleryGVAdapter: BaseAdapter() {
 
     }
 
+
     override fun getView(p0: Int, p1: View?, p2: ViewGroup?): View {
         var binding = ItemArtistgalleryBinding.inflate(LayoutInflater.from(p2?.context), p2, false)
-        binding.galleryIv.setImageResource(galleryList[p0].GalleryId!!)
+        var uri: Uri = Uri.parse(galleryList[p0].GalleryId!!)
+        binding.galleryIv.setImageURI(uri)
         binding.galleryIv.setOnClickListener {
             mItemClickListener.artworkClick(galleryList[p0])
         }
