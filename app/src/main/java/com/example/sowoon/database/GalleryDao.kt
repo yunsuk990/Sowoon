@@ -19,12 +19,12 @@ interface GalleryDao {
     fun getAllGallery(): List<Gallery>
 
     @Query("SELECT * FROM GalleryTable WHERE GalleryId = :galleryId")
-    fun getGallery(galleryId: Int): Gallery
+    fun getGallery(galleryId: String): Gallery
 
     @Query("UPDATE GalleryTable SET `like`= :like WHERE GalleryId=:galleryId")
-    fun setlikeCount(galleryId: Int, like: Int)
+    fun setlikeCount(galleryId: String, like: Int)
 
-    @Query("SELECT like FROM GalleryTable WHERE GalleryId=:galleryId")
-    fun getlikeCount(galleryId: Int): Int?
+    @Query("SELECT `like` FROM GalleryTable WHERE GalleryId=:galleryId")
+    fun getlikeCount(galleryId: String): Int?
 
 }
