@@ -7,31 +7,34 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.sowoon.data.entity.Gallery
+import com.example.sowoon.database.AppDatabase
 import com.example.sowoon.databinding.FragmentMainBinding
 import com.google.gson.Gson
 
 class HomeFragment : Fragment() {
 
     lateinit var binding: FragmentMainBinding
+    lateinit var database: AppDatabase
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         binding = FragmentMainBinding.inflate(inflater, container, false)
+        database = AppDatabase.getInstance(requireContext())!!
         initRecyclerView()
         return binding.root
     }
 
     private fun initRecyclerView(){
-        val todayGalleryAdapter = TodayGalleryRV()
+        val todayGalleryAdapter = TodayGalleryRV(requireContext()!!)
         binding.mainTodayAlbumRv.adapter = todayGalleryAdapter
         binding.mainTodayAlbumRv.layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL,false )
 
         //테스트 이미지
-        val gallery1 = Gallery(R.drawable.galleryexp3, 1, "모나리자","정은숙", "2020년 작품",null, 10)
-        val galleryList: MutableList<Gallery> = arrayListOf(gallery1)
-        todayGalleryAdapter.addGallery(galleryList as ArrayList<Gallery>)
+        val galleryList = database.galleryDao().getAllGallery() as ArrayList<Gallery>
+        todayGalleryAdapter.addGallery(galleryList!!)
 
         todayGalleryAdapter.setMyItemClickListener(object: TodayGalleryRV.MyItemOnClickListener{
             override fun galleryClick(gallery: Gallery) {
