@@ -5,7 +5,7 @@ import androidx.room.PrimaryKey
 
 @Entity(tableName = "GalleryTable")
 data class Gallery(
-    @PrimaryKey var GalleryId: Int,
+    @PrimaryKey var GalleryId: String,
     var userId: Int,
     var title: String? = "",
     var artist: String? = "",
