@@ -8,6 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.net.toUri
 import com.example.sowoon.data.entity.Gallery
 import com.example.sowoon.data.entity.User
 import com.example.sowoon.database.AppDatabase
@@ -18,7 +19,7 @@ class GalleryInfoFragment : Fragment() {
 
     lateinit var binding: FragmentGalleryInfoBinding
     lateinit var database: AppDatabase
-    var galleryId: Int = -1
+    var galleryId: String = ""
     var user: User? = null
     private var gson = Gson()
 
@@ -40,7 +41,7 @@ class GalleryInfoFragment : Fragment() {
     }
 
     private fun setGallery(gallery: Gallery){
-        binding.galleryInfoIv.setImageResource(gallery.GalleryId!!)
+        binding.galleryInfoIv.setImageURI(gallery.GalleryId!!.toUri())
         binding.todayAlbumTitle.text = gallery.title
         binding.todayAlbumArtist.text = gallery.artist
         binding.todayAlbumInfo.text = gallery.info
@@ -70,7 +71,7 @@ class GalleryInfoFragment : Fragment() {
             var jwt = getJwt()
             binding.galleryInfoHeartIv.setOnClickListener {
                 if(getJwt() != 0){
-                    var likeList: ArrayList<Int>? = use?.likeGallery as? ArrayList<Int>
+                    var likeList: ArrayList<String>? = use?.likeGallery as? ArrayList<String>
                     if(likeList == null) likeList = ArrayList()
                     var galleryLikeCount: Int = database.galleryDao().getlikeCount(galleryId)!!
 
