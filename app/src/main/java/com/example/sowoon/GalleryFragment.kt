@@ -54,6 +54,7 @@ class GalleryFragment : Fragment() {
         var gridView = binding.galleryGv
         var gridViewAdapter = GalleryGVAdapter()
         var expGallery: List<Gallery> = database.galleryDao().getAllGallery()
+        Log.d("expGallery", expGallery.toString())
         gridViewAdapter.addGallery(expGallery as ArrayList<Gallery>)
         gridViewAdapter.itemClickListener(object: GalleryGVAdapter.MyItemClickListener{
             override fun artworkClick(gallery: Gallery) {
@@ -75,17 +76,6 @@ class GalleryFragment : Fragment() {
             .commitNowAllowingStateLoss()
     }
 
-    private fun addGallery(){
-        user = database.userDao().getUser(user!!.email, user!!.password)
-        Log.d("ifArtist", user?.ifArtist.toString())
-        if(user?.ifArtist == true){
-            //사용자가 사진 등록
-            var exp = Gallery(R.drawable.galleryexp3, jwt , "모나리자","정은숙", "2020년 작품",null, 0)
-            database.galleryDao().insertGallery(exp)
-        }else{
-            Toast.makeText(context, "화가 등록 후 이용 가능합니다.", Toast.LENGTH_SHORT).show()
-        }
-    }
 
     private fun getJwt(): Int? {
         val spf = activity?.getSharedPreferences("auth", AppCompatActivity.MODE_PRIVATE)
