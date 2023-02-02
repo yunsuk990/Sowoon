@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "963672305124",
+    "project_id": "sowoon-a80c0",
+    "storage_bucket": "sowoon-a80c0.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:963672305124:android:c827e5db2b139e1996abf1",
+        "android_client_info": {
+          "package_name": "com.example.sowoon"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "963672305124-f92m8n5ogbkpegdt3mjvbl2dpc60flek.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDggMQNI3OrZYadXw4-KO8dOsww1WjlY24"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "963672305124-f92m8n5ogbkpegdt3mjvbl2dpc60flek.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
