@@ -19,7 +19,7 @@ class SettingFragment : Fragment() {
     lateinit var binding: FragmentSettingBinding
     lateinit var database: AppDatabase
     lateinit var gson: Gson
-    lateinit var user: User
+    var user: User? = null
     var jwt: Int = -1
 
     override fun onCreateView(
@@ -30,7 +30,7 @@ class SettingFragment : Fragment() {
         binding = FragmentSettingBinding.inflate(inflater, container, false)
         database = AppDatabase.getInstance(requireContext())!!
         jwt = getJwt()!!
-        user = User()!!
+        user = User()
         initClickListener()
         return binding.root
     }
@@ -80,7 +80,7 @@ class SettingFragment : Fragment() {
 
         binding.settingSignupArtistTv.setOnClickListener {
             if(jwt != 0){
-                user = database.userDao().getUser(user.email, user.password)!!
+                user = database.userDao().getUser(user!!.email, user!!.password)!!
                 Log.d("ifArtist", user?.ifArtist!!.toString())
                 if(user?.ifArtist!!){
                     Toast.makeText(context, "이미 화가 등록 되어있습니다.",Toast.LENGTH_SHORT).show()
@@ -110,7 +110,7 @@ class SettingFragment : Fragment() {
             if(jwt != 0){
                 database.userDao().deleteUser(User()!!)
                 removeJwt()
-                var use = database.userDao().getUser(user.email, user.password)
+                var use = database.userDao().getUser(user!!.email, user!!.password)
                 var likeGallery = use?.likeGallery
                 if (likeGallery != null) {
                     for( i in likeGallery){
