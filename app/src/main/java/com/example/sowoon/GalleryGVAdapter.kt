@@ -42,7 +42,7 @@ class GalleryGVAdapter: BaseAdapter() {
     override fun getView(p0: Int, p1: View?, p2: ViewGroup?): View {
         var binding = ItemArtistgalleryBinding.inflate(LayoutInflater.from(p2?.context), p2, false)
         var uri: Uri = Uri.parse(galleryList[p0].GalleryId!!)
-        binding.galleryIv.setImageURI(uri)
+        //binding.galleryIv.setImageURI(uri)
         binding.galleryIv.setOnClickListener {
             mItemClickListener.artworkClick(galleryList[p0])
         }
