@@ -13,6 +13,8 @@ import com.example.sowoon.data.entity.Gallery
 import com.example.sowoon.data.entity.User
 import com.example.sowoon.database.AppDatabase
 import com.example.sowoon.databinding.ActivityAddGalleryBinding
+import com.google.android.gms.tasks.OnFailureListener
+import com.google.android.gms.tasks.OnSuccessListener
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
@@ -21,6 +23,7 @@ import com.google.firebase.storage.ktx.storage
 import com.google.gson.Gson
 import java.io.FileNotFoundException
 import java.io.InputStream
+import java.lang.Exception
 
 class AddGalleryActivity : AppCompatActivity() {
 
@@ -37,7 +40,7 @@ class AddGalleryActivity : AppCompatActivity() {
         setContentView(binding.root)
         var user = User()
         database = AppDatabase.getInstance(this)!!
-        storage = FirebaseStorage.getInstance()
+        storage = Firebase.storage
 
         binding.addgalleryArtistInput.text = user?.name
 
@@ -89,11 +92,9 @@ class AddGalleryActivity : AppCompatActivity() {
                         binding.addgalleryIv.scaleType = ImageView.ScaleType.FIT_XY
                         Log.d("galleryUri", uri.toString())
                         var storageRef = storage.reference
-                        var mountainRef = storageRef.child(User()?.id.toString())
-                        //var mountainImageRef = storageRef.child(user.id.toString()+"space.jpg")
-                        Log.d("mountainImageRef", mountainRef.toString())
-                        var uploadTask: UploadTask = mountainRef.putFile(uri)
-
+                        var mountainImageRef: StorageReference? = storageRef.child("image/$uri")
+                        Log.d("mountainImageRef", mountainImageRef.toString())
+                        mountainImageRef?.putFile(uri)
                     }
                 }
             }
