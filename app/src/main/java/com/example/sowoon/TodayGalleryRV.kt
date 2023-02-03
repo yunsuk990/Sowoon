@@ -41,13 +41,8 @@ class TodayGalleryRV(var context: Context): RecyclerView.Adapter<TodayGalleryRV.
     inner class ViewHolder(val binding: ItemTodayalbumBinding): RecyclerView.ViewHolder(binding.root){
         fun bind(gallery: Gallery){
             var uri = gallery.GalleryId.toUri()
-            var bitmap: Bitmap = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-                ImageDecoder.decodeBitmap(ImageDecoder.createSource(context.contentResolver, uri))
-            } else {
-                MediaStore.Images.Media.getBitmap(context.contentResolver, uri)
-            }
+            //binding.todayAlbumIv.setImageURI(uri)
             Log.d("galleryuri", uri.toString())
-            binding.todayAlbumIv.setImageBitmap(bitmap)
             binding.todayAlbumTitle.text = gallery.title
             binding.todayAlbumArtist.text = gallery.artist
             binding.todayAlbumInfo.text= gallery.info
