@@ -36,7 +36,7 @@ class RegistArtistActivity : AppCompatActivity() {
         var school = binding.myInfoSchoolInput.text.toString()
         var awards = binding.myInfoAwardsInput.text.toString()
         //var bestArtwork = binding.myInfoBestArtworkIv
-        var profile: Profile = Profile(school,awards,getName(), null, null, getJwt()!!)
+        var profile: Profile = Profile(school,awards,getName(), null, getJwt()!!)
         database.profileDao().insertProfile(profile)
         database.userDao().ifArtistRegist(jwt!!,true)
         Toast.makeText(this, "등록되었습니다." ,Toast.LENGTH_SHORT).show()
