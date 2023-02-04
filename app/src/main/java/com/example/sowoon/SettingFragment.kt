@@ -85,19 +85,6 @@ class SettingFragment : Fragment() {
                 if(user?.ifArtist!!){
                     Toast.makeText(context, "이미 화가 등록 되어있습니다.",Toast.LENGTH_SHORT).show()
                 }else{
-                    //예시 갤러리
-//                    var expgallery = ArrayList<Gallery>()
-//                    expgallery.add(Gallery(R.drawable.galleryexp3, jwt , "모나리자","정은숙", "2020년 작품",null, 10))
-//                    var profile = Profile(
-//                        "",
-//                        "",
-//                        "",
-//                        expgallery,
-//                        R.drawable.galleryexp3,
-//                        jwt
-//                    )
-//                    database.profileDao().insertProfile(profile)
-//                    database.userDao().ifArtistRegist(jwt,true)
                     startActivity(Intent(activity, RegistArtistActivity::class.java))
                 }
             }else{
@@ -111,14 +98,14 @@ class SettingFragment : Fragment() {
                 database.userDao().deleteUser(User()!!)
                 removeJwt()
                 var use = database.userDao().getUser(user!!.email, user!!.password)
-                var likeGallery = use?.likeGallery
-                if (likeGallery != null) {
-                    for( i in likeGallery){
-                        var gallery = database.galleryDao().getGallery(i)
-                        var likecount = gallery.like - 1
-                        database.galleryDao().setlikeCount(i, likecount)
-                    }
-                }
+                //회원탈퇴시 좋아요 매커니즘 어떻게 할 것인지
+//                if (likeGallery != null) {
+//                    for( i in likeGallery){
+//                        var gallery = database.galleryDao().getGallery(i)
+//                        var likecount = gallery.like - 1
+//                        database.galleryDao().setlikeCount(i, likecount)
+//                    }
+//                }
                 startActivity(Intent(context, MainActivity::class.java))
             }else{
                 Toast.makeText(context, "로그인 후 이용하시기 바랍니다.", Toast.LENGTH_SHORT).show()
