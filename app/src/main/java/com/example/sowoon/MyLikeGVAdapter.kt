@@ -14,6 +14,7 @@ import com.example.sowoon.databinding.ItemArtistgalleryBinding
 class MyLikeGVAdapter(private val context: Context): BaseAdapter() {
 
     lateinit var database: AppDatabase
+
     val galleryList = ArrayList<Gallery>()
     init {
         database = AppDatabase.getInstance(context!!)!!
