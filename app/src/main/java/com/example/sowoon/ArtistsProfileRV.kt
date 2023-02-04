@@ -6,6 +6,7 @@ import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.net.toUri
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import com.example.sowoon.data.entity.Gallery
 import com.example.sowoon.data.entity.Profile
 import com.example.sowoon.data.entity.User
@@ -34,8 +35,7 @@ class ArtistsProfileRV(private val profileList: ArrayList<Profile>, var context:
             var bestArtwork: String? = profile.bestArtwork
             var gallery: Gallery? = null
             if(bestArtwork != null){
-                gallery = database.galleryDao().getGallery(bestArtwork)
-                binding.profileArtistArtworkIv.setImageURI(bestArtwork.toUri())
+                Glide.with(context).load(bestArtwork).into(binding.profileArtistArtworkIv)
             }
             binding.profileArtistNameTv.text = profile.name
             binding.profileArtistArtworkTv.text = gallery?.title
