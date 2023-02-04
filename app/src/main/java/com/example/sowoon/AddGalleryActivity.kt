@@ -9,12 +9,14 @@ import android.provider.MediaStore
 import android.util.Log
 import android.widget.ImageView
 import android.widget.Toast
+import com.bumptech.glide.Glide
 import com.example.sowoon.data.entity.Gallery
 import com.example.sowoon.data.entity.User
 import com.example.sowoon.database.AppDatabase
 import com.example.sowoon.databinding.ActivityAddGalleryBinding
 import com.google.android.gms.tasks.OnFailureListener
 import com.google.android.gms.tasks.OnSuccessListener
+import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
@@ -24,6 +26,7 @@ import com.google.gson.Gson
 import java.io.FileNotFoundException
 import java.io.InputStream
 import java.lang.Exception
+import java.net.URI
 
 class AddGalleryActivity : AppCompatActivity() {
 
@@ -31,8 +34,9 @@ class AddGalleryActivity : AppCompatActivity() {
     lateinit var gson: Gson
     lateinit var database: AppDatabase
     val REQ_GALLERY = 10
-    var URI: String? = null
-    lateinit var storage: FirebaseStorage
+    var URI: Uri? = null
+    var db = Firebase.firestore
+    var storage = Firebase.storage
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -40,8 +44,6 @@ class AddGalleryActivity : AppCompatActivity() {
         setContentView(binding.root)
         var user = User()
         database = AppDatabase.getInstance(this)!!
-        storage = Firebase.storage
-
         binding.addgalleryArtistInput.text = user?.name
 
         binding.addgalleryIv.setOnClickListener {
@@ -50,8 +52,6 @@ class AddGalleryActivity : AppCompatActivity() {
         binding.addgalleryBtn.setOnClickListener {
             upload(user)
         }
-
-
     }
 
     private fun upload(user: User?){
@@ -60,13 +60,17 @@ class AddGalleryActivity : AppCompatActivity() {
         }
         var title = binding.addgalleryTitleInput.text.toString()
         var info = binding.addgalleryInfoInput.text.toString()
-        var profile = database.profileDao().getProfile(user?.id!!)
-        var artwork = profile?.artwork
-        profile?.artwork = artwork
-        val Gallery = Gallery(URI!!, getJwt()!!, title, user?.name, info, null, 0)
-        artwork?.add(Gallery)
-        database.galleryDao().insertGallery(Gallery)
-        database.profileDao().updateProfile(profile!!)
+        var mountainImageRef: StorageReference? = storage?.reference?.child("images")?.child(getJwt().toString())
+        mountainImageRef?.putFile(URI!!)?.addOnSuccessListener {
+            mountainImageRef.downloadUrl.addOnSuccessListener { url ->
+                Log.d("FirebaseUri", url.toString())
+                val Gallery = Gallery(url.toString(), getJwt()!!,null ,title, user?.name, info, null, 0)
+                database.galleryDao().insertGallery(Gallery)
+            }
+        }?.addOnFailureListener{
+            Toast.makeText(this, "업로드 실패", Toast.LENGTH_SHORT).show()
+            Log.d("FirebaseUri", "FAIL", it)
+        }
     }
 
     private fun User(): User? {
@@ -87,14 +91,9 @@ class AddGalleryActivity : AppCompatActivity() {
             when(requestCode){
                 REQ_GALLERY -> {
                     data?.data?.let { uri ->
-                        URI = uri.toString()
+                        URI = uri
                         binding.addgalleryIv.setImageURI(uri)
                         binding.addgalleryIv.scaleType = ImageView.ScaleType.FIT_XY
-                        Log.d("galleryUri", uri.toString())
-                        var storageRef = storage.reference
-                        var mountainImageRef: StorageReference? = storageRef.child("image/$uri")
-                        Log.d("mountainImageRef", mountainImageRef.toString())
-                        mountainImageRef?.putFile(uri)
                     }
                 }
             }
@@ -107,3 +106,4 @@ class AddGalleryActivity : AppCompatActivity() {
         return jwt
     }
 }
+
