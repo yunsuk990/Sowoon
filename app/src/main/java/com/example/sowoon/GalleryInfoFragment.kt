@@ -9,6 +9,7 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.net.toUri
+import com.bumptech.glide.Glide
 import com.example.sowoon.data.entity.Gallery
 import com.example.sowoon.data.entity.User
 import com.example.sowoon.database.AppDatabase
@@ -41,7 +42,7 @@ class GalleryInfoFragment : Fragment() {
     }
 
     private fun setGallery(gallery: Gallery){
-        binding.galleryInfoIv.setImageURI(gallery.GalleryId!!.toUri())
+        Glide.with(requireContext()).load(gallery.GalleryId).into(binding.galleryInfoIv)
         binding.todayAlbumTitle.text = gallery.title
         binding.todayAlbumArtist.text = gallery.artist
         binding.todayAlbumInfo.text = gallery.info
@@ -50,13 +51,12 @@ class GalleryInfoFragment : Fragment() {
         var use = database.userDao().getUser(user!!.email, user!!.password)
 
         if(user != null){
-            Log.d("likeGallery", use?.likeGallery.toString())
-            if(use?.likeGallery?.contains(gallery.GalleryId) == true){
+            if(gallery.favorites?.contains(getJwt()) == true){
                 binding.galleryInfoHeartIv.setImageResource(R.drawable.fullheart)
             }else{
                 binding.galleryInfoHeartIv.setImageResource(R.drawable.blankheart)
             }
-            initClickListener(use)
+            initClickListener(gallery)
         }
 
     }
@@ -67,27 +67,28 @@ class GalleryInfoFragment : Fragment() {
         return jwt!!
     }
 
-    private fun initClickListener(use: User?) {
+    private fun initClickListener(gallery: Gallery?) {
             var jwt = getJwt()
             binding.galleryInfoHeartIv.setOnClickListener {
                 if(getJwt() != 0){
-                    var likeList: ArrayList<String>? = use?.likeGallery as? ArrayList<String>
+                    var likeList: ArrayList<Int>? = gallery?.favorites
                     if(likeList == null) likeList = ArrayList()
-                    var galleryLikeCount: Int = database.galleryDao().getlikeCount(galleryId)!!
+                    var galleryLikeCount: Int = gallery?.like!!
 
-                    if(likeList?.contains(galleryId) == true){
-                        likeList?.remove(galleryId)
+                    if(likeList?.contains(jwt) == true){
+                        likeList?.remove(jwt)
                         galleryLikeCount -= 1
                         binding.galleryInfoHeartIv.setImageResource(R.drawable.blankheart)
                     }else{
-                        likeList?.add(galleryId)
+                        likeList?.add(jwt)
                         galleryLikeCount += 1
                         binding.galleryInfoHeartIv.setImageResource(R.drawable.fullheart)
 
                     }
                     Log.d("LikeList", likeList.toString())
-                    database.userDao().addLikeGallery(jwt, likeList)
-                    database.galleryDao().setlikeCount(galleryId, galleryLikeCount)
+                    gallery.favorites = likeList
+                    gallery.like = galleryLikeCount
+                    database.galleryDao().updateGallery(gallery)
                 }else{
                     Toast.makeText(context, "로그인 후 이용해주시길 바랍니다.", Toast.LENGTH_SHORT).show()
                 }
