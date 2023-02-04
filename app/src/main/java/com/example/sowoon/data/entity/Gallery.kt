@@ -7,6 +7,7 @@ import androidx.room.PrimaryKey
 data class Gallery(
     @PrimaryKey var GalleryId: String,
     var userId: Int,
+    var favorites: ArrayList<Int>?,
     var title: String? = "",
     var artist: String? = "",
     var info: String? = "",
