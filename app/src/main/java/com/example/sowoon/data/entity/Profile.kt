@@ -19,7 +19,6 @@ data class Profile(
     var school: String? = "",
     var awards: String? = "",
     var name: String? = "",
-    var artwork: ArrayList<Gallery>?,
     var bestArtwork: String? = null,
     @PrimaryKey var userId: Int
 )
