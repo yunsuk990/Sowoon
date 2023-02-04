@@ -4,7 +4,6 @@ import androidx.room.*
 import com.example.sowoon.data.entity.User
 
 @Dao
-@SuppressWarnings(RoomWarnings.CURSOR_MISMATCH)
 interface UserDao {
 
     @Insert
@@ -18,9 +17,4 @@ interface UserDao {
 
     @Query("UPDATE UserTable SET ifArtist=:bool WHERE id=:id")
     fun ifArtistRegist(id: Int, bool: Boolean)
-
-    @Query("UPDATE UserTable SET likeGallery=:likeGallery WHERE id=:id")
-    fun addLikeGallery(id: Int, likeGallery: ArrayList<String>?)
-
-
 }
