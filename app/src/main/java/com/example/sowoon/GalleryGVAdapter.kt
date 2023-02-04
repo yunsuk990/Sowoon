@@ -8,10 +8,11 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.BaseAdapter
 import androidx.core.net.toUri
+import com.bumptech.glide.Glide
 import com.example.sowoon.data.entity.Gallery
 import com.example.sowoon.databinding.ItemArtistgalleryBinding
 
-class GalleryGVAdapter: BaseAdapter() {
+class GalleryGVAdapter(var context: Context): BaseAdapter() {
 
     val galleryList = ArrayList<Gallery>()
 
@@ -41,8 +42,8 @@ class GalleryGVAdapter: BaseAdapter() {
 
     override fun getView(p0: Int, p1: View?, p2: ViewGroup?): View {
         var binding = ItemArtistgalleryBinding.inflate(LayoutInflater.from(p2?.context), p2, false)
-        var uri: Uri = Uri.parse(galleryList[p0].GalleryId!!)
-        //binding.galleryIv.setImageURI(uri)
+        var galleryUrl = galleryList[p0].GalleryId!!
+        Glide.with(context).load(galleryUrl).into(binding.galleryIv)
         binding.galleryIv.setOnClickListener {
             mItemClickListener.artworkClick(galleryList[p0])
         }
