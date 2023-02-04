@@ -13,8 +13,10 @@ import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.net.toUri
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import com.example.sowoon.data.entity.Gallery
 import com.example.sowoon.databinding.ItemTodayalbumBinding
+import java.net.URL
 import kotlin.coroutines.coroutineContext
 
 class TodayGalleryRV(var context: Context): RecyclerView.Adapter<TodayGalleryRV.ViewHolder>() {
@@ -40,9 +42,9 @@ class TodayGalleryRV(var context: Context): RecyclerView.Adapter<TodayGalleryRV.
 
     inner class ViewHolder(val binding: ItemTodayalbumBinding): RecyclerView.ViewHolder(binding.root){
         fun bind(gallery: Gallery){
-            var uri = gallery.GalleryId.toUri()
-            //binding.todayAlbumIv.setImageURI(uri)
-            Log.d("galleryuri", uri.toString())
+            var url = gallery.GalleryId
+            Log.d("url",url.toString())
+            Glide.with(context).asBitmap().load(url).override(300,300).centerCrop().into(binding.todayAlbumIv)
             binding.todayAlbumTitle.text = gallery.title
             binding.todayAlbumArtist.text = gallery.artist
             binding.todayAlbumInfo.text= gallery.info
