@@ -12,6 +12,9 @@ import androidx.appcompat.app.AppCompatActivity
 import com.example.sowoon.data.entity.User
 import com.example.sowoon.database.AppDatabase
 import com.example.sowoon.databinding.FragmentSettingBinding
+import com.google.firebase.ktx.Firebase
+import com.google.firebase.storage.FirebaseStorage
+import com.google.firebase.storage.ktx.storage
 import com.google.gson.Gson
 
 class SettingFragment : Fragment() {
@@ -21,6 +24,8 @@ class SettingFragment : Fragment() {
     lateinit var gson: Gson
     var user: User? = null
     var jwt: Int = -1
+    lateinit var storage: FirebaseStorage
+
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -29,6 +34,7 @@ class SettingFragment : Fragment() {
     ): View? {
         binding = FragmentSettingBinding.inflate(inflater, container, false)
         database = AppDatabase.getInstance(requireContext())!!
+        storage = Firebase.storage
         jwt = getJwt()!!
         user = User()
         initClickListener()
@@ -106,6 +112,13 @@ class SettingFragment : Fragment() {
 //                        database.galleryDao().setlikeCount(i, likecount)
 //                    }
 //                }
+                database.galleryDao().deleteUserGallery(jwt)
+                val desertRef = storage.reference.child("images/"+jwt)
+                desertRef.delete().addOnSuccessListener {
+                    Log.d("DELETE", "SUCCESS")
+                }.addOnFailureListener{
+                    Log.d("DELETE", "FAIL")
+                }
                 startActivity(Intent(context, MainActivity::class.java))
             }else{
                 Toast.makeText(context, "로그인 후 이용하시기 바랍니다.", Toast.LENGTH_SHORT).show()
