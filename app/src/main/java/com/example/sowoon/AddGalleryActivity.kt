@@ -36,7 +36,7 @@ class AddGalleryActivity : AppCompatActivity() {
     val REQ_GALLERY = 10
     var URI: Uri? = null
     var db = Firebase.firestore
-    var storage = Firebase.storage
+    lateinit var storage: FirebaseStorage
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -44,6 +44,8 @@ class AddGalleryActivity : AppCompatActivity() {
         setContentView(binding.root)
         var user = User()
         database = AppDatabase.getInstance(this)!!
+        storage = Firebase.storage
+
         binding.addgalleryArtistInput.text = user?.name
 
         binding.addgalleryIv.setOnClickListener {
@@ -60,7 +62,7 @@ class AddGalleryActivity : AppCompatActivity() {
         }
         var title = binding.addgalleryTitleInput.text.toString()
         var info = binding.addgalleryInfoInput.text.toString()
-        var mountainImageRef: StorageReference? = storage?.reference?.child("images")?.child(getJwt().toString())
+        var mountainImageRef: StorageReference? = storage?.reference?.child("images")?.child(getJwt().toString())?.child(URI?.lastPathSegment.toString())
         mountainImageRef?.putFile(URI!!)?.addOnSuccessListener {
             mountainImageRef.downloadUrl.addOnSuccessListener { url ->
                 Log.d("FirebaseUri", url.toString())
@@ -71,6 +73,7 @@ class AddGalleryActivity : AppCompatActivity() {
             Toast.makeText(this, "업로드 실패", Toast.LENGTH_SHORT).show()
             Log.d("FirebaseUri", "FAIL", it)
         }
+        finish()
     }
 
     private fun User(): User? {
