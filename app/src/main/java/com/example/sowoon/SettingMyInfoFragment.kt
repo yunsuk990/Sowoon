@@ -1,7 +1,9 @@
 package com.example.sowoon
 
+import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.provider.MediaStore
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -23,6 +25,8 @@ class SettingMyInfoFragment : Fragment() {
     lateinit var binding: FragmentSettingMyInfoBinding
     lateinit var gson: Gson
     lateinit var database: AppDatabase
+    val REQ_GALLERY = 10
+    var URI: Uri? = null
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -60,11 +64,9 @@ class SettingMyInfoFragment : Fragment() {
                 binding.myInfoBestArtworkIv.setImageResource(R.drawable.add)
                 binding.myInfoBestArtworkIv.setOnClickListener {
                     //예시 삽입,, 나중에 앨범에서 이미지 가져오기
-                    var expgallery = R.drawable.galleryexp2 as Uri
-                    binding.myInfoBestArtworkIv.scaleType = (ImageView.ScaleType.FIT_XY)
-                    binding.myInfoBestArtworkIv.setImageURI(expgallery)
+                    openGallery()
+
                     //DB에 삽입
-                    profile?.bestArtwork = expgallery.toString()
                     database.profileDao().updateProfile(profile!!)
                     //사진 설명 정보 삽입
                     //database.galleryDao().insertGallery()
@@ -91,6 +93,29 @@ class SettingMyInfoFragment : Fragment() {
         }
 //        binding.myInfoSchoolInput.text = user.school
 //        binding.myInfoAwardsInput.text = user.awards
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if(resultCode == AppCompatActivity.RESULT_OK){
+            when(requestCode){
+                REQ_GALLERY -> {
+                    data?.data?.let { uri ->
+                        URI = uri
+                        binding.myInfoBestArtworkIv.setImageURI(uri)
+                        binding.myInfoBestArtworkIv.scaleType = ImageView.ScaleType.FIT_XY
+                    }
+                }
+            }
+        }
+    }
+
+
+
+    private fun openGallery(){
+        val intent = Intent(Intent.ACTION_PICK)
+        intent.type = MediaStore.Images.Media.CONTENT_TYPE
+        startActivityForResult(intent, REQ_GALLERY)
     }
 
 }
