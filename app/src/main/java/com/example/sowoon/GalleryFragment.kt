@@ -53,9 +53,9 @@ class GalleryFragment : Fragment() {
     private fun initGridView(){
         var gridView = binding.galleryGv
         var gridViewAdapter = GalleryGVAdapter(requireContext())
-        var expGallery: ArrayList<Gallery> = database.galleryDao().getAllGallery() as ArrayList<Gallery>
+        var expGallery: ArrayList<Gallery>? = database.galleryDao().getAllGallery() as? ArrayList<Gallery>
         Log.d("expGallery", expGallery.toString())
-        gridViewAdapter.addGallery(expGallery)
+        gridViewAdapter.addGallery(expGallery!!)
         gridViewAdapter.itemClickListener(object: GalleryGVAdapter.MyItemClickListener{
             override fun artworkClick(gallery: Gallery) {
                 ArtworkClick(gallery)
