@@ -103,6 +103,7 @@ class AddGalleryActivity : AppCompatActivity() {
         }
     }
 
+
     private fun getJwt(): Int? {
         val spf = getSharedPreferences("auth", AppCompatActivity.MODE_PRIVATE)
         var jwt = spf?.getInt("jwt", 0)
