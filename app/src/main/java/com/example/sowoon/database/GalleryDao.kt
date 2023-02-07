@@ -32,4 +32,7 @@ interface GalleryDao {
     @Update
     fun updateGallery(gallery: Gallery)
 
+    @Query("DELETE FROM GalleryTable WHERE userId=:id")
+    fun deleteUserGallery(id: Int)
+
 }
