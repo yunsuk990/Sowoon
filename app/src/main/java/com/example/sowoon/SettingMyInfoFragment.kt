@@ -4,6 +4,7 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -13,10 +14,15 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.net.toUri
 import com.example.sowoon.data.entity.Gallery
+import com.example.sowoon.data.entity.Profile
 import com.example.sowoon.data.entity.User
 import com.example.sowoon.database.AppDatabase
 import com.example.sowoon.databinding.FragmentSettingBinding
 import com.example.sowoon.databinding.FragmentSettingMyInfoBinding
+import com.google.firebase.ktx.Firebase
+import com.google.firebase.storage.FirebaseStorage
+import com.google.firebase.storage.StorageReference
+import com.google.firebase.storage.ktx.storage
 import com.google.gson.Gson
 import kotlin.math.exp
 
@@ -27,6 +33,7 @@ class SettingMyInfoFragment : Fragment() {
     lateinit var database: AppDatabase
     val REQ_GALLERY = 10
     var URI: Uri? = null
+    lateinit var storage: FirebaseStorage
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -35,6 +42,7 @@ class SettingMyInfoFragment : Fragment() {
     ): View? {
         binding = FragmentSettingMyInfoBinding.inflate(inflater, container, false)
         database = AppDatabase.getInstance(requireContext())!!
+        storage = Firebase.storage
 
         var user: User = User()
         initInfo(user)
@@ -51,8 +59,9 @@ class SettingMyInfoFragment : Fragment() {
 
     private fun initInfo(user: User){
         var user = database.userDao().getUser(user.email, user.password)
+        var profile: Profile? = null
         if(user?.ifArtist!!){
-            var profile = database.profileDao().getProfile(user.id)
+            profile = database.profileDao().getProfile(user.id)!!
             var bestartwork = profile?.bestArtwork
             binding.myInfoName.text = user.name
             binding.myInfoAgeInput.text = user.age
@@ -62,18 +71,15 @@ class SettingMyInfoFragment : Fragment() {
 
             if(bestartwork == null){
                 binding.myInfoBestArtworkIv.setImageResource(R.drawable.add)
-                binding.myInfoBestArtworkIv.setOnClickListener {
-                    //예시 삽입,, 나중에 앨범에서 이미지 가져오기
-                    openGallery()
-
-                    //DB에 삽입
-                    database.profileDao().updateProfile(profile!!)
-                    //사진 설명 정보 삽입
-                    //database.galleryDao().insertGallery()
-                }
             }else{
                 binding.myInfoBestArtworkIv.scaleType = (ImageView.ScaleType.FIT_XY)
-                binding.myInfoBestArtworkIv.setImageURI(profile?.bestArtwork!!.toUri())
+            }
+            binding.myInfoBestArtworkIv.setOnClickListener {
+                //예시 삽입,, 나중에 앨범에서 이미지 가져오기
+                openGallery()
+            }
+            binding.uploadBtn.setOnClickListener {
+                uploadGallery(profile)
             }
 
         }else{
@@ -95,6 +101,20 @@ class SettingMyInfoFragment : Fragment() {
 //        binding.myInfoAwardsInput.text = user.awards
     }
 
+    private fun uploadGallery(profile: Profile) {
+        var mountainImageRef: StorageReference? = storage?.reference?.child("images")?.child(getJwt().toString())?.child("InfoGallery")?.child(URI?.lastPathSegment.toString())
+        mountainImageRef?.putFile(URI!!)?.addOnSuccessListener {
+            mountainImageRef.downloadUrl.addOnSuccessListener { url ->
+                Log.d("FirebaseUri", url.toString())
+                profile.bestArtwork = url.toString()
+                database.profileDao().updateProfile(profile)
+            }
+        }?.addOnFailureListener{
+            Toast.makeText(requireContext(), "업로드 실패", Toast.LENGTH_SHORT).show()
+            Log.d("FirebaseUri", "FAIL", it)
+        }
+    }
+
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if(resultCode == AppCompatActivity.RESULT_OK){
@@ -110,7 +130,11 @@ class SettingMyInfoFragment : Fragment() {
         }
     }
 
-
+    private fun getJwt(): Int? {
+        val spf = activity?.getSharedPreferences("auth", AppCompatActivity.MODE_PRIVATE)
+        var jwt = spf?.getInt("jwt", 0)
+        return jwt
+    }
 
     private fun openGallery(){
         val intent = Intent(Intent.ACTION_PICK)
