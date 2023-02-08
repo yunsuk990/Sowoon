@@ -37,6 +37,7 @@ class ArtistsProfileRV(private val profileList: ArrayList<Profile>, var context:
             if(bestArtwork != null){
                 Glide.with(context).load(bestArtwork).into(binding.profileArtistArtworkIv)
             }
+            binding.profileArtistAgeTv.text = profile.school
             binding.profileArtistNameTv.text = profile.name
             binding.profileArtistArtworkTv.text = gallery?.title
             binding.profileArtistArtworkInfoTv.text = gallery?.info
