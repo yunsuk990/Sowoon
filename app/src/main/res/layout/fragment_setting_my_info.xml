@@ -140,17 +140,16 @@
                 app:layout_constraintStart_toStartOf="@+id/myInfo_awards"
                 app:layout_constraintTop_toBottomOf="@+id/myInfo_awards" />
 
-            <TextView
-                android:id="@+id/myInfo_artwork"
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/upload_btn"
+                android:text="변경하기"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="20dp"
-                android:text="작품"
-                android:textColor="@color/black"
-                android:textSize="16sp"
-                android:textStyle="bold"
-                app:layout_constraintStart_toStartOf="@+id/myInfo_awards_input"
-                app:layout_constraintTop_toBottomOf="@+id/myInfo_awards_input" />
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/myInfo_awards_input"/>
         </androidx.constraintlayout.widget.ConstraintLayout>
     </ScrollView>
 
