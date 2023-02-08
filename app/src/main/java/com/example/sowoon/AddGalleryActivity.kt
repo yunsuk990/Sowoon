@@ -35,7 +35,6 @@ class AddGalleryActivity : AppCompatActivity() {
     lateinit var database: AppDatabase
     val REQ_GALLERY = 10
     var URI: Uri? = null
-    var db = Firebase.firestore
     lateinit var storage: FirebaseStorage
 
     override fun onCreate(savedInstanceState: Bundle?) {
