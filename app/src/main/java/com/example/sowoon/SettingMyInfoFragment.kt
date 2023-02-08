@@ -13,6 +13,7 @@ import android.widget.ImageView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.net.toUri
+import com.bumptech.glide.Glide
 import com.example.sowoon.data.entity.Gallery
 import com.example.sowoon.data.entity.Profile
 import com.example.sowoon.data.entity.User
@@ -73,6 +74,7 @@ class SettingMyInfoFragment : Fragment() {
                 binding.myInfoBestArtworkIv.setImageResource(R.drawable.add)
             }else{
                 binding.myInfoBestArtworkIv.scaleType = (ImageView.ScaleType.FIT_XY)
+                Glide.with(requireContext()).load(profile.bestArtwork).into(binding.myInfoBestArtworkIv)
             }
             binding.myInfoBestArtworkIv.setOnClickListener {
                 //예시 삽입,, 나중에 앨범에서 이미지 가져오기
