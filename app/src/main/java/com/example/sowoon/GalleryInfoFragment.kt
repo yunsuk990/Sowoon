@@ -2,24 +2,26 @@ package com.example.sowoon
 
 import android.os.Bundle
 import android.util.Log
+import android.view.*
+import android.widget.PopupMenu
 import androidx.fragment.app.Fragment
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.net.toUri
 import com.bumptech.glide.Glide
 import com.example.sowoon.data.entity.Gallery
 import com.example.sowoon.data.entity.User
 import com.example.sowoon.database.AppDatabase
 import com.example.sowoon.databinding.FragmentGalleryInfoBinding
+import com.google.firebase.ktx.Firebase
+import com.google.firebase.storage.FirebaseStorage
+import com.google.firebase.storage.ktx.storage
 import com.google.gson.Gson
 
 class GalleryInfoFragment : Fragment() {
 
     lateinit var binding: FragmentGalleryInfoBinding
     lateinit var database: AppDatabase
+    lateinit var storage: FirebaseStorage
     var galleryId: String = ""
     var user: User? = null
     private var gson = Gson()
@@ -32,11 +34,12 @@ class GalleryInfoFragment : Fragment() {
         binding = FragmentGalleryInfoBinding.inflate(inflater, container, false)
         Log.d("database", "database")
         database = AppDatabase.getInstance(requireContext())!!
+        storage = Firebase.storage
         user = User()
-
         val galleryJson = arguments?.getString("gallery")
         val gallery = gson.fromJson(galleryJson, Gallery::class.java)
         galleryId = gallery.GalleryId
+        setOption(galleryId)
         setGallery(gallery)
         return binding.root
     }
@@ -47,9 +50,6 @@ class GalleryInfoFragment : Fragment() {
         binding.todayAlbumArtist.text = gallery.artist
         binding.todayAlbumInfo.text = gallery.info
         binding.galleryInfoLikeCountTv.text = gallery.like.toString()
-
-        var use = database.userDao().getUser(user!!.email, user!!.password)
-
         if(user != null){
             if(gallery.favorites?.contains(getJwt()) == true){
                 binding.galleryInfoHeartIv.setImageResource(R.drawable.fullheart)
@@ -100,5 +100,29 @@ class GalleryInfoFragment : Fragment() {
         val spf =
             requireActivity().getSharedPreferences("userProfile", AppCompatActivity.MODE_PRIVATE)
         return gson.fromJson(spf.getString("user", null), User::class.java)
+    }
+
+    private fun setOption(galleryId: String){
+        binding.galleryOption.setOnClickListener(object: View.OnClickListener{
+            override fun onClick(p0: View?) {
+                var popup: PopupMenu = PopupMenu(context, p0)
+                MenuInflater(context).inflate(R.menu.option, popup.menu)
+                popup.setOnMenuItemClickListener { p0 ->
+                    when (p0?.itemId) {
+                        R.id.delete -> deleteGallery(galleryId)
+                        R.id.correct -> Toast.makeText(context, "수정 클릭", Toast.LENGTH_SHORT).show()
+                    }
+                    true
+                }
+                popup.show()
+            }
+
+        })
+    }
+
+    private fun deleteGallery(galleryId: String){
+        database.galleryDao().deleteGallery(galleryId)
+        storage
+
     }
 }
