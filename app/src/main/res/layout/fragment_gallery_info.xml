@@ -32,6 +32,16 @@
                 app:layout_constraintTop_toTopOf="parent"/>
 
             <ImageView
+                android:id="@+id/gallery_option"
+                android:layout_marginRight="20dp"
+                app:layout_constraintTop_toTopOf="@+id/galleryInfo"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintBottom_toBottomOf="@+id/galleryInfo"
+                android:src="@drawable/more"
+                android:layout_width="24dp"
+                android:layout_height="24dp"/>
+
+            <ImageView
                 android:id="@+id/galleryInfo_iv"
                 android:src="@drawable/galleryexp1"
                 android:scaleType="fitXY"
