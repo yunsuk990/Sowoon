@@ -61,11 +61,12 @@ class AddGalleryActivity : AppCompatActivity() {
         }
         var title = binding.addgalleryTitleInput.text.toString()
         var info = binding.addgalleryInfoInput.text.toString()
-        var mountainImageRef: StorageReference? = storage?.reference?.child("images")?.child(getJwt().toString())?.child(URI?.lastPathSegment.toString())
+        var galleryPath = URI?.lastPathSegment.toString()
+        var mountainImageRef: StorageReference? = storage?.reference?.child("images")?.child(getJwt().toString())?.child(galleryPath)
         mountainImageRef?.putFile(URI!!)?.addOnSuccessListener {
             mountainImageRef.downloadUrl.addOnSuccessListener { url ->
                 Log.d("FirebaseUri", url.toString())
-                val Gallery = Gallery(url.toString(), getJwt()!!,null ,title, user?.name, info, null, 0)
+                val Gallery = Gallery(url.toString(), galleryPath, getJwt()!!,null ,title, user?.name, info, null, 0)
                 database.galleryDao().insertGallery(Gallery)
             }
         }?.addOnFailureListener{
@@ -77,7 +78,7 @@ class AddGalleryActivity : AppCompatActivity() {
 
     private fun User(): User? {
         gson = Gson()
-        val spf = getSharedPreferences("userProfile", MODE_PRIVATE)
+        val spf = getSharedPreferences("userProfile", MODE_PRIVATE) 
         return gson.fromJson(spf.getString("user", null), User::class.java)
     }
 
