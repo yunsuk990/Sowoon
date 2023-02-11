@@ -25,7 +25,7 @@ class SettingMyLikeFragment : Fragment() {
     }
 
     private fun initGridView(){
-        database.
+
         var adapter = MyLikeGVAdapter()
         binding.myLikeGv.adapter = adapter
 
