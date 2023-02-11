@@ -39,7 +39,7 @@ class GalleryInfoFragment : Fragment() {
         val galleryJson = arguments?.getString("gallery")
         val gallery = gson.fromJson(galleryJson, Gallery::class.java)
         galleryId = gallery.GalleryId
-        setOption(galleryId)
+        setOption(gallery)
         setGallery(gallery)
         return binding.root
     }
@@ -102,14 +102,14 @@ class GalleryInfoFragment : Fragment() {
         return gson.fromJson(spf.getString("user", null), User::class.java)
     }
 
-    private fun setOption(galleryId: String){
+    private fun setOption(gallery: Gallery){
         binding.galleryOption.setOnClickListener(object: View.OnClickListener{
             override fun onClick(p0: View?) {
                 var popup: PopupMenu = PopupMenu(context, p0)
                 MenuInflater(context).inflate(R.menu.option, popup.menu)
                 popup.setOnMenuItemClickListener { p0 ->
                     when (p0?.itemId) {
-                        R.id.delete -> deleteGallery(galleryId)
+                        R.id.delete -> deleteGallery(gallery)
                         R.id.correct -> Toast.makeText(context, "수정 클릭", Toast.LENGTH_SHORT).show()
                     }
                     true
@@ -120,9 +120,18 @@ class GalleryInfoFragment : Fragment() {
         })
     }
 
-    private fun deleteGallery(galleryId: String){
+    private fun deleteGallery(gallery: Gallery?){
         database.galleryDao().deleteGallery(galleryId)
-        storage
-
+        var galleryPath = gallery?.galleryPath
+        val desertRef = storage.reference.child("images/"+ getJwt()+galleryPath)
+        desertRef.delete().addOnSuccessListener {
+            Log.d("DELETE", "SUCCESS")
+            Toast.makeText(context, "삭제 성공", Toast.LENGTH_SHORT).show()
+        }.addOnFailureListener{
+            Log.d("DELETE", "FAIL")
+            Toast.makeText(context, "삭제 실패", Toast.LENGTH_SHORT).show()
+        }
     }
+
+
 }
