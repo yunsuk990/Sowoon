@@ -6,6 +6,7 @@ import androidx.room.PrimaryKey
 @Entity(tableName = "GalleryTable")
 data class Gallery(
     @PrimaryKey var GalleryId: String,
+    var galleryPath: String,
     var userId: Int,
     var favorites: ArrayList<Int>?,
     var title: String? = "",
