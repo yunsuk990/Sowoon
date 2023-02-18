@@ -1,5 +1,6 @@
 package com.example.sowoon
 
+import android.app.Activity.RESULT_OK
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
@@ -78,7 +79,7 @@ class SettingMyInfoFragment : Fragment() {
             }
             binding.myInfoBestArtworkIv.setOnClickListener {
                 //예시 삽입,, 나중에 앨범에서 이미지 가져오기
-                openGallery()
+                startActivityForResult(Intent(requireContext(), AddGalleryActivity::class.java), 0)
             }
             binding.uploadBtn.setOnClickListener {
                 uploadGallery(profile)
@@ -117,20 +118,22 @@ class SettingMyInfoFragment : Fragment() {
         }
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        if(resultCode == AppCompatActivity.RESULT_OK){
-            when(requestCode){
-                REQ_GALLERY -> {
-                    data?.data?.let { uri ->
-                        URI = uri
-                        binding.myInfoBestArtworkIv.setImageURI(uri)
-                        binding.myInfoBestArtworkIv.scaleType = ImageView.ScaleType.FIT_XY
-                    }
-                }
-            }
-        }
-    }
+//    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+//        super.onActivityResult(requestCode, resultCode, data)
+//        if(resultCode == AppCompatActivity.RESULT_OK){
+//            when(requestCode){
+//                REQ_GALLERY -> {
+//                    data?.data?.let { uri ->
+//                        URI = uri
+//                        binding.myInfoBestArtworkIv.setImageURI(uri)
+//                        binding.myInfoBestArtworkIv.scaleType = ImageView.ScaleType.FIT_XY
+//                    }
+//                }
+//            }
+//
+//
+//        }
+//    }
 
     private fun getJwt(): Int? {
         val spf = activity?.getSharedPreferences("auth", AppCompatActivity.MODE_PRIVATE)
@@ -138,10 +141,14 @@ class SettingMyInfoFragment : Fragment() {
         return jwt
     }
 
-    private fun openGallery(){
-        val intent = Intent(Intent.ACTION_PICK)
-        intent.type = MediaStore.Images.Media.CONTENT_TYPE
-        startActivityForResult(intent, REQ_GALLERY)
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+                var GalleryId = data?.getStringExtra("GalleryId")
+                Log.d("GalleryId", GalleryId.toString())
+                Glide.with(requireContext()).load(GalleryId).into(binding.myInfoBestArtworkIv)
+
     }
+
 
 }
