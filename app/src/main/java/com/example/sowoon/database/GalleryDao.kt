@@ -6,7 +6,6 @@ import androidx.room.Insert
 import androidx.room.Query
 import androidx.room.Update
 import com.example.sowoon.data.entity.Gallery
-import org.checkerframework.checker.guieffect.qual.UIPackage
 
 @Dao
 interface GalleryDao {
