@@ -16,7 +16,6 @@ import com.example.sowoon.database.AppDatabase
 import com.example.sowoon.databinding.ActivityAddGalleryBinding
 import com.google.android.gms.tasks.OnFailureListener
 import com.google.android.gms.tasks.OnSuccessListener
-import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
@@ -43,7 +42,7 @@ class AddGalleryActivity : AppCompatActivity() {
         setContentView(binding.root)
         var user = User()
         database = AppDatabase.getInstance(this)!!
-        storage = Firebase.storage
+        storage = FirebaseStorage.getInstance()
 
         binding.addgalleryArtistInput.text = user?.name
 
@@ -62,18 +61,27 @@ class AddGalleryActivity : AppCompatActivity() {
         var title = binding.addgalleryTitleInput.text.toString()
         var info = binding.addgalleryInfoInput.text.toString()
         var galleryPath = URI?.lastPathSegment.toString()
-        var mountainImageRef: StorageReference? = storage?.reference?.child("images")?.child(getJwt().toString())?.child(galleryPath)
-        mountainImageRef?.putFile(URI!!)?.addOnSuccessListener {
-            mountainImageRef.downloadUrl.addOnSuccessListener { url ->
-                Log.d("FirebaseUri", url.toString())
-                val Gallery = Gallery(url.toString(), galleryPath, getJwt()!!,null ,title, user?.name, info, null, 0)
-                database.galleryDao().insertGallery(Gallery)
+        if(URI != null){
+            var mountainImageRef: StorageReference? = storage?.reference?.child("images")?.child(getJwt().toString())?.child(galleryPath)
+            Log.d("FirebaseUri", URI.toString())
+            mountainImageRef?.putFile(URI!!)?.addOnSuccessListener {
+                mountainImageRef.downloadUrl.addOnSuccessListener { url ->
+                    Log.d("FirebaseUri", url.toString())
+                    val Gallery = Gallery(url.toString(), galleryPath, getJwt()!!,null ,title, user?.name, info, null, 0)
+                    database.galleryDao().insertGallery(Gallery)
+                    var intent: Intent = Intent()
+                    intent.putExtra("GalleryId", url.toString())
+                    intent.putExtra("Uri", URI)
+                    setResult(RESULT_OK, intent)
+                }
+            }?.addOnFailureListener{
+                Toast.makeText(this, "업로드 실패", Toast.LENGTH_SHORT).show()
+                Log.d("FirebaseUri", "FAIL", it)
             }
-        }?.addOnFailureListener{
-            Toast.makeText(this, "업로드 실패", Toast.LENGTH_SHORT).show()
-            Log.d("FirebaseUri", "FAIL", it)
+            finish()
+
         }
-        finish()
+
     }
 
     private fun User(): User? {
