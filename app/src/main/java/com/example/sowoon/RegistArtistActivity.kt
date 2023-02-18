@@ -1,8 +1,13 @@
 package com.example.sowoon
 
+import android.content.Intent
+import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.provider.MediaStore
+import android.widget.ImageView
 import android.widget.Toast
+import androidx.core.net.toUri
 import com.example.sowoon.data.entity.Profile
 import com.example.sowoon.data.entity.User
 import com.example.sowoon.database.AppDatabase
@@ -25,6 +30,9 @@ class RegistArtistActivity : AppCompatActivity() {
         binding.registBtn.setOnClickListener {
             registInfo()
         }
+        binding.myInfoBestArtworkIv.setOnClickListener{
+            startActivityForResult(Intent(this, AddGalleryActivity::class.java), 0)
+        }
     }
 
     private fun registInfo(){
@@ -35,7 +43,9 @@ class RegistArtistActivity : AppCompatActivity() {
         }
         var school = binding.myInfoSchoolInput.text.toString()
         var awards = binding.myInfoAwardsInput.text.toString()
-        //var bestArtwork = binding.myInfoBestArtworkIv
+
+        //firebase에 사진 저장하기
+
         var profile: Profile = Profile(school,awards,getName(), null, getJwt()!!)
         database.profileDao().insertProfile(profile)
         database.userDao().ifArtistRegist(jwt!!,true)
@@ -61,5 +71,14 @@ class RegistArtistActivity : AppCompatActivity() {
         return jwt
     }
 
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if(requestCode == 0){
+            if(resultCode == RESULT_OK){
+                var uri = data?.getStringExtra("Uri")?.toUri()
+                binding.myInfoBestArtworkIv.setImageURI(uri)
 
+            }
+        }
+    }
 }
