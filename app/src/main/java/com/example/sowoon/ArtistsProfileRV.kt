@@ -1,6 +1,7 @@
 package com.example.sowoon
 
 import android.content.Context
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
@@ -18,6 +19,7 @@ class ArtistsProfileRV(private val profileList: ArrayList<Profile>, var context:
 
     lateinit var database: AppDatabase
 
+
     interface MyItemClickOnListener {
         fun profileClick(profile: Profile)
         fun profileArtworkClick(profile: Profile, database: AppDatabase)
@@ -32,15 +34,15 @@ class ArtistsProfileRV(private val profileList: ArrayList<Profile>, var context:
     inner class ViewHolder(val binding: ItemArtistsprofileBinding): RecyclerView.ViewHolder(binding.root){
         fun bind(profile: Profile){
             database = AppDatabase.getInstance(context!!)!!
-            var bestArtwork: String? = profile.bestArtwork
-            var gallery: Gallery? = null
-            if(bestArtwork != null){
-                Glide.with(context).load(bestArtwork).into(binding.profileArtistArtworkIv)
+            var bestGallery = database.galleryDao().getBestArtwork(profile.bestArtwork.toString())
+            Log.d("bestGallery", bestGallery.toString())
+            if(bestGallery != null){
+                Glide.with(context).asBitmap().load(bestGallery.GalleryId).override(300,300).centerCrop().into(binding.profileArtistArtworkIv)
             }
             binding.profileArtistAgeTv.text = profile.school
             binding.profileArtistNameTv.text = profile.name
-            binding.profileArtistArtworkTv.text = gallery?.title
-            binding.profileArtistArtworkInfoTv.text = gallery?.info
+            binding.profileArtistArtworkTv.text = bestGallery?.title
+            binding.profileArtistArtworkInfoTv.text = bestGallery?.info
         }
     }
 
