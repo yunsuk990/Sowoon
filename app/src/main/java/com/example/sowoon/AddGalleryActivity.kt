@@ -71,15 +71,14 @@ class AddGalleryActivity : AppCompatActivity() {
                     database.galleryDao().insertGallery(Gallery)
                     var intent: Intent = Intent()
                     intent.putExtra("GalleryId", url.toString())
-                    intent.putExtra("Uri", URI)
                     setResult(RESULT_OK, intent)
+                    finish()
                 }
             }?.addOnFailureListener{
                 Toast.makeText(this, "업로드 실패", Toast.LENGTH_SHORT).show()
                 Log.d("FirebaseUri", "FAIL", it)
+                finish()
             }
-            finish()
-
         }
 
     }
