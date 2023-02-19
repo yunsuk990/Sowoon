@@ -41,7 +41,33 @@ class GalleryInfoFragment : Fragment() {
         galleryId = gallery.GalleryId
         setOption(gallery)
         setGallery(gallery)
+        setGridView()
         return binding.root
+    }
+
+    private fun setGridView() {
+        var datas = database.galleryDao().getUserGallery(getJwt())
+        var gridView = binding.galleryInfoGv
+        var adapter = ArtistGalleryGVAdapter(datas as ArrayList<Gallery>, requireContext())
+        adapter.itemClickListener(object: ArtistGalleryGVAdapter.MyItemClickListener{
+            override fun artworkClick(gallery: Gallery) {
+                ArtworkClick(gallery)
+            }
+        })
+        gridView.adapter = adapter
+
+    }
+
+    private fun ArtworkClick(gallery: Gallery) {
+        (context as MainActivity).supportFragmentManager.beginTransaction()
+            .replace(R.id.main_frame, GalleryInfoFragment().apply {
+                arguments = Bundle().apply {
+                    val gson = Gson()
+                    val galleryJson = gson.toJson(gallery)
+                    putString("gallery", galleryJson)
+                }
+            })
+            .commitNowAllowingStateLoss()
     }
 
     private fun setGallery(gallery: Gallery){
@@ -123,15 +149,21 @@ class GalleryInfoFragment : Fragment() {
     private fun deleteGallery(gallery: Gallery?){
         database.galleryDao().deleteGallery(galleryId)
         var galleryPath = gallery?.galleryPath
-        val desertRef = storage.reference.child("images/"+ getJwt()+galleryPath)
-        desertRef.delete().addOnSuccessListener {
+        val desertRef = storage.reference.child("images")?.child(getJwt().toString())?.child(
+            galleryPath!!
+        )
+        desertRef?.delete()?.addOnSuccessListener {
             Log.d("DELETE", "SUCCESS")
             Toast.makeText(context, "삭제 성공", Toast.LENGTH_SHORT).show()
-        }.addOnFailureListener{
+            (context as MainActivity).supportFragmentManager.beginTransaction()
+                .replace(R.id.main_frame, GalleryFragment())
+                .commitNowAllowingStateLoss()
+        }?.addOnFailureListener{
             Log.d("DELETE", "FAIL")
             Toast.makeText(context, "삭제 실패", Toast.LENGTH_SHORT).show()
         }
     }
+
 
 
 }
