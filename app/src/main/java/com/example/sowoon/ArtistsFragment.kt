@@ -65,7 +65,7 @@ class ArtistsFragment : Fragment() {
             .replace(R.id.main_frame, GalleryInfoFragment().apply {
                 arguments = Bundle().apply {
                     val bestArtwork = profile.bestArtwork
-                    val gallery = database.galleryDao().getGallery(bestArtwork!!)
+                    val gallery = database.galleryDao().getBestArtwork(bestArtwork.toString())
                     val gson = Gson()
                     val galleryJson = gson.toJson(gallery)
                     putString("gallery", galleryJson)
