@@ -16,6 +16,9 @@ interface GalleryDao {
     @Query("SELECT * FROM GalleryTable")
     fun getAllGallery(): List<Gallery>?
 
+    @Query("SELECT * FROM GalleryTable WHERE userId=:userId")
+    fun getUserGallery(userId: Int): List<Gallery>?
+
     @Query("SELECT * FROM GalleryTable WHERE GalleryId = :galleryId")
     fun getGallery(galleryId: String): Gallery
 
@@ -33,6 +36,9 @@ interface GalleryDao {
 
     @Query("DELETE FROM GalleryTable WHERE GalleryId=:galleryId")
     fun deleteGallery(galleryId: String)
+
+    @Query("SELECT * FROM GalleryTable WHERE galleryPath=:galleryPath")
+    fun getBestArtwork(galleryPath: String): Gallery?
 
 //    @Query("SELECT * FROM GALLERYTABLE WHERE favorites=:id")
 //    fun getLikeGallery(id: Int)
