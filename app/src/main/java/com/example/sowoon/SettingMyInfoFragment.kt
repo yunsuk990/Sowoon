@@ -33,9 +33,8 @@ class SettingMyInfoFragment : Fragment() {
     lateinit var binding: FragmentSettingMyInfoBinding
     lateinit var gson: Gson
     lateinit var database: AppDatabase
-    val REQ_GALLERY = 10
-    var URI: Uri? = null
     lateinit var storage: FirebaseStorage
+    var GalleryId: String = ""
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -45,7 +44,6 @@ class SettingMyInfoFragment : Fragment() {
         binding = FragmentSettingMyInfoBinding.inflate(inflater, container, false)
         database = AppDatabase.getInstance(requireContext())!!
         storage = Firebase.storage
-
         var user: User = User()
         initInfo(user)
         return binding.root
@@ -75,10 +73,11 @@ class SettingMyInfoFragment : Fragment() {
                 binding.myInfoBestArtworkIv.setImageResource(R.drawable.add)
             }else{
                 binding.myInfoBestArtworkIv.scaleType = (ImageView.ScaleType.FIT_XY)
-                Glide.with(requireContext()).load(profile.bestArtwork).into(binding.myInfoBestArtworkIv)
+                var bestGallery = database.galleryDao().getBestArtwork(bestartwork)
+                Glide.with(requireContext()).load(bestGallery?.GalleryId).into(binding.myInfoBestArtworkIv)
             }
             binding.myInfoBestArtworkIv.setOnClickListener {
-                //예시 삽입,, 나중에 앨범에서 이미지 가져오기
+                //나중에 앨범에서 이미지 가져오기
                 startActivityForResult(Intent(requireContext(), AddGalleryActivity::class.java), 0)
             }
             binding.uploadBtn.setOnClickListener {
@@ -105,35 +104,16 @@ class SettingMyInfoFragment : Fragment() {
     }
 
     private fun uploadGallery(profile: Profile) {
-        var mountainImageRef: StorageReference? = storage?.reference?.child("images")?.child(getJwt().toString())?.child("InfoGallery")?.child(URI?.lastPathSegment.toString())
-        mountainImageRef?.putFile(URI!!)?.addOnSuccessListener {
-            mountainImageRef.downloadUrl.addOnSuccessListener { url ->
-                Log.d("FirebaseUri", url.toString())
-                profile.bestArtwork = url.toString()
-                database.profileDao().updateProfile(profile)
-            }
-        }?.addOnFailureListener{
-            Toast.makeText(requireContext(), "업로드 실패", Toast.LENGTH_SHORT).show()
-            Log.d("FirebaseUri", "FAIL", it)
+        if(GalleryId != null){
+            var gallery = database.galleryDao().getGallery(GalleryId)
+            var galleryPath = gallery.galleryPath
+            profile.bestArtwork = galleryPath
+            database.profileDao().updateProfile(profile)
         }
+        (context as MainActivity).supportFragmentManager.beginTransaction()
+            .replace(R.id.main_frame, SettingFragment())
+            .commitNowAllowingStateLoss()
     }
-
-//    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-//        super.onActivityResult(requestCode, resultCode, data)
-//        if(resultCode == AppCompatActivity.RESULT_OK){
-//            when(requestCode){
-//                REQ_GALLERY -> {
-//                    data?.data?.let { uri ->
-//                        URI = uri
-//                        binding.myInfoBestArtworkIv.setImageURI(uri)
-//                        binding.myInfoBestArtworkIv.scaleType = ImageView.ScaleType.FIT_XY
-//                    }
-//                }
-//            }
-//
-//
-//        }
-//    }
 
     private fun getJwt(): Int? {
         val spf = activity?.getSharedPreferences("auth", AppCompatActivity.MODE_PRIVATE)
@@ -143,12 +123,11 @@ class SettingMyInfoFragment : Fragment() {
 
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-                var GalleryId = data?.getStringExtra("GalleryId")
-                Log.d("GalleryId", GalleryId.toString())
-                Glide.with(requireContext()).load(GalleryId).into(binding.myInfoBestArtworkIv)
-
+        if(resultCode== RESULT_OK){
+            GalleryId = data?.getStringExtra("GalleryId")!!
+            Log.d("GalleryId", GalleryId.toString())
+            binding.myInfoBestArtworkIv.scaleType = ImageView.ScaleType.FIT_XY
+            Glide.with(requireContext()).load(GalleryId).into(binding.myInfoBestArtworkIv)
+        }
     }
-
-
 }
