@@ -35,6 +35,8 @@ class SettingMyInfoFragment : Fragment() {
     lateinit var database: AppDatabase
     lateinit var storage: FirebaseStorage
     var GalleryId: String = ""
+    val REQ_GALLERY = 10
+    var URI: Uri? = null
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -76,12 +78,16 @@ class SettingMyInfoFragment : Fragment() {
                 var bestGallery = database.galleryDao().getBestArtwork(bestartwork)
                 Glide.with(requireContext()).load(bestGallery?.GalleryId).into(binding.myInfoBestArtworkIv)
             }
+
             binding.myInfoBestArtworkIv.setOnClickListener {
                 //나중에 앨범에서 이미지 가져오기
                 startActivityForResult(Intent(requireContext(), AddGalleryActivity::class.java), 0)
             }
             binding.uploadBtn.setOnClickListener {
                 uploadGallery(profile)
+            }
+            binding.myInfoIv.setOnClickListener{
+                openGallery()
             }
 
         }else{
@@ -109,6 +115,7 @@ class SettingMyInfoFragment : Fragment() {
             var galleryPath = gallery.galleryPath
             profile.bestArtwork = galleryPath
             database.profileDao().updateProfile(profile)
+            registProfileImage()
         }
         (context as MainActivity).supportFragmentManager.beginTransaction()
             .replace(R.id.main_frame, SettingFragment())
@@ -123,11 +130,39 @@ class SettingMyInfoFragment : Fragment() {
 
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        if(resultCode== RESULT_OK){
-            GalleryId = data?.getStringExtra("GalleryId")!!
-            Log.d("GalleryId", GalleryId.toString())
-            binding.myInfoBestArtworkIv.scaleType = ImageView.ScaleType.FIT_XY
-            Glide.with(requireContext()).load(GalleryId).into(binding.myInfoBestArtworkIv)
+        if (resultCode == RESULT_OK) {
+            when (requestCode) {
+                0 -> {
+                    GalleryId = data?.getStringExtra("GalleryId")!!
+                    Log.d("GalleryId", GalleryId.toString())
+                    binding.myInfoBestArtworkIv.scaleType = ImageView.ScaleType.FIT_XY
+                    Glide.with(requireContext()).load(GalleryId).into(binding.myInfoBestArtworkIv)
+                }
+                REQ_GALLERY -> {
+                    data?.data?.let { uri ->
+                        URI = uri
+                        binding.myInfoIv.setImageURI(uri)
+                        binding.myInfoIv.scaleType = ImageView.ScaleType.FIT_XY
+                    }
+                }
+
+            }
         }
+    }
+
+    private fun registProfileImage(){
+        var mountainImageRef: StorageReference? = storage?.reference?.child("images")?.child(getJwt().toString())?.child("Profile")?.child("profile.png")
+        Log.d("FirebaseUri", URI.toString())
+        mountainImageRef?.putFile(URI!!)?.addOnSuccessListener {
+            Log.d("registProfileImage", "SUCCESS")
+        }?.addOnFailureListener{
+            Log.d("registProfileImage", "FAIL", it)
+        }
+    }
+
+    private fun openGallery(){
+        val intent = Intent(Intent.ACTION_PICK)
+        intent.type = MediaStore.Images.Media.CONTENT_TYPE
+        startActivityForResult(intent, REQ_GALLERY)
     }
 }
