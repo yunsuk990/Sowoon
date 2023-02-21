@@ -71,6 +71,16 @@ class SettingMyInfoFragment : Fragment() {
             binding.myInfoSchoolInput.text = profile?.school.toString()
             binding.myInfoAwardsInput.text = profile?.awards.toString()
 
+            var mountainImageRef: StorageReference? = storage?.reference?.child("images")?.child(getJwt().toString())?.child("Profile")?.child("profile.png")
+            mountainImageRef?.downloadUrl?.addOnSuccessListener { url ->
+                binding.myInfoIv.scaleType = (ImageView.ScaleType.FIT_XY)
+                Glide.with(requireContext()).load(url).into(binding.myInfoIv)
+            }?.addOnFailureListener {
+                binding.myInfoIv.scaleType = (ImageView.ScaleType.FIT_XY)
+                binding.myInfoIv.setImageResource(R.drawable.add)
+            }
+
+
             if(bestartwork == null){
                 binding.myInfoBestArtworkIv.setImageResource(R.drawable.add)
             }else{
@@ -110,13 +120,13 @@ class SettingMyInfoFragment : Fragment() {
     }
 
     private fun uploadGallery(profile: Profile) {
-        if(GalleryId != null){
+        if(GalleryId != ""){
             var gallery = database.galleryDao().getGallery(GalleryId)
             var galleryPath = gallery.galleryPath
             profile.bestArtwork = galleryPath
             database.profileDao().updateProfile(profile)
-            registProfileImage()
         }
+        registProfileImage()
         (context as MainActivity).supportFragmentManager.beginTransaction()
             .replace(R.id.main_frame, SettingFragment())
             .commitNowAllowingStateLoss()
