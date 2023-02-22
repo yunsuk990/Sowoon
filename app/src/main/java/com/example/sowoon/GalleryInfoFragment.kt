@@ -41,12 +41,13 @@ class GalleryInfoFragment : Fragment() {
         galleryId = gallery.GalleryId
         setOption(gallery)
         setGallery(gallery)
-        setGridView()
+        setGridView(gallery)
         return binding.root
     }
 
-    private fun setGridView() {
-        var datas = database.galleryDao().getUserGallery(getJwt())
+    private fun setGridView(gallery: Gallery) {
+        var datas = database.galleryDao().getUserGallery(getJwt()) as ArrayList<Gallery>
+        datas.remove(gallery)
         var gridView = binding.galleryInfoGv
         var adapter = ArtistGalleryGVAdapter(datas as ArrayList<Gallery>, requireContext())
         adapter.itemClickListener(object: ArtistGalleryGVAdapter.MyItemClickListener{
