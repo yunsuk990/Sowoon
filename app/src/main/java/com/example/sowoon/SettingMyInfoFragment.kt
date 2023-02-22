@@ -67,39 +67,11 @@ class SettingMyInfoFragment : Fragment() {
             var bestartwork = profile?.bestArtwork
             binding.myInfoName.text = user.name
             binding.myInfoAgeInput.text = user.age
-
             binding.myInfoSchoolInput.text = profile?.school.toString()
             binding.myInfoAwardsInput.text = profile?.awards.toString()
-
-            var mountainImageRef: StorageReference? = storage?.reference?.child("images")?.child(getJwt().toString())?.child("Profile")?.child("profile.png")
-            mountainImageRef?.downloadUrl?.addOnSuccessListener { url ->
-                binding.myInfoIv.scaleType = (ImageView.ScaleType.FIT_XY)
-                Glide.with(requireContext()).load(url).into(binding.myInfoIv)
-            }?.addOnFailureListener {
-                binding.myInfoIv.scaleType = (ImageView.ScaleType.FIT_XY)
-                binding.myInfoIv.setImageResource(R.drawable.add)
-            }
-
-
-            if(bestartwork == null){
-                binding.myInfoBestArtworkIv.setImageResource(R.drawable.add)
-            }else{
-                binding.myInfoBestArtworkIv.scaleType = (ImageView.ScaleType.FIT_XY)
-                var bestGallery = database.galleryDao().getBestArtwork(bestartwork)
-                Glide.with(requireContext()).load(bestGallery?.GalleryId).into(binding.myInfoBestArtworkIv)
-            }
-
-            binding.myInfoBestArtworkIv.setOnClickListener {
-                //나중에 앨범에서 이미지 가져오기
-                startActivityForResult(Intent(requireContext(), AddGalleryActivity::class.java), 0)
-            }
-            binding.uploadBtn.setOnClickListener {
-                uploadGallery(profile)
-            }
-            binding.myInfoIv.setOnClickListener{
-                openGallery()
-            }
-
+            getProfileImage()
+            getBestArwork(bestartwork)
+            initClickListener(profile)
         }else{
             binding.myInfoName.text = user?.name
             binding.myInfoAgeInput.text = user?.age
@@ -109,14 +81,48 @@ class SettingMyInfoFragment : Fragment() {
             binding.myInfoAwardsInput.setOnClickListener{
                 Toast.makeText(context, "화가 등록 후 설정하실 수 있습니다.", Toast.LENGTH_SHORT).show()
             }
-
             binding.myInfoBestArtworkIv.setOnClickListener {
                 Toast.makeText(context, "화가 등록 후 설정하실 수 있습니다.", Toast.LENGTH_SHORT).show()
             }
-
         }
-//        binding.myInfoSchoolInput.text = user.school
-//        binding.myInfoAwardsInput.text = user.awards
+    }
+
+    private fun getBestArwork(bestartwork: String?) {
+        if (bestartwork == null) {
+            binding.myInfoBestArtworkIv.setImageResource(R.drawable.add)
+        } else {
+            binding.myInfoBestArtworkIv.scaleType = (ImageView.ScaleType.FIT_XY)
+            var bestGallery = database.galleryDao().getBestArtwork(bestartwork)
+            Glide.with(requireContext()).load(bestGallery?.GalleryId)
+                .into(binding.myInfoBestArtworkIv)
+        }
+    }
+
+    private fun getProfileImage() {
+        var profileImg = database.profileDao().getProfileImg(getJwt()!!)
+        if(profileImg != "") {
+            binding.myInfoIv.scaleType = (ImageView.ScaleType.FIT_XY)
+            Glide.with(requireContext()).load(profileImg).into(binding.myInfoIv)
+        }else {
+            binding.myInfoIv.scaleType = (ImageView.ScaleType.FIT_XY)
+            binding.myInfoIv.setImageResource(R.drawable.add)
+        }
+
+    }
+
+    private fun initClickListener(profile: Profile?) {
+        //대표 이미지 가져오기
+        binding.myInfoBestArtworkIv.setOnClickListener {
+            startActivityForResult(Intent(requireContext(), AddGalleryActivity::class.java), 0)
+        }
+        //업로드 버튼 클릭 시
+        binding.uploadBtn.setOnClickListener {
+            uploadGallery(profile!!)
+        }
+        //프로필 사진 가져오기
+        binding.myInfoIv.setOnClickListener {
+            openGallery()
+        }
     }
 
     private fun uploadGallery(profile: Profile) {
@@ -162,12 +168,19 @@ class SettingMyInfoFragment : Fragment() {
 
     private fun registProfileImage(){
         var mountainImageRef: StorageReference? = storage?.reference?.child("images")?.child(getJwt().toString())?.child("Profile")?.child("profile.png")
-        Log.d("FirebaseUri", URI.toString())
-        mountainImageRef?.putFile(URI!!)?.addOnSuccessListener {
-            Log.d("registProfileImage", "SUCCESS")
-        }?.addOnFailureListener{
-            Log.d("registProfileImage", "FAIL", it)
+        if(URI != null){
+            mountainImageRef?.delete()?.addOnSuccessListener {
+                mountainImageRef?.putFile(URI!!)?.addOnSuccessListener {
+                    mountainImageRef.downloadUrl.addOnSuccessListener {
+                        database.profileDao().updateProfileImg(getJwt()!!, it.toString())
+                    }
+                    Log.d("registProfileImage", "SUCCESS")
+                }?.addOnFailureListener{
+                    Log.d("registProfileImage", "FAIL", it)
+                }
+            }
         }
+
     }
 
     private fun openGallery(){
