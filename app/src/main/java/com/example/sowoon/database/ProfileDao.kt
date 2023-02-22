@@ -21,6 +21,11 @@ interface ProfileDao {
     @Update
     fun updateProfile(profile: Profile)
 
+    @Query("SELECT profileImg FROM ProfileTable WHERE userId=:id")
+    fun getProfileImg(id: Int): String?
+
+    @Query("UPDATE ProfileTable SET profileImg=:profileImg WHERE userId=:id")
+    fun updateProfileImg(id: Int, profileImg: String?)
 
 
 }
