@@ -8,7 +8,7 @@
     <ImageView
         android:id="@+id/today_album_iv"
         android:src="@drawable/galleryexp1"
-        android:scaleType="fitXY"
+        android:scaleType="centerCrop"
         android:layout_width="match_parent"
         android:layout_height="500dp"
         app:layout_constraintStart_toStartOf="parent"
