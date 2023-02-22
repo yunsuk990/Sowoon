@@ -1,9 +1,12 @@
 package com.example.sowoon
 
 import android.content.Context
+import android.net.Uri
+import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.net.toUri
 import androidx.recyclerview.widget.RecyclerView
@@ -13,15 +16,18 @@ import com.example.sowoon.data.entity.Profile
 import com.example.sowoon.data.entity.User
 import com.example.sowoon.database.AppDatabase
 import com.example.sowoon.databinding.ItemArtistsprofileBinding
+import com.google.firebase.storage.FirebaseStorage
+import com.google.firebase.storage.StorageReference
+import com.google.firebase.storage.ktx.storage
 import com.google.gson.Gson
 
 class ArtistsProfileRV(private val profileList: ArrayList<Profile>, var context: Context): RecyclerView.Adapter<ArtistsProfileRV.ViewHolder>() {
 
     lateinit var database: AppDatabase
+    lateinit var storage: FirebaseStorage
 
 
     interface MyItemClickOnListener {
-        fun profileClick(profile: Profile)
         fun profileArtworkClick(profile: Profile, database: AppDatabase)
     }
 
@@ -33,16 +39,33 @@ class ArtistsProfileRV(private val profileList: ArrayList<Profile>, var context:
 
     inner class ViewHolder(val binding: ItemArtistsprofileBinding): RecyclerView.ViewHolder(binding.root){
         fun bind(profile: Profile){
+            var uri: Uri? = null
             database = AppDatabase.getInstance(context!!)!!
+            storage = FirebaseStorage.getInstance()
+            var userId = profile.userId
+            var profileImg = database.profileDao().getProfileImg(userId)
+            binding.profileIv.scaleType = (ImageView.ScaleType.FIT_XY)
+            Glide.with(context).load(profileImg).into(binding.profileIv)
             var bestGallery = database.galleryDao().getBestArtwork(profile.bestArtwork.toString())
-            Log.d("bestGallery", bestGallery.toString())
-            if(bestGallery != null){
-                Glide.with(context).asBitmap().load(bestGallery.GalleryId).override(300,300).centerCrop().into(binding.profileArtistArtworkIv)
-            }
+            Glide.with(context).load(bestGallery?.GalleryId).into(binding.profileArtistArtworkIv)
             binding.profileArtistAgeTv.text = profile.school
             binding.profileArtistNameTv.text = profile.name
             binding.profileArtistArtworkTv.text = bestGallery?.title
             binding.profileArtistArtworkInfoTv.text = bestGallery?.info
+
+            binding.artistsProfile.setOnClickListener{
+                (context as MainActivity).supportFragmentManager.beginTransaction()
+                    .replace(R.id.main_frame, ArtistProfileFragment().apply {
+                        arguments = Bundle().apply {
+                            val gson = Gson()
+                            val profileJson = gson.toJson(profile)
+                            putString("profile", profileJson)
+                            putString("profileImage", uri.toString())
+                            Log.d("uri", uri.toString())
+                        }
+                    })
+                    .commitNowAllowingStateLoss()
+            }
         }
     }
 
@@ -53,9 +76,6 @@ class ArtistsProfileRV(private val profileList: ArrayList<Profile>, var context:
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         holder.bind(profileList[position])
-        holder.binding.artistsProfile.setOnClickListener{
-            mItemClickListener.profileClick(profileList[position])
-        }
         holder.binding.profileArtistArtworkIv.setOnClickListener {
             mItemClickListener.profileArtworkClick(profileList[position], database)
         }
