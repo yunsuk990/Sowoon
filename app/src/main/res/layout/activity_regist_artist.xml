@@ -40,8 +40,10 @@
             android:layout_width="180dp"
             android:layout_height="280dp"
             android:layout_marginTop="10dp"
-            android:scaleType="fitXY"
-            android:src="@drawable/galleryexp1"
+            android:scaleType="center"
+            android:background="@color/white"
+            android:elevation="20dp"
+            android:src="@drawable/add"
             app:layout_constraintStart_toStartOf="@+id/myInfo_tv"
             app:layout_constraintTop_toBottomOf="@+id/myInfo_name" />
 
