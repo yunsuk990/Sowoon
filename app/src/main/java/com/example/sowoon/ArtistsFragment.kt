@@ -35,28 +35,11 @@ class ArtistsFragment : Fragment() {
         binding.artistsRv.layoutManager = LinearLayoutManager(context, GridLayoutManager.VERTICAL, false)
 
         adapter.itemClickListener(object: ArtistsProfileRV.MyItemClickOnListener{
-            override fun profileClick(profile: Profile) {
-                profileArtist(profile)
-            }
-
             override fun profileArtworkClick(profile: Profile, database: AppDatabase) {
                 profileArtwork(profile, database)
             }
         })
         return binding.root
-    }
-
-    //화가 프로필 클릭 시
-    private fun profileArtist(profile: Profile){
-        (context as MainActivity).supportFragmentManager.beginTransaction()
-            .replace(R.id.main_frame, ArtistProfileFragment().apply {
-                arguments = Bundle().apply {
-                    val gson = Gson()
-                    val profileJson = gson.toJson(profile)
-                    putString("profile", profileJson)
-                }
-            })
-            .commitNowAllowingStateLoss()
     }
 
     //화가 대표작 클릭 시
