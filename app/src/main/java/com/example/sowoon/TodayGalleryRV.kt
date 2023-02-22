@@ -44,7 +44,7 @@ class TodayGalleryRV(var context: Context): RecyclerView.Adapter<TodayGalleryRV.
         fun bind(gallery: Gallery){
             var url = gallery.GalleryId
             Log.d("url",url.toString())
-            Glide.with(context).asBitmap().load(url).override(300,300).centerCrop().into(binding.todayAlbumIv)
+            Glide.with(context).load(url).into(binding.todayAlbumIv)
             binding.todayAlbumTitle.text = gallery.title
             binding.todayAlbumArtist.text = gallery.artist
             binding.todayAlbumInfo.text= gallery.info
