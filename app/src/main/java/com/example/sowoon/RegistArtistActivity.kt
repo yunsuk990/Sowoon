@@ -5,28 +5,43 @@ import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.provider.MediaStore
+import android.util.Log
 import android.widget.ImageView
 import android.widget.Toast
 import androidx.core.net.toUri
+import com.bumptech.glide.Glide
 import com.example.sowoon.data.entity.Profile
 import com.example.sowoon.data.entity.User
 import com.example.sowoon.database.AppDatabase
 import com.example.sowoon.databinding.ActivityRegistArtistBinding
+import com.google.firebase.ktx.Firebase
+import com.google.firebase.storage.FirebaseStorage
+import com.google.firebase.storage.StorageReference
+import com.google.firebase.storage.ktx.storage
 import com.google.gson.Gson
 
 class RegistArtistActivity : AppCompatActivity() {
 
     lateinit var binding: ActivityRegistArtistBinding
     lateinit var database: AppDatabase
+    lateinit var storage: FirebaseStorage
     lateinit var gson: Gson
+    var GalleryId: String = ""
+    val REQ_GALLERY = 10
+    var URI: Uri? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityRegistArtistBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
+        storage = Firebase.storage
         database = AppDatabase.getInstance(this)!!
         binding.myInfoName.text = getName()
+
+        binding.myInfoIv.setOnClickListener{
+            openGallery()
+        }
+
         binding.registBtn.setOnClickListener {
             registInfo()
         }
@@ -44,12 +59,28 @@ class RegistArtistActivity : AppCompatActivity() {
         var school = binding.myInfoSchoolInput.text.toString()
         var awards = binding.myInfoAwardsInput.text.toString()
 
-        //firebase에 사진 저장하기
-
-        var profile: Profile = Profile(school,awards,getName(), null, getJwt()!!)
-        database.profileDao().insertProfile(profile)
-        database.userDao().ifArtistRegist(jwt!!,true)
+        var profile: Profile = Profile(school,awards,getName(),"" ,null, getJwt()!!)
         Toast.makeText(this, "등록되었습니다." ,Toast.LENGTH_SHORT).show()
+
+        if(GalleryId != ""){
+            var gallery = database.galleryDao().getGallery(GalleryId)
+            var galleryPath = gallery.galleryPath
+            profile.bestArtwork = galleryPath
+        }
+        if(URI != null){
+            var mountainImageRef: StorageReference? = storage?.reference?.child("images")?.child(getJwt().toString())?.child("Profile")?.child("profile.png")
+            Log.d("FirebaseUri", URI.toString())
+            mountainImageRef?.putFile(URI!!)?.addOnSuccessListener {
+                mountainImageRef.downloadUrl.addOnSuccessListener { uri ->
+                    Log.d("registProfileImage", "SUCCESS")
+                    profile.profileImg = uri.toString()
+                }
+            }?.addOnFailureListener{
+                Log.d("registProfileImage", "FAIL", it)
+            }
+        }
+        database.userDao().ifArtistRegist(jwt!!,true)
+        database.profileDao().insertProfile(profile)
         finish()
     }
 
@@ -57,6 +88,12 @@ class RegistArtistActivity : AppCompatActivity() {
         gson = Gson()
         val spf = getSharedPreferences("userProfile", MODE_PRIVATE)
         return gson.fromJson(spf.getString("user", null), User::class.java)
+    }
+
+    private fun openGallery(){
+        val intent = Intent(Intent.ACTION_PICK)
+        intent.type = MediaStore.Images.Media.CONTENT_TYPE
+        startActivityForResult(intent, REQ_GALLERY)
     }
 
     private fun getName(): String?{
@@ -73,10 +110,22 @@ class RegistArtistActivity : AppCompatActivity() {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        if(requestCode == 0){
-            if(resultCode == RESULT_OK){
-                var uri = data?.getStringExtra("Uri")?.toUri()
-                binding.myInfoBestArtworkIv.setImageURI(uri)
+        if (resultCode == RESULT_OK) {
+            when (requestCode) {
+                0 -> {
+                    GalleryId = data?.getStringExtra("GalleryId")!!
+                    Log.d("GalleryId", GalleryId.toString())
+                    binding.myInfoBestArtworkIv.scaleType = ImageView.ScaleType.FIT_XY
+                    Glide.with(this).load(GalleryId).into(binding.myInfoBestArtworkIv)
+                    binding.myInfoBestArtworkIv.scaleType = ImageView.ScaleType.FIT_XY
+                }
+                REQ_GALLERY -> {
+                    data?.data?.let { uri ->
+                        URI = uri
+                        binding.myInfoIv.setImageURI(uri)
+                        binding.myInfoIv.scaleType = ImageView.ScaleType.FIT_XY
+                    }
+                }
 
             }
         }
