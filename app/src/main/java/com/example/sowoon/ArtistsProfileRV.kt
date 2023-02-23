@@ -39,7 +39,6 @@ class ArtistsProfileRV(private val profileList: ArrayList<Profile>, var context:
 
     inner class ViewHolder(val binding: ItemArtistsprofileBinding): RecyclerView.ViewHolder(binding.root){
         fun bind(profile: Profile){
-            var uri: Uri? = null
             database = AppDatabase.getInstance(context!!)!!
             storage = FirebaseStorage.getInstance()
             var userId = profile.userId
@@ -60,8 +59,6 @@ class ArtistsProfileRV(private val profileList: ArrayList<Profile>, var context:
                             val gson = Gson()
                             val profileJson = gson.toJson(profile)
                             putString("profile", profileJson)
-                            putString("profileImage", uri.toString())
-                            Log.d("uri", uri.toString())
                         }
                     })
                     .commitNowAllowingStateLoss()
