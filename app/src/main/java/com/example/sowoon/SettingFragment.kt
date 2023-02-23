@@ -68,7 +68,7 @@ class SettingFragment : Fragment() {
 
         binding.settingMylikeTv.setOnClickListener {
             if(jwt != 0){
-
+                startActivity(Intent(context, SettingMyLikeActivity::class.java))
             }else{
                 Toast.makeText(context, "로그인 후 이용하시기 바랍니다.", Toast.LENGTH_SHORT).show()
             }
