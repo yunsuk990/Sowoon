@@ -58,29 +58,32 @@ class RegistArtistActivity : AppCompatActivity() {
         }
         var school = binding.myInfoSchoolInput.text.toString()
         var awards = binding.myInfoAwardsInput.text.toString()
+        var bestArtwork: String? = null
+        var profileImg: String? = null
 
-        var profile: Profile = Profile(school,awards,getName(),"" ,null, getJwt()!!)
         Toast.makeText(this, "등록되었습니다." ,Toast.LENGTH_SHORT).show()
 
         if(GalleryId != ""){
             var gallery = database.galleryDao().getGallery(GalleryId)
             var galleryPath = gallery.galleryPath
-            profile.bestArtwork = galleryPath
+            bestArtwork = galleryPath
         }
         if(URI != null){
             var mountainImageRef: StorageReference? = storage?.reference?.child("images")?.child(getJwt().toString())?.child("Profile")?.child("profile.png")
             Log.d("FirebaseUri", URI.toString())
             mountainImageRef?.putFile(URI!!)?.addOnSuccessListener {
                 mountainImageRef.downloadUrl.addOnSuccessListener { uri ->
-                    Log.d("registProfileImage", "SUCCESS")
-                    profile.profileImg = uri.toString()
+                    Log.d("registProfileImage", uri.toString())
+                    profileImg = uri.toString()
+                    var profile: Profile = Profile(school,awards,getName(),profileImg ,bestArtwork, jwt!!)
+                    Log.d("profile", profile.toString())
+                    database.userDao().ifArtistRegist(jwt!!,true)
+                    database.profileDao().insertProfile(profile)
                 }
             }?.addOnFailureListener{
                 Log.d("registProfileImage", "FAIL", it)
             }
         }
-        database.userDao().ifArtistRegist(jwt!!,true)
-        database.profileDao().insertProfile(profile)
         finish()
     }
 
