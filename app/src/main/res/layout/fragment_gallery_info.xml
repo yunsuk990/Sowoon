@@ -62,13 +62,25 @@
                 app:layout_constraintTop_toBottomOf="@+id/galleryInfo_iv"
                 app:layout_constraintStart_toStartOf="@+id/galleryInfo_iv">
 
+                <LinearLayout
+                    android:orientation="horizontal"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content">
 
-                <ImageView
-                    android:id="@+id/gallery_info_heart_iv"
-                    android:src="@drawable/blankheart"
-                    android:scaleType="fitXY"
-                    android:layout_width="22dp"
-                    android:layout_height="22dp" />
+                    <ImageView
+                        android:id="@+id/gallery_info_heart_iv"
+                        android:src="@drawable/blankheart"
+                        android:scaleType="fitXY"
+                        android:layout_width="22dp"
+                        android:layout_height="22dp" />
+
+                    <ImageView
+                        android:id="@+id/gallery_info_chat_iv"
+                        android:src="@drawable/chat"
+                        android:layout_width="25dp"
+                        android:layout_height="25dp"
+                        android:layout_marginLeft="10dp"/>
+                </LinearLayout>
 
                 <LinearLayout
                     android:orientation="horizontal"
