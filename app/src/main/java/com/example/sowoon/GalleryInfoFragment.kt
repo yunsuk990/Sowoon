@@ -1,5 +1,6 @@
 package com.example.sowoon
 
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.*
@@ -12,6 +13,7 @@ import com.example.sowoon.data.entity.Gallery
 import com.example.sowoon.data.entity.User
 import com.example.sowoon.database.AppDatabase
 import com.example.sowoon.databinding.FragmentGalleryInfoBinding
+import com.example.sowoon.message.ChatRoomActivity
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.ktx.storage
@@ -99,7 +101,6 @@ class GalleryInfoFragment : Fragment() {
             binding.galleryInfoHeartIv.setOnClickListener {
                 if(getJwt() != 0){
                     var likeList: ArrayList<Int>? = gallery?.favorites
-                    if(likeList == null) likeList = ArrayList()
                     var galleryLikeCount: Int = gallery?.like!!
 
                     if(likeList?.contains(jwt) == true){
@@ -120,6 +121,13 @@ class GalleryInfoFragment : Fragment() {
                     Toast.makeText(context, "로그인 후 이용해주시길 바랍니다.", Toast.LENGTH_SHORT).show()
                 }
             }
+
+        binding.galleryInfoChatIv.setOnClickListener {
+            var intent = Intent(requireContext(), ChatRoomActivity::class.java)
+            intent.putExtra("userId", gallery?.userId)
+            intent.putExtra("Artist", gallery?.artist.toString())
+            startActivity(intent)
+        }
     }
 
     private fun User(): User? {
