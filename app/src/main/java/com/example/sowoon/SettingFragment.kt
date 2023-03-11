@@ -12,6 +12,7 @@ import androidx.appcompat.app.AppCompatActivity
 import com.example.sowoon.data.entity.User
 import com.example.sowoon.database.AppDatabase
 import com.example.sowoon.databinding.FragmentSettingBinding
+import com.example.sowoon.message.MessageMenu
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.ktx.storage
@@ -58,17 +59,13 @@ class SettingFragment : Fragment() {
             }
         }
 
+        binding.settingChat.setOnClickListener {
+            startActivity(Intent(requireContext(), MessageMenu::class.java))
+        }
+
         binding.settingLogoutTv.setOnClickListener {
             if(jwt != 0){
                 logOut()
-            }else{
-                Toast.makeText(context, "로그인 후 이용하시기 바랍니다.", Toast.LENGTH_SHORT).show()
-            }
-        }
-
-        binding.settingMylikeTv.setOnClickListener {
-            if(jwt != 0){
-                startActivity(Intent(context, SettingMyLikeActivity::class.java))
             }else{
                 Toast.makeText(context, "로그인 후 이용하시기 바랍니다.", Toast.LENGTH_SHORT).show()
             }
