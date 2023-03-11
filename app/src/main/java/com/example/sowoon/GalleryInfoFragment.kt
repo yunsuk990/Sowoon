@@ -41,6 +41,7 @@ class GalleryInfoFragment : Fragment() {
         val galleryJson = arguments?.getString("gallery")
         val gallery = gson.fromJson(galleryJson, Gallery::class.java)
         galleryId = gallery.GalleryId
+        if(gallery.userId == getJwt()) binding.galleryInfoChatIv.visibility = View.INVISIBLE
         setOption(gallery)
         setGallery(gallery)
         setGridView(gallery)
@@ -124,7 +125,7 @@ class GalleryInfoFragment : Fragment() {
 
         binding.galleryInfoChatIv.setOnClickListener {
             var intent = Intent(requireContext(), ChatRoomActivity::class.java)
-            intent.putExtra("userId", gallery?.userId)
+            intent.putExtra("userId", gallery?.userId.toString())
             intent.putExtra("Artist", gallery?.artist.toString())
             startActivity(intent)
         }
