@@ -4,8 +4,8 @@ import java.util.Objects
 
 class ChatModel {
 
-    var users: MutableMap<Int, Boolean>? = HashMap()
-    var comments: Map<Int, Comment> = HashMap()
+    var users: MutableMap<String, Boolean>? = HashMap() //채팅방 유저들
+    var comments: Map<String, Comment> = HashMap() //채팅방의 내용
 
     class Comment {
         var userId: Int? = 0
