@@ -3,19 +3,21 @@ package com.example.sowoon.message
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
-import android.widget.Toast
-import com.example.sowoon.R
+import android.widget.LinearLayout
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.sowoon.data.entity.ChatModel
 import com.example.sowoon.databinding.ActivityChatRoomBinding
 import com.google.android.gms.tasks.OnSuccessListener
-import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.ktx.firestore
-import com.google.firebase.ktx.Firebase
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ValueEventListener
+import com.google.firebase.database.ktx.getValue
 
 class ChatRoomActivity : AppCompatActivity() {
 
     lateinit var binding: ActivityChatRoomBinding
-    lateinit var firebaseDB: FirebaseFirestore
+    lateinit var firebaseDB: FirebaseDatabase
     private var chatRoomUid: String? = null
     private var destUid: String? = null
 
@@ -26,7 +28,7 @@ class ChatRoomActivity : AppCompatActivity() {
         destUid = intent.getStringExtra("userId") //채팅 상대방
         Log.d("destUid", destUid.toString())
 
-        var firebaseDB = Firebase.firestore
+        firebaseDB = FirebaseDatabase.getInstance()
         binding.chatRoomSendTitleTv.text = artist + "님에게 메세지"
         setContentView(binding.root)
 
@@ -37,30 +39,43 @@ class ChatRoomActivity : AppCompatActivity() {
                 chatModel.users?.put(getJwt().toString(), true)
 
                 if(chatRoomUid == null){
-                    binding.chatRoomSendBtn.isEnabled = false
-                    firebaseDB.collection("chatrooms").add(chatModel).addOnSuccessListener{
-                        checkChatRoom()
-                    }
-                    Log.d("ChatRoom", "성공")
+                    binding.chatRoomSendBtn.isEnabled = false //요청 가기도 전에 버튼 누르는 것을 방지
+                    firebaseDB.getReference().child("chatrooms").push().setValue(chatModel).addOnSuccessListener(object: OnSuccessListener<Void>{
+                        override fun onSuccess(p0: Void?) {
+                            checkChatRoom()
+                        }
+                    })
                 }else{
-                    Log.d("ChatRoom", "실패")
-                    sendMsgDatabase()
+                    var comment: ChatModel.Comment = ChatModel.Comment()
+                    comment.userId = getJwt()
+                    comment.message = binding.chatRoomSendEt.text.toString()
+                    firebaseDB.getReference().child("chatrooms").child(chatRoomUid!!).child("comments").push().setValue(comment)
                 }
             }
-
+            checkChatRoom()
         }
-
     }
 
 
     private fun checkChatRoom(){
-//        firebaseDB.collection("chatrooms")
-    }
+        Log.d("checkChatRoom", "Start")
+        firebaseDB.getReference().child("chatrooms").orderByChild("users/${getJwt()}").equalTo(true)
+            .addListenerForSingleValueEvent(object: ValueEventListener{
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    for(item in snapshot.children){
+                        var chatModel: ChatModel? = item.getValue<ChatModel>()
+                        if(chatModel?.users?.contains(destUid)!!){
+                            chatRoomUid = item.key
+                            binding.chatRoomSendBtn.isEnabled = true
 
-    private fun sendMsgDatabase(){
-        if(!binding.chatRoomSendEt.text.toString().equals("")){
+                            binding.chatRoomSendRv.layoutManager = LinearLayoutManager(baseContext ,LinearLayoutManager.VERTICAL, false)
+                            binding.chatRoomSendRv.adapter = ChatMessageRVAdapter(chatRoomUid!!)
 
-        }
+                        }
+                    }
+                }
+                override fun onCancelled(error: DatabaseError) {}
+            })
     }
 
     private fun getJwt(): Int? {
