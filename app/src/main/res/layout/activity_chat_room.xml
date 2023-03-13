@@ -7,30 +7,56 @@
     tools:context=".message.ChatRoomActivity">
 
 
+
+    <ImageView
+        android:id="@+id/back_btn"
+        android:src="@drawable/back_btn"
+        android:layout_width="36dp"
+        android:layout_height="36dp"
+        android:layout_marginTop="15dp"
+        android:layout_marginLeft="20dp"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"/>
+
     <TextView
         android:id="@+id/chat_room_send_title_tv"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentTop="true"
-        android:layout_marginLeft="20dp"
-        android:layout_marginTop="30dp"
-        android:text="작가님에게 메세지"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="작가"
+        android:textColor="@color/black"
         android:textSize="20sp"
         android:textStyle="bold"
-        android:textColor="@color/black"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"/>
+        android:gravity="center"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignTop="@+id/back_btn"
+        android:layout_alignBottom="@+id/back_btn" />
+
+
+    <View
+        android:id="@+id/chat_room_view"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/chatroom"
+        android:layout_below="@+id/back_btn"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginStart="0dp"
+        android:layout_marginTop="15dp"
+        android:layout_marginEnd="0dp"
+        android:elevation="20dp"/>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/chat_room_send_rv"
         tools:listitem="@layout/item_message"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginLeft="5dp"
+        android:layout_marginRight="5dp"
         android:layout_above="@+id/chat_room_send_et"
-        android:layout_below="@+id/chat_room_send_title_tv"
+        android:layout_below="@+id/chat_room_view"
         android:layout_alignParentStart="true"
         android:layout_alignParentEnd="true"
-        android:layout_marginStart="0dp"
-        android:layout_marginEnd="0dp"
         android:layout_marginBottom="15dp" />
 
 
