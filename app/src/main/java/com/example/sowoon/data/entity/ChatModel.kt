@@ -1,5 +1,6 @@
 package com.example.sowoon.data.entity
 
+import com.google.firebase.database.ServerValue
 import java.util.Objects
 
 class ChatModel {
@@ -10,6 +11,7 @@ class ChatModel {
     class Comment {
         var message: String? = null
         var userId: Int? = 0
+        var timestamp: String? = null
     }
 
 }
