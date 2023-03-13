@@ -15,6 +15,9 @@ interface UserDao {
     @Delete
     fun deleteUser(user: User)
 
+    @Query("SELECT * FROM UserTable WHERE id=:userId")
+    fun getUserProfile(userId: Int): User
+
     @Query("UPDATE UserTable SET ifArtist=:bool WHERE id=:id")
     fun ifArtistRegist(id: Int, bool: Boolean)
 }
