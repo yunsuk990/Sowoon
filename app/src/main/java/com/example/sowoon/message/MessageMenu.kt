@@ -89,10 +89,17 @@ class MessageMenu : AppCompatActivity() {
                     if(users != Jwt.toString()) destinationId = users
                     destinationUsers.add(users)
                 }
-                var profile = database.profileDao().getProfile(destinationId!!.toInt())
-                binding.messageartistTv.text = profile?.name.toString()
-                Glide.with(Context!!).load(profile?.profileImg).centerCrop().into(binding.messageartistIv)
 
+                var ifArtist = database.userDao().ifArtist(destinationId?.toInt()!!)
+                if(ifArtist == true){
+                    var profile = database.profileDao().getProfile(destinationId!!.toInt())
+                    binding.messageartistTv.text = profile?.name.toString()
+                    Glide.with(Context!!).load(profile?.profileImg).centerCrop().into(binding.messageartistIv)
+
+                }else{
+                    var profile = database.userDao().getUserProfile(destinationId!!.toInt())
+                    binding.messageartistTv.text = profile.name
+                }
                 var commentMap: MutableMap<String,ChatModel.Comment> = TreeMap(Collections.reverseOrder())
                 commentMap.putAll(chatModel[position].comments)
                 var lastmessageKey = commentMap.keys.toTypedArray()[0]
@@ -102,6 +109,7 @@ class MessageMenu : AppCompatActivity() {
                 binding.messageartistContainer.setOnClickListener{
                     var intent = Intent(Context, ChatRoomActivity::class.java)
                     intent.putExtra("userId", destinationUsers[position])
+                    intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
                     it.context.startActivity(intent)
                 }
 
