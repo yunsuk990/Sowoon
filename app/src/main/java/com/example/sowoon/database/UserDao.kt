@@ -20,4 +20,7 @@ interface UserDao {
 
     @Query("UPDATE UserTable SET ifArtist=:bool WHERE id=:id")
     fun ifArtistRegist(id: Int, bool: Boolean)
+
+    @Query("SELECT ifArtist FROM UserTable WHERE id=:userId")
+    fun ifArtist(userId: Int): Boolean
 }
