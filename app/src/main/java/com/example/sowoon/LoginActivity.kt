@@ -9,6 +9,8 @@ import android.widget.Toast
 import com.example.sowoon.data.entity.User
 import com.example.sowoon.database.AppDatabase
 import com.example.sowoon.databinding.ActivityLoginBinding
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.messaging.FirebaseMessaging
 import com.google.gson.Gson
 
 class LoginActivity : AppCompatActivity() {
@@ -20,6 +22,7 @@ class LoginActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityLoginBinding.inflate(layoutInflater)
+        database = AppDatabase.getInstance(applicationContext)!!
         setContentView(binding.root)
 
         binding.loginBtn.setOnClickListener {
@@ -41,8 +44,6 @@ class LoginActivity : AppCompatActivity() {
         Log.d("email", email)
         Log.d("password", password)
 
-
-        database = AppDatabase.getInstance(applicationContext)!!
         var user = database.userDao().getUser(email, password)
         Log.d("user", user.toString())
 
@@ -56,6 +57,7 @@ class LoginActivity : AppCompatActivity() {
     }
 
     private fun startMainActivity() {
+        createPushToken()
         startActivity(Intent(this, MainActivity::class.java))
     }
 
@@ -74,5 +76,17 @@ class LoginActivity : AppCompatActivity() {
         val editor = spf.edit()
         editor.putString("user", userJson)
         editor.apply()
+    }
+
+    //FCM token 생성
+    fun createPushToken(){
+        var token = FirebaseMessaging.getInstance().token
+        database.userDao().insertPushToken(getJwt()!!, token.toString())
+    }
+
+    private fun getJwt(): Int? {
+        val spf = getSharedPreferences("auth", MODE_PRIVATE)
+        var jwt = spf?.getInt("jwt", 0)
+        return jwt
     }
 }
