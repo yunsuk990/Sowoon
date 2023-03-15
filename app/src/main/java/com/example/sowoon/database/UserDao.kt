@@ -23,4 +23,7 @@ interface UserDao {
 
     @Query("SELECT ifArtist FROM UserTable WHERE id=:userId")
     fun ifArtist(userId: Int): Boolean
+
+    @Query("UPDATE UserTable SET pushToken=:pushToken WHERE id=:userId")
+    fun insertPushToken(userId: Int, pushToken: String)
 }
