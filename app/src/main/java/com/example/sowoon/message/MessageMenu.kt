@@ -63,7 +63,7 @@ class MessageMenu : AppCompatActivity() {
             Jwt = jwt
             Context = context
             database = AppDatabase.getInstance(context)!!
-            FirebaseDatabase.getInstance().getReference().child("chatrooms").orderByChild("users/"+jwt).equalTo(true).addListenerForSingleValueEvent(object: ValueEventListener{
+            FirebaseDatabase.getInstance().getReference().child("chatrooms").orderByChild("users/"+jwt).addListenerForSingleValueEvent(object: ValueEventListener{
                 override fun onDataChange(snapshot: DataSnapshot) {
                     chatModel.clear()
                     for(item in snapshot.children){
@@ -83,7 +83,7 @@ class MessageMenu : AppCompatActivity() {
 
         inner class ViewHolder(var binding: ItemMessageartistBinding): RecyclerView.ViewHolder(binding.root){
             fun bind(position: Int){
-                var desUser = chatModel[position].users.keys
+                var desUser = chatModel[position].users
 
                 for(users in desUser){
                     if(users != Jwt.toString()) destinationId = users
@@ -101,10 +101,10 @@ class MessageMenu : AppCompatActivity() {
                     binding.messageartistTv.text = profile.name
                 }
                 var commentMap: MutableMap<String,ChatModel.Comment> = TreeMap(Collections.reverseOrder())
-                commentMap.putAll(chatModel[position].comments)
+                commentMap.putAll(chatModel[position].comments!!)
                 var lastmessageKey = commentMap.keys.toTypedArray()[0]
-                binding.messageartistMessage.text = chatModel[position].comments.get(lastmessageKey)?.message
-                binding.messageartistTimestamp.text = chatModel[position].comments[lastmessageKey]?.timestamp
+                binding.messageartistMessage.text = chatModel[position].comments?.get(lastmessageKey)?.message
+                binding.messageartistTimestamp.text = chatModel[position].comments?.get(lastmessageKey)?.timestamp
 
                 binding.messageartistContainer.setOnClickListener{
                     var intent = Intent(Context, ChatRoomActivity::class.java)
