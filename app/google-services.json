@@ -1,33 +1,34 @@
 {
   "project_info": {
-    "project_number": "87016480979",
-    "project_id": "sowoon-cf466",
-    "storage_bucket": "sowoon-cf466.appspot.com"
+    "project_number": "990603141555",
+    "firebase_url": "https://sowoon-9ad62-default-rtdb.firebaseio.com",
+    "project_id": "sowoon-9ad62",
+    "storage_bucket": "sowoon-9ad62.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:87016480979:android:046c8403224079a5367426",
+        "mobilesdk_app_id": "1:990603141555:android:2a969cbf3afc9ef8016bc6",
         "android_client_info": {
           "package_name": "com.example.sowoon"
         }
       },
       "oauth_client": [
         {
-          "client_id": "87016480979-98f0c4v31ejgq04g6vj51ftn0i9bvt2s.apps.googleusercontent.com",
+          "client_id": "990603141555-g7uk72ermuees8f7fjeenk96ah9pujpf.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyAzI6DFq3VT89O4aPonGXoC1i-3_HMPIVk"
+          "current_key": "AIzaSyDm9ttOMXYp2JEOqJoIUhkGIWi0kkQSl3I"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "87016480979-98f0c4v31ejgq04g6vj51ftn0i9bvt2s.apps.googleusercontent.com",
+              "client_id": "990603141555-g7uk72ermuees8f7fjeenk96ah9pujpf.apps.googleusercontent.com",
               "client_type": 3
             }
           ]
