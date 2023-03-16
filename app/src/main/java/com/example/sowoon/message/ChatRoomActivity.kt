@@ -1,25 +1,27 @@
 package com.example.sowoon.message
 
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
-import android.widget.LinearLayout
+import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.sowoon.data.entity.ChatModel
+import com.example.sowoon.data.entity.NotificationModel
 import com.example.sowoon.database.AppDatabase
 import com.example.sowoon.databinding.ActivityChatRoomBinding
-import com.google.android.gms.tasks.OnSuccessListener
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
-import com.google.firebase.database.ServerValue
 import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.ktx.getValue
+import com.google.gson.Gson
+import okhttp3.*
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
+import java.io.FileInputStream
+import java.io.IOException
 import java.text.SimpleDateFormat
 import java.util.*
-import kotlin.collections.ArrayList
-import kotlin.collections.HashMap
+
 
 class ChatRoomActivity : AppCompatActivity() {
 
@@ -67,6 +69,7 @@ class ChatRoomActivity : AppCompatActivity() {
                     comment.timestamp = time.format(Date())
                     firebaseDB.getReference().child("chatrooms").child(chatRoomUid!!).child("comments")
                         .push().setValue(comment).addOnCompleteListener {
+                            sendFCM()
                             binding.chatRoomSendEt.setText("")
                         }
                 }
@@ -74,6 +77,35 @@ class ChatRoomActivity : AppCompatActivity() {
             checkChatRoom()
 
         }
+    }
+
+    private fun sendFCM(){
+        var gson = Gson()
+        var notificationModel: NotificationModel = NotificationModel()
+        notificationModel.to = "com.google.android.gms.tasks.zzw@2dbfe4a"
+            //database.userDao().getPushToken(destUid?.toInt()!!)
+        notificationModel.notification.text = binding.chatRoomSendEt.text.toString()
+        notificationModel.notification.title = "보낸이 아이디"
+
+
+        var requestBody: RequestBody = RequestBody.create("application/json; charset=utf8".toMediaTypeOrNull(), gson.toJson(notificationModel))
+        var request = Request.Builder()
+            .header("Content-Type", "application/json")
+//            .addHeader("Authorization", "Bearer " + getAccessToken())
+            .addHeader("Authorization", "key=BFwG-SBccTjDIy9fDSldTjXwJtwHEcqW4tJcXiijgAdkaFaN4f7oTz_cHTnbo-TNr7edhDcrdidba74VKWLc09k")
+            .url("https://fcm.googleapis.com/v1/projects/sowoon-9ad62/messages:send")
+            .post(requestBody)
+            .build()
+
+        var okHttpClient = OkHttpClient()
+        okHttpClient.newCall(request).enqueue(object: Callback{
+            override fun onFailure(call: Call, e: IOException) {
+            }
+
+            override fun onResponse(call: Call, response: Response) {
+            }
+
+        })
     }
 
     //유효성 검사
@@ -113,6 +145,17 @@ class ChatRoomActivity : AppCompatActivity() {
             })
     }
 
+//    @Throws(IOException::class)
+//    private fun getAccessToken(): String? {
+//        val googleCredentials: GoogleCredentials = GoogleCredentials
+//            .fromStream(FileInputStream("service-account.json"))
+//            .createScoped(Arrays.asList("https://www.googleapis.com/auth/cloud-platform"))
+//        googleCredentials.refreshAccessToken()
+//        Log.d("accessToken", googleCredentials.getAccessToken().getTokenValue().toString())
+//        return googleCredentials.getAccessToken().getTokenValue()
+//
+//    }
+
 
 
     private fun getJwt(): Int? {
@@ -120,4 +163,5 @@ class ChatRoomActivity : AppCompatActivity() {
         var jwt = spf?.getInt("jwt", 0)
         return jwt
     }
+
 }
