@@ -10,7 +10,9 @@ import com.example.sowoon.data.entity.User
 import com.example.sowoon.database.AppDatabase
 import com.example.sowoon.databinding.ActivityLoginBinding
 import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.iid.internal.FirebaseInstanceIdInternal
 import com.google.firebase.messaging.FirebaseMessaging
+import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.gson.Gson
 
 class LoginActivity : AppCompatActivity() {
@@ -80,7 +82,9 @@ class LoginActivity : AppCompatActivity() {
 
     //FCM token 생성
     fun createPushToken(){
-        var token = FirebaseMessaging.getInstance().token
+        var token = FirebaseMessaging.getInstance().token.addOnCompleteListener { task ->
+            task.result
+        }
         database.userDao().insertPushToken(getJwt()!!, token.toString())
     }
 
