@@ -6,7 +6,7 @@ import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.sowoon.data.entity.ChatModel
-import com.example.sowoon.data.entity.NotificationModel
+import com.example.sowoon.data.entity.UserModel
 import com.example.sowoon.database.AppDatabase
 import com.example.sowoon.databinding.ActivityChatRoomBinding
 import com.google.firebase.database.DataSnapshot
@@ -17,7 +17,6 @@ import com.google.firebase.database.ktx.getValue
 import com.google.gson.Gson
 import okhttp3.*
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
-import java.io.FileInputStream
 import java.io.IOException
 import java.text.SimpleDateFormat
 import java.util.*
@@ -82,18 +81,27 @@ class ChatRoomActivity : AppCompatActivity() {
     private fun sendFCM(){
         var gson = Gson()
         var notificationModel: NotificationModel = NotificationModel()
-        notificationModel.to = "com.google.android.gms.tasks.zzw@2dbfe4a"
-            //database.userDao().getPushToken(destUid?.toInt()!!)
-        notificationModel.notification.text = binding.chatRoomSendEt.text.toString()
-        notificationModel.notification.title = "보낸이 아이디"
+        firebaseDB.getReference().child("users").child(destUid!!).addListenerForSingleValueEvent(object: ValueEventListener{
+            override fun onDataChange(snapshot: DataSnapshot) {
+                for(item in snapshot.children){
+                    var userModel = item.getValue(UserModel::class.java)
+                    notificationModel.to = userModel?.pushToken.toString()
+                    notificationModel.notification.text = binding.chatRoomSendEt.text.toString()
+                    notificationModel.notification.title = "보낸이 아이디"
+                }
+            }
 
+            override fun onCancelled(error: DatabaseError) {
+                TODO("Not yet implemented")
+            }
+
+        })
 
         var requestBody: RequestBody = RequestBody.create("application/json; charset=utf8".toMediaTypeOrNull(), gson.toJson(notificationModel))
         var request = Request.Builder()
             .header("Content-Type", "application/json")
-//            .addHeader("Authorization", "Bearer " + getAccessToken())
             .addHeader("Authorization", "key=BFwG-SBccTjDIy9fDSldTjXwJtwHEcqW4tJcXiijgAdkaFaN4f7oTz_cHTnbo-TNr7edhDcrdidba74VKWLc09k")
-            .url("https://fcm.googleapis.com/v1/projects/sowoon-9ad62/messages:send")
+            .url("https://fcm.googleapis.com/fcm/send")
             .post(requestBody)
             .build()
 
@@ -144,19 +152,6 @@ class ChatRoomActivity : AppCompatActivity() {
                 override fun onCancelled(error: DatabaseError) {}
             })
     }
-
-//    @Throws(IOException::class)
-//    private fun getAccessToken(): String? {
-//        val googleCredentials: GoogleCredentials = GoogleCredentials
-//            .fromStream(FileInputStream("service-account.json"))
-//            .createScoped(Arrays.asList("https://www.googleapis.com/auth/cloud-platform"))
-//        googleCredentials.refreshAccessToken()
-//        Log.d("accessToken", googleCredentials.getAccessToken().getTokenValue().toString())
-//        return googleCredentials.getAccessToken().getTokenValue()
-//
-//    }
-
-
 
     private fun getJwt(): Int? {
         val spf = getSharedPreferences("auth", MODE_PRIVATE)
