@@ -1,30 +1,20 @@
 package com.example.sowoon
 
 import android.content.Context
-import android.graphics.Bitmap
-import android.graphics.ImageDecoder
-import android.net.Uri
-import android.os.Build
-import android.provider.MediaStore
-import android.provider.MediaStore.Audio.Media
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import androidx.appcompat.app.AppCompatActivity
-import androidx.core.net.toUri
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
-import com.example.sowoon.data.entity.Gallery
 import com.example.sowoon.databinding.ItemTodayalbumBinding
-import java.net.URL
-import kotlin.coroutines.coroutineContext
+import com.google.firebase.storage.StorageReference
 
 class TodayGalleryRV(var context: Context): RecyclerView.Adapter<TodayGalleryRV.ViewHolder>() {
 
-    private var galleryList = ArrayList<Gallery>()
+    private var galleryList = ArrayList<StorageReference>()
 
     interface MyItemOnClickListener{
-        fun galleryClick(gallery: Gallery)
+        fun galleryClick(gallery: StorageReference)
     }
 
     private lateinit var mItemClickListener: MyItemOnClickListener
@@ -33,7 +23,7 @@ class TodayGalleryRV(var context: Context): RecyclerView.Adapter<TodayGalleryRV.
         mItemClickListener = itemClickListener
     }
 
-    fun addGallery(gallerys: ArrayList<Gallery>){
+    fun addGallery(gallerys: ArrayList<StorageReference>){
         galleryList.clear()
         galleryList.addAll(gallerys)
         notifyDataSetChanged()
@@ -41,13 +31,16 @@ class TodayGalleryRV(var context: Context): RecyclerView.Adapter<TodayGalleryRV.
 
 
     inner class ViewHolder(val binding: ItemTodayalbumBinding): RecyclerView.ViewHolder(binding.root){
-        fun bind(gallery: Gallery){
-            var url = gallery.GalleryId
-            Log.d("url",url.toString())
-            Glide.with(context).load(url).into(binding.todayAlbumIv)
-            binding.todayAlbumTitle.text = gallery.title
-            binding.todayAlbumArtist.text = gallery.artist
-            binding.todayAlbumInfo.text= gallery.info
+        fun bind(gallery: StorageReference){
+            //var url = gallery.GalleryId
+            //Log.d("url",url.toString())
+            gallery.downloadUrl.addOnSuccessListener{ uri ->
+                var url = uri
+                Glide.with(context).load(url).into(binding.todayAlbumIv)
+            }
+//            binding.todayAlbumTitle.text = gallery.title
+//            binding.todayAlbumArtist.text = gallery.artist
+//            binding.todayAlbumInfo.text= gallery.info
         }
     }
 
