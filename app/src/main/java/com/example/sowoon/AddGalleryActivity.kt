@@ -16,6 +16,8 @@ import com.example.sowoon.database.AppDatabase
 import com.example.sowoon.databinding.ActivityAddGalleryBinding
 import com.google.android.gms.tasks.OnFailureListener
 import com.google.android.gms.tasks.OnSuccessListener
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
@@ -32,45 +34,52 @@ class AddGalleryActivity : AppCompatActivity() {
     lateinit var binding: ActivityAddGalleryBinding
     lateinit var gson: Gson
     lateinit var database: AppDatabase
+    lateinit var firebaseAuth: FirebaseAuth
     val REQ_GALLERY = 10
     var URI: Uri? = null
     lateinit var storage: FirebaseStorage
+    var currentUser: FirebaseUser? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityAddGalleryBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        var user = User()
         database = AppDatabase.getInstance(this)!!
         storage = FirebaseStorage.getInstance()
+        firebaseAuth = FirebaseAuth.getInstance()
 
-        binding.addgalleryArtistInput.text = user?.name
+        //binding.addgalleryArtistInput.text = user?.name
 
         binding.addgalleryIv.setOnClickListener {
             openGallery()
         }
         binding.addgalleryBtn.setOnClickListener {
-            upload(user)
+            upload()
         }
     }
 
-    private fun upload(user: User?){
-        if(user == null){
+    override fun onStart() {
+        super.onStart()
+        currentUser = firebaseAuth.currentUser
+    }
+
+    private fun upload(){
+        if(currentUser == null){
             Toast.makeText(this, "로그인 후 이용해주시길 바랍니다.", Toast.LENGTH_SHORT).show()
         }
         var title = binding.addgalleryTitleInput.text.toString()
         var info = binding.addgalleryInfoInput.text.toString()
         var galleryPath = URI?.lastPathSegment.toString()
         if(URI != null){
-            var mountainImageRef: StorageReference? = storage?.reference?.child("images")?.child(getJwt().toString())?.child(galleryPath)
+            var mountainImageRef: StorageReference? = storage?.reference?.child("images")?.child(galleryPath)
             Log.d("FirebaseUri", URI.toString())
             mountainImageRef?.putFile(URI!!)?.addOnSuccessListener {
                 mountainImageRef.downloadUrl.addOnSuccessListener { url ->
                     Log.d("FirebaseUri", url.toString())
-                    val Gallery = Gallery(url.toString(), galleryPath, getJwt()!!,null ,title, user?.name, info, null, 0)
-                    database.galleryDao().insertGallery(Gallery)
+                    //val Gallery = Gallery(url.toString(), galleryPath, getJwt()!!,null ,title, user?.name, info, null, 0)
+                    //database.galleryDao().insertGallery(Gallery)
                     var intent: Intent = Intent()
-                    intent.putExtra("GalleryId", url.toString())
+                    intent.putExtra("BestArtworkURL", url.toString())
                     setResult(RESULT_OK, intent)
                     finish()
                 }
@@ -81,12 +90,6 @@ class AddGalleryActivity : AppCompatActivity() {
             }
         }
 
-    }
-
-    private fun User(): User? {
-        gson = Gson()
-        val spf = getSharedPreferences("userProfile", MODE_PRIVATE) 
-        return gson.fromJson(spf.getString("user", null), User::class.java)
     }
 
     private fun openGallery(){
@@ -108,13 +111,6 @@ class AddGalleryActivity : AppCompatActivity() {
                 }
             }
         }
-    }
-
-
-    private fun getJwt(): Int? {
-        val spf = getSharedPreferences("auth", AppCompatActivity.MODE_PRIVATE)
-        var jwt = spf?.getInt("jwt", 0)
-        return jwt
     }
 }
 
