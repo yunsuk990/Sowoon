@@ -1,30 +1,29 @@
 package com.example.sowoon
 
 import android.content.Intent
-import android.content.SharedPreferences
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
-import com.example.sowoon.data.entity.User
-import com.example.sowoon.database.AppDatabase
+import androidx.appcompat.app.AppCompatActivity
 import com.example.sowoon.databinding.ActivityLoginBinding
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.FirebaseDatabase
-import com.google.firebase.iid.internal.FirebaseInstanceIdInternal
-import com.google.firebase.messaging.FirebaseMessaging
-import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.gson.Gson
 
 class LoginActivity : AppCompatActivity() {
 
     lateinit var binding: ActivityLoginBinding
-    lateinit var database: AppDatabase
+    //lateinit var database: AppDatabase
     lateinit var gson: Gson
+    lateinit var firebaseDatabase: FirebaseDatabase
+    lateinit var firebaseAuth: FirebaseAuth
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityLoginBinding.inflate(layoutInflater)
-        database = AppDatabase.getInstance(applicationContext)!!
+        //database = AppDatabase.getInstance(applicationContext)!!
+        firebaseDatabase = FirebaseDatabase.getInstance()
+        firebaseAuth = FirebaseAuth.getInstance()
         setContentView(binding.root)
 
         binding.loginBtn.setOnClickListener {
@@ -46,51 +45,42 @@ class LoginActivity : AppCompatActivity() {
         Log.d("email", email)
         Log.d("password", password)
 
-        var user = database.userDao().getUser(email, password)
-        Log.d("user", user.toString())
-
-        if(user != null){
-            saveJwt(user.id)
-            saveUser(user)
-            startMainActivity()
-        }else{
-            Toast.makeText(this, "회원정보가 존재하지 않습니다.", Toast.LENGTH_SHORT).show()
+        if(email != "" || password != ""){
+            firebaseAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener{ task ->
+                if(task.isSuccessful){
+                    saveJwt(task.result.user!!.uid)
+                }else{
+                    Toast.makeText(this, task.exception.toString(), Toast.LENGTH_LONG).show()
+                }
+            }
+            startActivity(Intent(this, MainActivity::class.java))
+//            var user = database.userDao().getUser(email, password)
+//            saveJwt(user.id)
+//            saveUser(user)
         }
     }
 
-    private fun startMainActivity() {
-        createPushToken()
-        startActivity(Intent(this, MainActivity::class.java))
-    }
 
-    private fun saveJwt(jwt: Int) {
+    private fun saveJwt(jwt: String) {
         val spf = getSharedPreferences("auth", MODE_PRIVATE)
         val editor = spf.edit()
-        editor.putInt("jwt", jwt)
+        editor.putString("jwt", jwt)
         Log.d("jwt", jwt.toString())
         editor.apply()
     }
+//
+//    private fun saveUser(user: User){
+//        gson = Gson()
+//        var userJson = gson.toJson(user)
+//        val spf = getSharedPreferences("userProfile", MODE_PRIVATE)
+//        val editor = spf.edit()
+//        editor.putString("user", userJson)
+//        editor.apply()
+//    }
 
-    private fun saveUser(user: User){
-        gson = Gson()
-        var userJson = gson.toJson(user)
-        val spf = getSharedPreferences("userProfile", MODE_PRIVATE)
-        val editor = spf.edit()
-        editor.putString("user", userJson)
-        editor.apply()
-    }
-
-    //FCM token 생성
-    fun createPushToken(){
-        var token = FirebaseMessaging.getInstance().token.addOnCompleteListener { task ->
-            task.result
-        }
-        database.userDao().insertPushToken(getJwt()!!, token.toString())
-    }
-
-    private fun getJwt(): Int? {
-        val spf = getSharedPreferences("auth", MODE_PRIVATE)
-        var jwt = spf?.getInt("jwt", 0)
-        return jwt
-    }
+//    private fun getJwt(): Int? {
+//        val spf = getSharedPreferences("auth", MODE_PRIVATE)
+//        var jwt = spf?.getString("jwt", null)
+//        return jwt
+//    }
 }
