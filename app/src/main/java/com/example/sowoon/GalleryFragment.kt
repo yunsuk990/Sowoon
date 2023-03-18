@@ -14,6 +14,8 @@ import com.example.sowoon.data.entity.User
 import com.example.sowoon.database.AppDatabase
 import com.example.sowoon.databinding.FragmentGalleryBinding
 import com.example.sowoon.databinding.FragmentMainBinding
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseUser
 import com.google.gson.Gson
 
 class GalleryFragment : Fragment() {
@@ -21,8 +23,9 @@ class GalleryFragment : Fragment() {
     lateinit var binding: FragmentGalleryBinding
     lateinit var database: AppDatabase
     lateinit var gson: Gson
-    var jwt: Int = -1
-    var user: User? = null
+    lateinit var firebaseAuth: FirebaseAuth
+    var currentUser: FirebaseUser? = null
+
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -31,11 +34,11 @@ class GalleryFragment : Fragment() {
     ): View? {
         binding = FragmentGalleryBinding.inflate(inflater, container, false)
         database = AppDatabase.getInstance(requireContext())!!
-        jwt = getJwt()!!
+        firebaseAuth = FirebaseAuth.getInstance()
 
         binding.addGallery.setOnClickListener {
             //나중에 앨범에서 사진 가져오기
-            if(jwt != 0){
+            if(currentUser != null){
                 startActivity(Intent(context, AddGalleryActivity::class.java))
             }else{
                 Toast.makeText(context, "로그인 후 이용 가능합니다.", Toast.LENGTH_SHORT).show()
@@ -47,7 +50,9 @@ class GalleryFragment : Fragment() {
 
     override fun onStart() {
         super.onStart()
-        user = User()
+        if(firebaseAuth.currentUser != null){
+            currentUser = firebaseAuth.currentUser
+        }
     }
 
     private fun initGridView(){
@@ -77,16 +82,9 @@ class GalleryFragment : Fragment() {
     }
 
 
-    private fun getJwt(): Int? {
+    private fun getJwt(): String? {
         val spf = activity?.getSharedPreferences("auth", AppCompatActivity.MODE_PRIVATE)
-        var jwt = spf?.getInt("jwt", 0)
+        var jwt = spf?.getString("jwt", null)
         return jwt
-    }
-
-    private fun User(): User? {
-        gson = Gson()
-        val spf =
-            requireActivity().getSharedPreferences("userProfile", AppCompatActivity.MODE_PRIVATE)
-        return gson.fromJson(spf.getString("user", null), User::class.java)
     }
 }
