@@ -11,6 +11,7 @@ import android.widget.ImageView
 import android.widget.Toast
 import com.bumptech.glide.Glide
 import com.example.sowoon.data.entity.Gallery
+import com.example.sowoon.data.entity.GalleryModel
 import com.example.sowoon.data.entity.User
 import com.example.sowoon.database.AppDatabase
 import com.example.sowoon.databinding.ActivityAddGalleryBinding
@@ -18,11 +19,13 @@ import com.google.android.gms.tasks.OnFailureListener
 import com.google.android.gms.tasks.OnSuccessListener
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
+import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
 import com.google.firebase.storage.UploadTask
 import com.google.firebase.storage.ktx.storage
+import com.google.firebase.storage.ktx.storageMetadata
 import com.google.gson.Gson
 import java.io.FileNotFoundException
 import java.io.InputStream
@@ -35,10 +38,12 @@ class AddGalleryActivity : AppCompatActivity() {
     lateinit var gson: Gson
     lateinit var database: AppDatabase
     lateinit var firebaseAuth: FirebaseAuth
-    val REQ_GALLERY = 10
-    var URI: Uri? = null
+    lateinit var firebaseDatabase: FirebaseDatabase
     lateinit var storage: FirebaseStorage
     var currentUser: FirebaseUser? = null
+
+    val REQ_GALLERY = 10
+    var imageURL: Uri? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -47,6 +52,7 @@ class AddGalleryActivity : AppCompatActivity() {
         database = AppDatabase.getInstance(this)!!
         storage = FirebaseStorage.getInstance()
         firebaseAuth = FirebaseAuth.getInstance()
+        firebaseDatabase = FirebaseDatabase.getInstance()
 
         //binding.addgalleryArtistInput.text = user?.name
 
@@ -67,27 +73,33 @@ class AddGalleryActivity : AppCompatActivity() {
         if(currentUser == null){
             Toast.makeText(this, "로그인 후 이용해주시길 바랍니다.", Toast.LENGTH_SHORT).show()
         }
+        var galleryModel: GalleryModel = GalleryModel()
         var title = binding.addgalleryTitleInput.text.toString()
         var info = binding.addgalleryInfoInput.text.toString()
-        var galleryPath = URI?.lastPathSegment.toString()
-        if(URI != null){
+        var galleryPath = imageURL?.lastPathSegment.toString()
+
+//        var metadata = storageMetadata {
+//            setCustomMetadata("title", title)
+//            setCustomMetadata("info", info)
+//            setCustomMetadata("uid", currentUser?.uid)
+//        }
+
+        //이미지 Storage 및 Database 업로드
+        if(imageURL != null){
             var mountainImageRef: StorageReference? = storage?.reference?.child("images")?.child(galleryPath)
-            Log.d("FirebaseUri", URI.toString())
-            mountainImageRef?.putFile(URI!!)?.addOnSuccessListener {
+            mountainImageRef?.putFile(imageURL!!)?.addOnSuccessListener {
                 mountainImageRef.downloadUrl.addOnSuccessListener { url ->
-                    Log.d("FirebaseUri", url.toString())
-                    //val Gallery = Gallery(url.toString(), galleryPath, getJwt()!!,null ,title, user?.name, info, null, 0)
-                    //database.galleryDao().insertGallery(Gallery)
-                    var intent: Intent = Intent()
-                    intent.putExtra("BestArtworkURL", url.toString())
-                    setResult(RESULT_OK, intent)
-                    finish()
+                    galleryModel.uid = currentUser?.uid
+                    galleryModel.title = title
+                    galleryModel.info = info
+                    galleryModel.imagePath = url.toString()
+                    firebaseDatabase.getReference().child("images").setValue(galleryModel)
                 }
             }?.addOnFailureListener{
                 Toast.makeText(this, "업로드 실패", Toast.LENGTH_SHORT).show()
                 Log.d("FirebaseUri", "FAIL", it)
-                finish()
             }
+            finish()
         }
 
     }
@@ -104,7 +116,7 @@ class AddGalleryActivity : AppCompatActivity() {
             when(requestCode){
                 REQ_GALLERY -> {
                     data?.data?.let { uri ->
-                        URI = uri
+                        imageURL = uri
                         binding.addgalleryIv.setImageURI(uri)
                         binding.addgalleryIv.scaleType = ImageView.ScaleType.FIT_XY
                     }
