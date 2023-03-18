@@ -16,6 +16,7 @@ import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.ListResult
 import com.google.firebase.storage.StorageReference
 import com.google.gson.Gson
+import java.io.Serializable
 
 class HomeFragment : Fragment() {
 
@@ -69,14 +70,17 @@ class HomeFragment : Fragment() {
     }
 
     private fun galleryOnClick(gallery: StorageReference){
+        var ref = reference(gallery)
         (context as MainActivity).supportFragmentManager.beginTransaction()
             .replace(R.id.main_frame, GalleryInfoFragment().apply {
                 arguments = Bundle().apply {
-                    val gson = Gson()
-                    val galleryJson = gson.toJson(gallery)
-                    putString("gallery", galleryJson)
+                   putSerializable("gallery", ref)
                 }
             })
             .commitNowAllowingStateLoss()
+    }
+
+    class reference(gallery: StorageReference) : Serializable {
+        var gallery = gallery
     }
 }
