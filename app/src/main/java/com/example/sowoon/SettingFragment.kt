@@ -61,6 +61,8 @@ class SettingFragment : Fragment() {
     }
 
     private fun initClickListener(){
+
+        //로그인
         binding.settingLoginTv.setOnClickListener {
             if(currentUser != null){
                 Toast.makeText(context, "이미 로그인되어있습니다.", Toast.LENGTH_SHORT).show()
@@ -69,6 +71,7 @@ class SettingFragment : Fragment() {
             }
         }
 
+        //회원가입
         binding.settingSignupTv.setOnClickListener {
             if(currentUser != null){
                 Toast.makeText(context, "이미 로그인되어있습니다.", Toast.LENGTH_SHORT).show()
@@ -77,10 +80,12 @@ class SettingFragment : Fragment() {
             }
         }
 
+        //채팅방 목록
         binding.settingChat.setOnClickListener {
             startActivity(Intent(requireContext(), MessageMenu::class.java))
         }
 
+        //로그아웃
         binding.settingLogoutTv.setOnClickListener {
             if(currentUser != null){
                 logOut()
@@ -89,6 +94,7 @@ class SettingFragment : Fragment() {
             }
         }
 
+        //내 정보
         binding.settingMyInfoTv.setOnClickListener {
             if(currentUser != null){
                 (context as MainActivity).supportFragmentManager.beginTransaction()
@@ -99,24 +105,17 @@ class SettingFragment : Fragment() {
             }
         }
 
+        //화가 등록
         binding.settingSignupArtistTv.setOnClickListener {
             if(currentUser != null){
-                firebaseDatabase.getReference().child("users").child(currentUser!!.uid).addListenerForSingleValueEvent(
-                    object: ValueEventListener {
-                        override fun onDataChange(snapshot: DataSnapshot) {
-                                var userModel = snapshot.getValue(UserModel::class.java)!!
-                                if (userModel.ifArtist) {
-                                    Toast.makeText(context, "이미 화가 등록 되어있습니다.", Toast.LENGTH_SHORT)
-                                        .show()
-                                } else {
-                                    startActivity(Intent(activity,
-                                        RegistArtistActivity::class.java))
-                                }
-
-                        }
-
-                        override fun onCancelled(error: DatabaseError) {}
-                    })
+                firebaseDatabase.getReference().child("users").child(currentUser!!.uid).get().addOnSuccessListener { snapshot ->
+                    var ifArtist = snapshot.getValue(UserModel::class.java)?.ifArtist
+                    if (ifArtist == true) {
+                        Toast.makeText(context, "이미 화가 등록 되어있습니다.", Toast.LENGTH_SHORT).show()
+                    } else {
+                        startActivity(Intent(activity, RegistArtistActivity::class.java))
+                    }
+                }
             }else{
                 Toast.makeText(context, "로그인 후 이용하시기 바랍니다.", Toast.LENGTH_SHORT).show()
             }
@@ -127,7 +126,10 @@ class SettingFragment : Fragment() {
             if(currentUser != null){
                 //database.userDao().deleteUser(User()!!)
                 removeJwt()
+                firebaseDatabase.getReference().child("users").child(currentUser!!.uid).removeValue()
+                firebaseDatabase.getReference().child("profile").child(currentUser!!.uid).removeValue()
                 firebaseAuth.currentUser?.delete()
+                currentUser = null
 //                var use = database.userDao().getUser(user!!.email, user!!.password)
                 //회원탈퇴시 좋아요 매커니즘 어떻게 할 것인지
 //                if (likeGallery != null) {
