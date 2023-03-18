@@ -8,6 +8,7 @@ import androidx.appcompat.app.AppCompatActivity
 import com.example.sowoon.databinding.ActivityLoginBinding
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.messaging.FirebaseMessaging
 import com.google.gson.Gson
 
 class LoginActivity : AppCompatActivity() {
@@ -42,9 +43,6 @@ class LoginActivity : AppCompatActivity() {
         }
         var email = binding.idEt.text.toString()
         var password = binding.passwordEt.text.toString()
-        Log.d("email", email)
-        Log.d("password", password)
-
         if(email != "" || password != ""){
             firebaseAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener{ task ->
                 if(task.isSuccessful){
@@ -53,6 +51,7 @@ class LoginActivity : AppCompatActivity() {
                     Toast.makeText(this, task.exception.toString(), Toast.LENGTH_LONG).show()
                 }
             }
+            createPushToken(firebaseAuth.currentUser?.uid.toString())
             startActivity(Intent(this, MainActivity::class.java))
 //            var user = database.userDao().getUser(email, password)
 //            saveJwt(user.id)
@@ -60,6 +59,16 @@ class LoginActivity : AppCompatActivity() {
         }
     }
 
+    //FCM token 생성
+    fun createPushToken(uid: String){
+        FirebaseMessaging.getInstance().token.addOnCompleteListener { task ->
+            Log.d("token", task.result.toString())
+            //database.userDao().insertPushToken(getJwt()!!, task.result.toString())
+            var map: MutableMap<String, Any> = HashMap()
+            map.put("pushToken", task.result.toString())
+            firebaseDatabase.getReference().child("users").child(uid).updateChildren(map)
+        }
+    }
 
     private fun saveJwt(jwt: String) {
         val spf = getSharedPreferences("auth", MODE_PRIVATE)
