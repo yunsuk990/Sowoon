@@ -8,4 +8,5 @@ class UserModel {
     var age: String? = null
 //    var password: String? = null
     var ifArtist: Boolean = false
+    var profileImg: String? = null
 }
