@@ -127,7 +127,7 @@ class SettingFragment : Fragment() {
                 //database.userDao().deleteUser(User()!!)
                 removeJwt()
                 firebaseDatabase.getReference().child("users").child(currentUser!!.uid).removeValue()
-                firebaseDatabase.getReference().child("profile").child(currentUser!!.uid).removeValue()
+                //firebaseDatabase.getReference().child("profile").child(currentUser!!.uid).removeValue()
                 firebaseAuth.currentUser?.delete()
                 currentUser = null
 //                var use = database.userDao().getUser(user!!.email, user!!.password)
