@@ -6,16 +6,18 @@ import android.view.*
 import android.widget.PopupMenu
 import androidx.fragment.app.Fragment
 import android.widget.Toast
-import androidx.appcompat.app.AppCompatActivity
 import com.bumptech.glide.Glide
-import com.example.sowoon.data.entity.Gallery
 import com.example.sowoon.data.entity.GalleryModel
-import com.example.sowoon.data.entity.User
+import com.example.sowoon.data.entity.UserModel
+import com.example.sowoon.data.entity.reference
 import com.example.sowoon.database.AppDatabase
 import com.example.sowoon.databinding.FragmentGalleryInfoBinding
-import com.example.sowoon.message.ChatRoomActivity
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ValueEventListener
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
@@ -28,11 +30,11 @@ class GalleryInfoFragment : Fragment() {
     lateinit var database: AppDatabase
     lateinit var firebaseStorage: FirebaseStorage
     lateinit var firebaseAuth: FirebaseAuth
+    lateinit var firebaseDatabase: FirebaseDatabase
     var galleryId: String = ""
-    var user: User? = null
     private var gson = Gson()
-    var galleryModel: GalleryModel? = null
     var currentUser: FirebaseUser? = null
+    var userModel: UserModel? = null
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -41,17 +43,24 @@ class GalleryInfoFragment : Fragment() {
     ): View? {
         binding = FragmentGalleryInfoBinding.inflate(inflater, container, false)
         //database = AppDatabase.getInstance(requireContext())!!
+        firebaseDatabase = FirebaseDatabase.getInstance()
         firebaseAuth = FirebaseAuth.getInstance()
         firebaseStorage = Firebase.storage
-        var ref = arguments?.getSerializable("gallery") as HomeFragment.reference
-        var gallery = ref.gallery
+        //var ref = arguments?.getSerializable("gallery") as reference
+        var ref = arguments?.getSerializable("gallery") as reference
+        var gallery = ref.gallery.getValue(GalleryModel::class.java)!!
+        setGallery(gallery)
 
-        galleryModel = getFirebaseGallery(gallery)
-
-
-        //if() binding.galleryInfoChatIv.visibility = View.INVISIBLE
-//        setOption(gallery)
-//        setGridView(gallery)
+        Log.d("userModel", userModel.toString())
+        if(currentUser?.uid == gallery.uid) {
+            binding.galleryInfoChatIv.visibility = View.INVISIBLE
+            binding.galleryOption.visibility = View.VISIBLE
+            setOption(ref.gallery.key)
+        }else{
+            binding.galleryInfoChatIv.visibility = View.VISIBLE
+            binding.galleryOption.visibility = View.INVISIBLE
+        }
+        setGridView(gallery, ref.gallery.key)
         return binding.root
     }
 
@@ -59,69 +68,63 @@ class GalleryInfoFragment : Fragment() {
         super.onStart()
         if(firebaseAuth.currentUser != null){
             currentUser = firebaseAuth.currentUser
+            firebaseDatabase.reference.child("users").child(currentUser!!.uid).get().addOnSuccessListener { snapshot ->
+                userModel = snapshot.getValue(UserModel::class.java)
+            }
         }
     }
 
-    private fun getFirebaseGallery(gallery: StorageReference): GalleryModel {
-        //var mountainImageRef: StorageReference? = firebaseStorage?.reference?.child("images")?.child(galleryPath)
-        var ref = GalleryModel()
-        gallery.metadata.addOnSuccessListener{ metadata ->
-            Log.d("metadata", metadata.toString())
-            ref.uid = metadata.getCustomMetadata("uid").toString()
-            ref.title = metadata.getCustomMetadata("title").toString()
-            ref.info = metadata.getCustomMetadata("info").toString()
-            Log.d("metadata", metadata.getCustomMetadata("info").toString())
-            setGallery(gallery)
-            //GalleryModel.like = metadata.getCustomMetadata("like") as Int
-        }
-        return ref
+    private fun setGridView(gallery: GalleryModel, key: String?) {
+        firebaseDatabase.getReference().child("images").orderByChild("artist").equalTo(gallery.artist).addListenerForSingleValueEvent(object: ValueEventListener{
+            var galleryList = ArrayList<DataSnapshot>()
+            override fun onDataChange(snapshot: DataSnapshot) {
+                for( item in snapshot.children){
+                    if(item.key != key){
+                        galleryList.add(item)
+                    }
+                }
+                var gridView = binding.galleryInfoGv
+                var adapter = ArtistGalleryGVAdapter(galleryList, requireContext())
+                adapter.itemClickListener(object: ArtistGalleryGVAdapter.MyItemClickListener{
+                    override fun artworkClick(gallery: DataSnapshot) {
+                        ArtworkClick(gallery)
+                    }
+                })
+                gridView.adapter = adapter
+            }
+
+            override fun onCancelled(error: DatabaseError) {}
+        })
     }
 
-//    private fun setGridView(gallery: StorageReference) {
-//        var datas = database.galleryDao().getUserGallery(getJwt()) as ArrayList<Gallery>
-//        datas.remove(gallery)
-//        var gridView = binding.galleryInfoGv
-//        var adapter = ArtistGalleryGVAdapter(datas as ArrayList<Gallery>, requireContext())
-//        adapter.itemClickListener(object: ArtistGalleryGVAdapter.MyItemClickListener{
-//            override fun artworkClick(gallery: Gallery) {
-//                ArtworkClick(gallery)
-//            }
-//        })
-//        gridView.adapter = adapter
-//
-//    }
-
-    private fun ArtworkClick(gallery: Gallery) {
+    private fun ArtworkClick(gallery: DataSnapshot) {
+        var ref = reference(gallery)
         (context as MainActivity).supportFragmentManager.beginTransaction()
             .replace(R.id.main_frame, GalleryInfoFragment().apply {
                 arguments = Bundle().apply {
-                    val gson = Gson()
-                    val galleryJson = gson.toJson(gallery)
-                    putString("gallery", galleryJson)
+                    putSerializable("gallery", ref)
+//                    val galleryJson = gson.toJson(gallery)
+//                    putString("gallery", galleryJson)
                 }
             })
             .commitNowAllowingStateLoss()
     }
 
-    private fun setGallery(gallery: StorageReference){
-        Glide.with(requireContext()).load(gallery.downloadUrl).into(binding.galleryInfoIv)
-        gallery.downloadUrl.addOnSuccessListener{ uri ->
-            var url = uri
-            Glide.with(requireContext()).load(url).into(binding.galleryInfoIv)
-        }
-        binding.todayAlbumTitle.text = galleryModel?.title
-        //binding.todayAlbumArtist.text = galleryModel?.artist
-        binding.todayAlbumInfo.text = galleryModel?.info
-        //binding.galleryInfoLikeCountTv.text = galleryModel?.like
+    private fun setGallery(gallery: GalleryModel){
+        Glide.with(requireContext()).load(gallery.imagePath).into(binding.galleryInfoIv)
+        binding.todayAlbumTitle.text = gallery?.title
+        binding.todayAlbumArtist.text = gallery?.artist
+        binding.todayAlbumInfo.text = gallery?.info
+        binding.galleryInfoLikeCountTv.text = gallery?.like.toString()
 
-        //좋아요 유무
-//        if( currentUser != null){
+        // 좋아요 유무
+//        if(currentUser != null){
 //            if(gallery.favorites?.contains(getJwt()) == true){
 //                binding.galleryInfoHeartIv.setImageResource(R.drawable.fullheart)
 //            }else{
 //                binding.galleryInfoHeartIv.setImageResource(R.drawable.blankheart)
 //            }
-//            initClickListener(gallery)
+//            //initClickListener(gallery)
 //        }
 
     }
@@ -166,14 +169,14 @@ class GalleryInfoFragment : Fragment() {
 //        }
 //    }
 
-    private fun setOption(gallery: StorageReference){
+    private fun setOption(key: String?){
         binding.galleryOption.setOnClickListener(object: View.OnClickListener{
             override fun onClick(p0: View?) {
                 var popup: PopupMenu = PopupMenu(context, p0)
                 MenuInflater(context).inflate(R.menu.option, popup.menu)
                 popup.setOnMenuItemClickListener { p0 ->
                     when (p0?.itemId) {
-                        R.id.delete -> deleteGallery(gallery)
+                        R.id.delete -> deleteGallery(key)
                         R.id.correct -> Toast.makeText(context, "수정 클릭", Toast.LENGTH_SHORT).show()
                     }
                     true
@@ -184,22 +187,19 @@ class GalleryInfoFragment : Fragment() {
         })
     }
 
-    private fun deleteGallery(gallery: StorageReference){
-        //database.galleryDao().deleteGallery(galleryId)
-        gallery.delete()
-//        val desertRef = storage.reference.child("images")?.child(getJwt().toString())?.child(
-//            galleryPath!!
-//        )
-//        desertRef?.delete()?.addOnSuccessListener {
-//            Log.d("DELETE", "SUCCESS")
-//            Toast.makeText(context, "삭제 성공", Toast.LENGTH_SHORT).show()
-//            (context as MainActivity).supportFragmentManager.beginTransaction()
-//                .replace(R.id.main_frame, GalleryFragment())
-//                .commitNowAllowingStateLoss()
-//        }?.addOnFailureListener{
-//            Log.d("DELETE", "FAIL")
-//            Toast.makeText(context, "삭제 실패", Toast.LENGTH_SHORT).show()
-//        }
+    private fun deleteGallery(key: String?){
+        var mountainImageRef: StorageReference? = firebaseStorage?.reference?.child("images")?.child(key!!)
+        mountainImageRef?.delete()?.addOnSuccessListener {
+            Log.d("DELETE", "SUCCESS")
+            Toast.makeText(context, "삭제 성공", Toast.LENGTH_SHORT).show()
+            (context as MainActivity).supportFragmentManager.beginTransaction()
+                .replace(R.id.main_frame, GalleryFragment())
+                .commitNowAllowingStateLoss()
+        }?.addOnFailureListener{
+            Log.d("DELETE", "FAIL")
+            Toast.makeText(context, "삭제 실패", Toast.LENGTH_SHORT).show()
+        }
+
     }
 
 
