@@ -34,7 +34,7 @@ class ArtistProfileFragment : Fragment() {
         val profileJson = arguments?.getString("profile")
         val profile = gson.fromJson(profileJson, Profile::class.java)
         setProfile(profile)
-        setGridView()
+        //setGridView()
         return binding.root
     }
 
@@ -56,18 +56,18 @@ class ArtistProfileFragment : Fragment() {
         return gson.fromJson(spf.getString("user", null), User::class.java)
     }
 
-    private fun setGridView() {
-        var datas = database.galleryDao().getUserGallery(getJwt()) as ArrayList<Gallery>
-        var gridView = binding.artistsProfileGv
-        var adapter = ArtistGalleryGVAdapter(datas as ArrayList<Gallery>, requireContext())
-        adapter.itemClickListener(object: ArtistGalleryGVAdapter.MyItemClickListener{
-            override fun artworkClick(gallery: Gallery) {
-                ArtworkClick(gallery)
-            }
-        })
-        gridView.adapter = adapter
-
-    }
+//    private fun setGridView() {
+//        var datas = database.galleryDao().getUserGallery(getJwt()) as ArrayList<Gallery>
+//        var gridView = binding.artistsProfileGv
+//        var adapter = ArtistGalleryGVAdapter(datas as ArrayList<Gallery>, requireContext())
+//        adapter.itemClickListener(object: ArtistGalleryGVAdapter.MyItemClickListener{
+//            override fun artworkClick(gallery: Gallery) {
+//                ArtworkClick(gallery)
+//            }
+//        })
+//        gridView.adapter = adapter
+//
+//    }
 
     private fun getJwt(): Int {
         val spf = activity?.getSharedPreferences("auth", AppCompatActivity.MODE_PRIVATE)
