@@ -1,20 +1,23 @@
 package com.example.sowoon
 
 import android.content.Context
+import android.provider.ContactsContract.Data
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.example.sowoon.data.entity.GalleryModel
 import com.example.sowoon.databinding.ItemTodayalbumBinding
+import com.google.firebase.database.DataSnapshot
 import com.google.firebase.storage.StorageReference
 
 class TodayGalleryRV(var context: Context): RecyclerView.Adapter<TodayGalleryRV.ViewHolder>() {
 
-    private var galleryList = ArrayList<StorageReference>()
+    private var galleryList = ArrayList<DataSnapshot>()
 
     interface MyItemOnClickListener{
-        fun galleryClick(gallery: StorageReference)
+        fun galleryClick(gallery: DataSnapshot)
     }
 
     private lateinit var mItemClickListener: MyItemOnClickListener
@@ -23,7 +26,7 @@ class TodayGalleryRV(var context: Context): RecyclerView.Adapter<TodayGalleryRV.
         mItemClickListener = itemClickListener
     }
 
-    fun addGallery(gallerys: ArrayList<StorageReference>){
+    fun addGallery(gallerys: ArrayList<DataSnapshot>){
         galleryList.clear()
         galleryList.addAll(gallerys)
         notifyDataSetChanged()
@@ -31,16 +34,12 @@ class TodayGalleryRV(var context: Context): RecyclerView.Adapter<TodayGalleryRV.
 
 
     inner class ViewHolder(val binding: ItemTodayalbumBinding): RecyclerView.ViewHolder(binding.root){
-        fun bind(gallery: StorageReference){
-            //var url = gallery.GalleryId
-            //Log.d("url",url.toString())
-            gallery.downloadUrl.addOnSuccessListener{ uri ->
-                var url = uri
-                Glide.with(context).load(url).into(binding.todayAlbumIv)
-            }
-//            binding.todayAlbumTitle.text = gallery.title
-//            binding.todayAlbumArtist.text = gallery.artist
-//            binding.todayAlbumInfo.text= gallery.info
+        fun bind(snapshot: DataSnapshot){
+            var gallery = snapshot.getValue(GalleryModel::class.java)!!
+            Glide.with(context).load(gallery.imagePath).into(binding.todayAlbumIv)
+            binding.todayAlbumTitle.text = gallery.title
+            binding.todayAlbumArtist.text = gallery.artist
+            binding.todayAlbumInfo.text= gallery.info
         }
     }
 
