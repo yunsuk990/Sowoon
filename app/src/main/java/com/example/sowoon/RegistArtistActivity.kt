@@ -96,8 +96,9 @@ class RegistArtistActivity : AppCompatActivity() {
                 profileModel.school = binding.myInfoSchoolInput.text.toString()
                 var map: MutableMap<String, Any> = HashMap()
                 map.put("ifArtist", true)
+                map.put("profileModel", profileModel)
                 firebaseDatabase.getReference().child("users").child(currentUser!!.uid).updateChildren(map)
-                firebaseDatabase.getReference().child("profile").child(currentUser!!.uid).setValue(profileModel)
+                //firebaseDatabase.getReference().child("profile").child(currentUser!!.uid).setValue(profileModel)
             }
         }
     }
