@@ -13,6 +13,7 @@ import com.bumptech.glide.Glide
 import com.example.sowoon.data.entity.Gallery
 import com.example.sowoon.data.entity.GalleryModel
 import com.example.sowoon.data.entity.User
+import com.example.sowoon.data.entity.UserModel
 import com.example.sowoon.database.AppDatabase
 import com.example.sowoon.databinding.ActivityAddGalleryBinding
 import com.google.android.gms.tasks.OnFailureListener
@@ -41,6 +42,7 @@ class AddGalleryActivity : AppCompatActivity() {
     lateinit var firebaseDatabase: FirebaseDatabase
     lateinit var storage: FirebaseStorage
     var currentUser: FirebaseUser? = null
+    var userModel: UserModel? = null
 
     val REQ_GALLERY = 10
     var imageURL: Uri? = null
@@ -54,8 +56,6 @@ class AddGalleryActivity : AppCompatActivity() {
         firebaseAuth = FirebaseAuth.getInstance()
         firebaseDatabase = FirebaseDatabase.getInstance()
 
-        //binding.addgalleryArtistInput.text = user?.name
-
         binding.addgalleryIv.setOnClickListener {
             openGallery()
         }
@@ -67,6 +67,11 @@ class AddGalleryActivity : AppCompatActivity() {
     override fun onStart() {
         super.onStart()
         currentUser = firebaseAuth.currentUser
+        firebaseDatabase.reference.child("users").child(currentUser!!.uid).get().addOnSuccessListener {
+                snapshot ->
+            userModel = snapshot.getValue(UserModel::class.java)
+            binding.addgalleryArtistInput.text = userModel?.name
+        }
     }
 
     private fun upload(){
@@ -93,7 +98,9 @@ class AddGalleryActivity : AppCompatActivity() {
                     galleryModel.title = title
                     galleryModel.info = info
                     galleryModel.imagePath = url.toString()
-                    firebaseDatabase.getReference().child("images").setValue(galleryModel)
+                    galleryModel.artist = userModel?.name
+
+                    firebaseDatabase.getReference().child("images").child(galleryPath).setValue(galleryModel)
                 }
             }?.addOnFailureListener{
                 Toast.makeText(this, "업로드 실패", Toast.LENGTH_SHORT).show()
