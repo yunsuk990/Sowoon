@@ -1,5 +1,6 @@
 package com.example.sowoon
 
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.*
@@ -12,6 +13,7 @@ import com.example.sowoon.data.entity.UserModel
 import com.example.sowoon.data.entity.reference
 import com.example.sowoon.database.AppDatabase
 import com.example.sowoon.databinding.FragmentGalleryInfoBinding
+import com.example.sowoon.message.ChatRoomActivity
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.database.DataSnapshot
@@ -31,10 +33,9 @@ class GalleryInfoFragment : Fragment() {
     lateinit var firebaseStorage: FirebaseStorage
     lateinit var firebaseAuth: FirebaseAuth
     lateinit var firebaseDatabase: FirebaseDatabase
-    var galleryId: String = ""
-    private var gson = Gson()
     var currentUser: FirebaseUser? = null
-    var userModel: UserModel? = null
+    var gallery: GalleryModel? = null
+    var ref: reference? = null
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -47,20 +48,10 @@ class GalleryInfoFragment : Fragment() {
         firebaseAuth = FirebaseAuth.getInstance()
         firebaseStorage = Firebase.storage
         //var ref = arguments?.getSerializable("gallery") as reference
-        var ref = arguments?.getSerializable("gallery") as reference
-        var gallery = ref.gallery.getValue(GalleryModel::class.java)!!
-        setGallery(gallery)
+        ref = arguments?.getSerializable("gallery") as reference
+        gallery = ref!!.gallery.getValue(GalleryModel::class.java)!!
 
-        Log.d("userModel", userModel.toString())
-        if(currentUser?.uid == gallery.uid) {
-            binding.galleryInfoChatIv.visibility = View.INVISIBLE
-            binding.galleryOption.visibility = View.VISIBLE
-            setOption(ref.gallery.key)
-        }else{
-            binding.galleryInfoChatIv.visibility = View.VISIBLE
-            binding.galleryOption.visibility = View.INVISIBLE
-        }
-        setGridView(gallery, ref.gallery.key)
+        Log.d("currentuser", currentUser.toString())
         return binding.root
     }
 
@@ -68,10 +59,21 @@ class GalleryInfoFragment : Fragment() {
         super.onStart()
         if(firebaseAuth.currentUser != null){
             currentUser = firebaseAuth.currentUser
-            firebaseDatabase.reference.child("users").child(currentUser!!.uid).get().addOnSuccessListener { snapshot ->
-                userModel = snapshot.getValue(UserModel::class.java)
+            Log.d("onStart CurrentUser", currentUser.toString())
+
+            setGallery(gallery!!, ref!!.gallery.key)
+
+            if(currentUser?.uid == gallery?.uid) {
+                binding.galleryInfoChatIv.visibility = View.INVISIBLE
+                binding.galleryOption.visibility = View.VISIBLE
+                setOption(ref?.gallery?.key)
+            }else{
+                binding.galleryInfoChatIv.visibility = View.VISIBLE
+                binding.galleryOption.visibility = View.INVISIBLE
             }
         }
+        setGridView(gallery!!, ref?.gallery?.key)
+
     }
 
     private fun setGridView(gallery: GalleryModel, key: String?) {
@@ -110,7 +112,7 @@ class GalleryInfoFragment : Fragment() {
             .commitNowAllowingStateLoss()
     }
 
-    private fun setGallery(gallery: GalleryModel){
+    private fun setGallery(gallery: GalleryModel, key: String?){
         Glide.with(requireContext()).load(gallery.imagePath).into(binding.galleryInfoIv)
         binding.todayAlbumTitle.text = gallery?.title
         binding.todayAlbumArtist.text = gallery?.artist
@@ -118,56 +120,64 @@ class GalleryInfoFragment : Fragment() {
         binding.galleryInfoLikeCountTv.text = gallery?.like.toString()
 
         // 좋아요 유무
-//        if(currentUser != null){
-//            if(gallery.favorites?.contains(getJwt()) == true){
-//                binding.galleryInfoHeartIv.setImageResource(R.drawable.fullheart)
-//            }else{
-//                binding.galleryInfoHeartIv.setImageResource(R.drawable.blankheart)
-//            }
-//            //initClickListener(gallery)
-//        }
+
+        if(currentUser != null) {
+            if(gallery.likeUid.contains(currentUser!!.uid)){
+                binding.galleryInfoHeartIv.setImageResource(R.drawable.fullheart)
+            }
+            initClickListener(key)
+        }else{
+            binding.galleryInfoHeartIv.setImageResource(R.drawable.blankheart)
+            binding.galleryInfoHeartIv.setOnClickListener {
+                Toast.makeText(requireContext(), "로그인 후 이용하시길 바랍니다." , Toast.LENGTH_SHORT).show()
+            }
+        }
 
     }
-//
-//    private fun getJwt(): String {
-//        val spf = activity?.getSharedPreferences("auth", AppCompatActivity.MODE_PRIVATE)
-//        var jwt = spf?.getString("jwt", null)
-//        return jwt!!
-//    }
-//
-//    private fun initClickListener(gallery: StorageReference?) {
-//            var jwt = getJwt()
-//            binding.galleryInfoHeartIv.setOnClickListener {
-//                if(getJwt() != 0){
-//                    var likeList: ArrayList<Int>? = gallery?.favorites
-//                    var galleryLikeCount: Int = gallery?.like!!
-//
-//                    if(likeList?.contains(jwt) == true){
-//                        likeList?.remove(jwt)
-//                        galleryLikeCount -= 1
-//                        binding.galleryInfoHeartIv.setImageResource(R.drawable.blankheart)
-//                    }else{
-//                        likeList?.add(jwt)
-//                        galleryLikeCount += 1
-//                        binding.galleryInfoHeartIv.setImageResource(R.drawable.fullheart)
-//
-//                    }
-//                    Log.d("LikeList", likeList.toString())
-//                    gallery.favorites = likeList
-//                    gallery.like = galleryLikeCount
-//                    database.galleryDao().updateGallery(gallery)
-//                }else{
-//                    Toast.makeText(context, "로그인 후 이용해주시길 바랍니다.", Toast.LENGTH_SHORT).show()
-//                }
-//            }
-//
-//        binding.galleryInfoChatIv.setOnClickListener {
-//            var intent = Intent(requireContext(), ChatRoomActivity::class.java)
+
+    private fun initClickListener(key: String?) {
+        var ref = firebaseDatabase.getReference().child("images").child(key!!)
+        ref.addListenerForSingleValueEvent(object: ValueEventListener{
+            override fun onDataChange(snapshot: DataSnapshot) {
+                var userList: ArrayList<String>? = ArrayList()
+                var galleryModel: GalleryModel? = null
+                    galleryModel = snapshot.getValue(GalleryModel::class.java)
+                    userList?.addAll(galleryModel!!.likeUid)
+
+                var galleryLikeCount = galleryModel!!.like
+
+                binding.galleryInfoHeartIv.setOnClickListener {
+                    if(userList!!.contains(currentUser!!.uid)){
+                        galleryLikeCount -= 1
+                        binding.galleryInfoHeartIv.setImageResource(R.drawable.blankheart)
+
+                        var map = HashMap<String, Any>()
+                        userList.remove(currentUser!!.uid)
+                        map.put("likeUid", userList)
+                        ref.updateChildren(map)
+                    }else{
+                        galleryLikeCount += 1
+                        binding.galleryInfoHeartIv.setImageResource(R.drawable.fullheart)
+
+                        var map = HashMap<String, Any>()
+                        userList.add(currentUser!!.uid)
+                        map.put("likeUid", userList)
+                        map.put("like", galleryLikeCount)
+                        ref.updateChildren(map)
+                    }
+                    binding.galleryInfoLikeCountTv.text = galleryLikeCount.toString()
+                }
+            }
+            override fun onCancelled(error: DatabaseError) {}
+        })
+
+        binding.galleryInfoChatIv.setOnClickListener {
+            var intent = Intent(requireContext(), ChatRoomActivity::class.java)
 //            intent.putExtra("userId", gallery?.userId.toString())
 //            intent.putExtra("Artist", gallery?.artist.toString())
-//            startActivity(intent)
-//        }
-//    }
+            startActivity(intent)
+        }
+    }
 
     private fun setOption(key: String?){
         binding.galleryOption.setOnClickListener(object: View.OnClickListener{
@@ -201,7 +211,4 @@ class GalleryInfoFragment : Fragment() {
         }
 
     }
-
-
-
 }
