@@ -9,5 +9,6 @@ class GalleryModel {
     var artist: String? = null
     var info: String? = null
     var like: Int = 0
+    var likeUid: ArrayList<String> = ArrayList()
     var imagePath: String? = null
 }
