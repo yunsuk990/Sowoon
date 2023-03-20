@@ -10,12 +10,18 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.example.sowoon.data.entity.Gallery
+import com.example.sowoon.data.entity.GalleryModel
 import com.example.sowoon.data.entity.User
+import com.example.sowoon.data.entity.reference
 import com.example.sowoon.database.AppDatabase
 import com.example.sowoon.databinding.FragmentGalleryBinding
 import com.example.sowoon.databinding.FragmentMainBinding
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ValueEventListener
 import com.google.gson.Gson
 
 class GalleryFragment : Fragment() {
@@ -24,6 +30,7 @@ class GalleryFragment : Fragment() {
     lateinit var database: AppDatabase
     lateinit var gson: Gson
     lateinit var firebaseAuth: FirebaseAuth
+    lateinit var firebaseDatabase: FirebaseDatabase
     var currentUser: FirebaseUser? = null
 
 
@@ -35,6 +42,7 @@ class GalleryFragment : Fragment() {
         binding = FragmentGalleryBinding.inflate(inflater, container, false)
         database = AppDatabase.getInstance(requireContext())!!
         firebaseAuth = FirebaseAuth.getInstance()
+        firebaseDatabase = FirebaseDatabase.getInstance()
 
         binding.addGallery.setOnClickListener {
             //나중에 앨범에서 사진 가져오기
@@ -58,33 +66,38 @@ class GalleryFragment : Fragment() {
     private fun initGridView(){
         var gridView = binding.galleryGv
         var gridViewAdapter = GalleryGVAdapter(requireContext())
-        var expGallery: ArrayList<Gallery>? = database.galleryDao().getAllGallery() as? ArrayList<Gallery>
-        Log.d("expGallery", expGallery.toString())
-        gridViewAdapter.addGallery(expGallery!!)
-        gridViewAdapter.itemClickListener(object: GalleryGVAdapter.MyItemClickListener{
-            override fun artworkClick(gallery: Gallery) {
-                ArtworkClick(gallery)
+        //var expGallery: ArrayList<Gallery>? = database.galleryDao().getAllGallery() as? ArrayList<Gallery>
+        firebaseDatabase.getReference().child("images").addListenerForSingleValueEvent(object: ValueEventListener{
+            override fun onDataChange(snapshot: DataSnapshot) {
+                var galleryList: ArrayList<DataSnapshot>? = ArrayList()
+                for(item in snapshot.children){
+                    galleryList!!.add(item)
+                }
+                galleryList?.let { gridViewAdapter.addGallery(it) }
+                gridViewAdapter.itemClickListener(object: GalleryGVAdapter.MyItemClickListener{
+                    override fun artworkClick(gallery: DataSnapshot) {
+                        ArtworkClick(gallery)
+                    }
+                })
+                gridView.adapter = gridViewAdapter
+
+
+            }
+
+            override fun onCancelled(error: DatabaseError) {
             }
         })
-        gridView.adapter = gridViewAdapter
     }
 
-    private fun ArtworkClick(gallery: Gallery){
+    private fun ArtworkClick(gallery: DataSnapshot){
+        var ref = reference(gallery)
         (context as MainActivity).supportFragmentManager.beginTransaction()
             .replace(R.id.main_frame, GalleryInfoFragment().apply {
                 arguments = Bundle().apply {
-                    val gson = Gson()
-                    val galleryJson = gson.toJson(gallery)
-                    putString("gallery", galleryJson)
+                    putSerializable("gallery", ref)
                 }
             })
             .commitNowAllowingStateLoss()
     }
 
-
-    private fun getJwt(): String? {
-        val spf = activity?.getSharedPreferences("auth", AppCompatActivity.MODE_PRIVATE)
-        var jwt = spf?.getString("jwt", null)
-        return jwt
-    }
 }
