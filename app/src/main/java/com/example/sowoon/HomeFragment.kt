@@ -60,10 +60,7 @@ class HomeFragment : Fragment() {
                 for(item in snapshot.children){
                     Log.d("item", item.toString())
                     Log.d("itemkey", item.key.toString())
-                    var galleryModel: GalleryModel? = item.getValue(GalleryModel::class.java)
-                    if (galleryModel != null) {
-                        galleryModelList?.add(item)
-                    }
+                    galleryModelList?.add(item)
                 }
                 if (galleryModelList != null) {
                     todayGalleryAdapter.addGallery(galleryModelList)
