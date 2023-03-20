@@ -86,7 +86,8 @@ class RegistArtistActivity : AppCompatActivity() {
     }
 
     private fun uploadImage(imageUri: Uri?){
-        var mountainImageRef: StorageReference? = storage?.reference?.child("images")?.child(imageUri?.lastPathSegment.toString())
+        var key = imageUri?.lastPathSegment.toString()
+        var mountainImageRef: StorageReference? = storage?.reference?.child("images")?.child(key)
         mountainImageRef?.putFile(imageUri!!)?.addOnSuccessListener {
             mountainImageRef.downloadUrl.addOnSuccessListener { url ->
                 var path = url.toString()
@@ -94,6 +95,7 @@ class RegistArtistActivity : AppCompatActivity() {
                 profileModel.bestArtwork = path
                 profileModel.awards = binding.myInfoAwardsInput.text.toString()
                 profileModel.school = binding.myInfoSchoolInput.text.toString()
+                profileModel.key = key
                 var map: MutableMap<String, Any> = HashMap()
                 map.put("ifArtist", true)
                 map.put("profileModel", profileModel)
