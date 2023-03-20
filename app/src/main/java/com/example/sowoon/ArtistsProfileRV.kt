@@ -3,6 +3,7 @@ package com.example.sowoon
 import android.content.Context
 import android.net.Uri
 import android.os.Bundle
+import android.provider.ContactsContract.Data
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
@@ -11,24 +12,26 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.net.toUri
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
-import com.example.sowoon.data.entity.Gallery
-import com.example.sowoon.data.entity.Profile
-import com.example.sowoon.data.entity.User
+import com.example.sowoon.data.entity.*
 import com.example.sowoon.database.AppDatabase
 import com.example.sowoon.databinding.ItemArtistsprofileBinding
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ValueEventListener
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
 import com.google.firebase.storage.ktx.storage
 import com.google.gson.Gson
 
-class ArtistsProfileRV(private val profileList: ArrayList<Profile>, var context: Context): RecyclerView.Adapter<ArtistsProfileRV.ViewHolder>() {
+class ArtistsProfileRV(var context: Context): RecyclerView.Adapter<ArtistsProfileRV.ViewHolder>() {
 
-    lateinit var database: AppDatabase
-    lateinit var storage: FirebaseStorage
+    var profileList: ArrayList<DataSnapshot> = ArrayList()
+    var firebaseDatabase: FirebaseDatabase = FirebaseDatabase.getInstance()
 
 
     interface MyItemClickOnListener {
-        fun profileArtworkClick(profile: Profile, database: AppDatabase)
+        fun profileArtworkClick(profile: UserModel)
     }
 
     private lateinit var mItemClickListener: MyItemClickOnListener
@@ -38,19 +41,25 @@ class ArtistsProfileRV(private val profileList: ArrayList<Profile>, var context:
     }
 
     inner class ViewHolder(val binding: ItemArtistsprofileBinding): RecyclerView.ViewHolder(binding.root){
-        fun bind(profile: Profile){
-            database = AppDatabase.getInstance(context!!)!!
-            storage = FirebaseStorage.getInstance()
-            var userId = profile.userId
-            var profileImg = database.profileDao().getProfileImg(userId)
+        fun bind(profile: UserModel){
+            var profileImg = profile.profileImg
+            var profileModel = profile.profileModel
+            var bestGallery = profileModel?.bestArtwork
+
+            firebaseDatabase.reference.child("images").child(profileModel?.key!!).addValueEventListener(object: ValueEventListener{
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    var galleryModel: GalleryModel? = snapshot.getValue(GalleryModel::class.java)
+                    binding.profileArtistArtworkTv.text = galleryModel?.title
+                    binding.profileArtistArtworkInfoTv.text = galleryModel?.info
+                    notifyDataSetChanged()
+                }
+                override fun onCancelled(error: DatabaseError) {}
+            })
             binding.profileIv.scaleType = (ImageView.ScaleType.FIT_XY)
             Glide.with(context).load(profileImg).into(binding.profileIv)
-            var bestGallery = database.galleryDao().getBestArtwork(profile.bestArtwork.toString())
-            Glide.with(context).load(bestGallery?.GalleryId).into(binding.profileArtistArtworkIv)
-            binding.profileArtistAgeTv.text = profile.school
+            Glide.with(context).load(bestGallery).into(binding.profileArtistArtworkIv)
+            binding.profileArtistAgeTv.text = profileModel?.school
             binding.profileArtistNameTv.text = profile.name
-            binding.profileArtistArtworkTv.text = bestGallery?.title
-            binding.profileArtistArtworkInfoTv.text = bestGallery?.info
 
             binding.artistsProfile.setOnClickListener{
                 (context as MainActivity).supportFragmentManager.beginTransaction()
@@ -72,17 +81,20 @@ class ArtistsProfileRV(private val profileList: ArrayList<Profile>, var context:
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        holder.bind(profileList[position])
-        holder.binding.profileArtistArtworkIv.setOnClickListener {
-            mItemClickListener.profileArtworkClick(profileList[position], database)
+        var profile: UserModel? = profileList[position].getValue(UserModel::class.java)
+        if (profile != null) {
+            holder.bind(profile)
+            holder.binding.profileArtistArtworkIv.setOnClickListener {
+                mItemClickListener.profileArtworkClick(profile)
+            }
         }
     }
 
     override fun getItemCount(): Int = profileList.size
 
-    fun addProfile(profile: Profile){
+    fun addProfile(userList: ArrayList<DataSnapshot>){
         profileList.clear()
-        profileList.add(profile)
+        profileList.addAll(userList)
         notifyDataSetChanged()
     }
 }
