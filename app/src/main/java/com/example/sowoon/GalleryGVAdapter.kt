@@ -10,14 +10,16 @@ import android.widget.BaseAdapter
 import androidx.core.net.toUri
 import com.bumptech.glide.Glide
 import com.example.sowoon.data.entity.Gallery
+import com.example.sowoon.data.entity.GalleryModel
 import com.example.sowoon.databinding.ItemArtistgalleryBinding
+import com.google.firebase.database.DataSnapshot
 
 class GalleryGVAdapter(var context: Context): BaseAdapter() {
 
-    val galleryList = ArrayList<Gallery>()
+    val galleryList = ArrayList<DataSnapshot>()
 
     interface MyItemClickListener {
-        fun artworkClick(gallery: Gallery)
+        fun artworkClick(gallery: DataSnapshot)
     }
 
     private lateinit var mItemClickListener: MyItemClickListener
@@ -42,15 +44,16 @@ class GalleryGVAdapter(var context: Context): BaseAdapter() {
 
     override fun getView(p0: Int, p1: View?, p2: ViewGroup?): View {
         var binding = ItemArtistgalleryBinding.inflate(LayoutInflater.from(p2?.context), p2, false)
-        var galleryUrl = galleryList[p0].GalleryId!!
-        Glide.with(context).load(galleryUrl).into(binding.galleryIv)
+        var gallery: GalleryModel? = galleryList[p0].getValue(GalleryModel::class.java)
+
+        Glide.with(context).load(gallery?.imagePath).into(binding.galleryIv)
         binding.galleryIv.setOnClickListener {
             mItemClickListener.artworkClick(galleryList[p0])
         }
         return binding.root
     }
 
-    fun addGallery(gallerys: ArrayList<Gallery>){
+    fun addGallery(gallerys: ArrayList<DataSnapshot>){
         galleryList.clear()
         galleryList.addAll(gallerys)
         notifyDataSetChanged()
