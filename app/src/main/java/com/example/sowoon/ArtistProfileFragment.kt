@@ -13,6 +13,7 @@ import com.bumptech.glide.Glide
 import com.example.sowoon.data.entity.Gallery
 import com.example.sowoon.data.entity.Profile
 import com.example.sowoon.data.entity.User
+import com.example.sowoon.data.entity.UserModel
 import com.example.sowoon.database.AppDatabase
 import com.example.sowoon.databinding.FragmentArtistProfileBinding
 import com.google.gson.Gson
@@ -32,28 +33,18 @@ class ArtistProfileFragment : Fragment() {
         binding = FragmentArtistProfileBinding.inflate(inflater, container, false)
         database = AppDatabase.getInstance(requireContext())!!
         val profileJson = arguments?.getString("profile")
-        val profile = gson.fromJson(profileJson, Profile::class.java)
+        val profile = gson.fromJson(profileJson, UserModel::class.java)
         setProfile(profile)
         //setGridView()
         return binding.root
     }
 
-    private fun setProfile(profile: Profile){
-        var user = User()
-        var age = database.userDao().getUser(user!!.email, user!!.password)?.age
+    private fun setProfile(profile: UserModel){
         binding.artistsProfileName.text = profile.name + " 화가"
-        binding.artistsProfileSchoolInput.text = profile.school
-        binding.artistsProfileAwardsInput.text = profile.awards
-        binding.artistsProfileAgeInput.text = age.toString()
-        var uri = database.profileDao().getProfileImg(getJwt())
-        Glide.with(requireContext()).load(uri).into(binding.artistsProfileIv)
-    }
-
-    private fun User(): User? {
-        gson = Gson()
-        val spf =
-            requireActivity().getSharedPreferences("userProfile", AppCompatActivity.MODE_PRIVATE)
-        return gson.fromJson(spf.getString("user", null), User::class.java)
+        binding.artistsProfileSchoolInput.text = profile.profileModel?.school
+        binding.artistsProfileAwardsInput.text = profile.profileModel?.awards
+        binding.artistsProfileAgeInput.text = profile.age
+        Glide.with(requireContext()).load(profile.profileImg).into(binding.artistsProfileIv)
     }
 
 //    private fun setGridView() {
