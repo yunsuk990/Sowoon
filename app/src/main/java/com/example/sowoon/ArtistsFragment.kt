@@ -12,6 +12,7 @@ import androidx.room.Database
 import com.example.sowoon.data.entity.Gallery
 import com.example.sowoon.data.entity.Profile
 import com.example.sowoon.data.entity.UserModel
+import com.example.sowoon.data.entity.reference
 import com.example.sowoon.database.AppDatabase
 import com.example.sowoon.databinding.FragmentArtistsBinding
 import com.google.firebase.database.DataSnapshot
@@ -35,41 +36,20 @@ class ArtistsFragment : Fragment() {
         binding = FragmentArtistsBinding.inflate(inflater, container, false)
         //database = AppDatabase.getInstance(requireContext())!!
         firebaseDatabase = FirebaseDatabase.getInstance()
+        val adapter = ArtistsProfileRV(requireContext())
+        binding.artistsRv.adapter = adapter
+        binding.artistsRv.layoutManager = LinearLayoutManager(context, GridLayoutManager.VERTICAL, false)
         firebaseDatabase.getReference().child("users").orderByChild("ifArtist").equalTo(true).addListenerForSingleValueEvent(object: ValueEventListener{
             override fun onDataChange(snapshot: DataSnapshot) {
                 var userList: ArrayList<DataSnapshot> = ArrayList()
                 for(item in snapshot.children){
                     userList.add(item)
                 }
-                val adapter = ArtistsProfileRV(requireContext())
                 adapter.addProfile(userList)
-                binding.artistsRv.adapter = adapter
-                binding.artistsRv.layoutManager = LinearLayoutManager(context, GridLayoutManager.VERTICAL, false)
-
-                adapter.itemClickListener(object: ArtistsProfileRV.MyItemClickOnListener{
-                    override fun profileArtworkClick(profile: UserModel) {
-                        profileArtwork(profile)
-                    }
-                })
             }
 
             override fun onCancelled(error: DatabaseError) {}
         })
         return binding.root
-    }
-
-
-
-    //화가 대표작 클릭 시
-    private fun profileArtwork(profile: UserModel){
-        (context as MainActivity).supportFragmentManager.beginTransaction()
-            .replace(R.id.main_frame, GalleryInfoFragment().apply {
-                arguments = Bundle().apply {
-                    val gson = Gson()
-                    val galleryJson = gson.toJson(gallery)
-                    putString("gallery", galleryJson)
-                }
-            })
-            .commitNowAllowingStateLoss()
     }
 }
