@@ -44,7 +44,7 @@ class ArtistProfileFragment : Fragment() {
     }
 
     private fun setGridView(profile: UserModel) {
-        firebaseDatabase.getReference().child("images").orderByChild("artist").equalTo(profile.name).addValueEventListener(object:
+        firebaseDatabase.getReference().child("images").orderByChild("artist").equalTo(profile.name).addListenerForSingleValueEvent(object:
             ValueEventListener {
             var galleryList = ArrayList<GalleryModel>()
             override fun onDataChange(snapshot: DataSnapshot) {
@@ -55,7 +55,7 @@ class ArtistProfileFragment : Fragment() {
                     }
                 }
                 var gridView = binding.artistsProfileGv
-                var adapter = ArtistGalleryGVAdapter(galleryList, requireContext())
+                var adapter = ArtistGalleryGVAdapter(requireContext())
                 adapter.itemClickListener(object: ArtistGalleryGVAdapter.MyItemClickListener{
                     override fun artworkClick(gallery: GalleryModel) {
                         ArtworkClick(gallery)
