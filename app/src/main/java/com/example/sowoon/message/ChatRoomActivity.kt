@@ -9,11 +9,13 @@ import com.example.sowoon.data.entity.ChatModel
 import com.example.sowoon.data.entity.UserModel
 import com.example.sowoon.database.AppDatabase
 import com.example.sowoon.databinding.ActivityChatRoomBinding
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.ktx.getValue
+import com.google.firebase.ktx.Firebase
 import com.google.gson.Gson
 import okhttp3.*
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
@@ -28,18 +30,22 @@ class ChatRoomActivity : AppCompatActivity() {
     lateinit var firebaseDB: FirebaseDatabase
     private var chatRoomUid: String? = null
     private var destUid: String? = null
-    lateinit var database: AppDatabase
+    lateinit var firebaseAuth: FirebaseAuth
     var time = SimpleDateFormat("HH:mm")
+    var uid: String? = null
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityChatRoomBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        database = AppDatabase.getInstance(this)!!
-        destUid = intent.getStringExtra("userId").toString() //채팅을 당하는 유저 jwt
-        var artist = database.userDao().getUserProfile(destUid!!.toInt()).name
         firebaseDB = FirebaseDatabase.getInstance()
+        firebaseAuth = FirebaseAuth.getInstance()
+
+        uid = firebaseAuth.currentUser?.uid.toString()
+        destUid = intent.getStringExtra("userUid").toString() //채팅을 당하는 유저 jwt
+        var artist = intent.getStringExtra("Artist").toString()
+
         binding.chatRoomSendTitleTv.text = artist+ " 작가"
         binding.backBtn.setOnClickListener {
             finish()
@@ -48,11 +54,10 @@ class ChatRoomActivity : AppCompatActivity() {
             startActivity(intent)
         }
 
-        if(getJwt() != 0){
             binding.chatRoomSendBtn.setOnClickListener {
                 var chatModel = ChatModel()
                 chatModel.users.add(destUid.toString())
-                chatModel.users.add(getJwt().toString())
+                chatModel.users.add(uid!!)
                 Log.d("user", chatModel.users.toString())
 
                 if (chatRoomUid == null) {
@@ -63,7 +68,7 @@ class ChatRoomActivity : AppCompatActivity() {
                         }
                 } else {
                     var comment: ChatModel.Comment = ChatModel.Comment()
-                    comment.userId = getJwt()
+                    comment.userId = uid
                     comment.message = binding.chatRoomSendEt.text.toString()
                     comment.timestamp = time.format(Date())
                     firebaseDB.getReference().child("chatrooms").child(chatRoomUid!!).child("comments")
@@ -74,14 +79,12 @@ class ChatRoomActivity : AppCompatActivity() {
                 }
             }
             checkChatRoom()
-
-        }
     }
 
     private fun sendFCM(){
         var gson = Gson()
         var notificationModel: NotificationModel = NotificationModel()
-        firebaseDB.getReference().child("users").child(destUid!!).addListenerForSingleValueEvent(object: ValueEventListener{
+        firebaseDB.getReference().child("users").orderByChild("jwt").equalTo(destUid!!).addListenerForSingleValueEvent(object: ValueEventListener{
             override fun onDataChange(snapshot: DataSnapshot) {
                 for(item in snapshot.children){
                     var userModel = item.getValue(UserModel::class.java)
@@ -119,7 +122,7 @@ class ChatRoomActivity : AppCompatActivity() {
     //유효성 검사
     private fun checkChatRoom(){
         Log.d("checkChatRoom", "Start")
-        firebaseDB.getReference().child("chatrooms").orderByChild("users/${getJwt()}")
+        firebaseDB.getReference().child("chatrooms").orderByChild("users/${uid}")
             .addListenerForSingleValueEvent(object: ValueEventListener{
                 override fun onDataChange(snapshot: DataSnapshot) {
                     Log.d("item", snapshot.children.toString())
@@ -137,7 +140,7 @@ class ChatRoomActivity : AppCompatActivity() {
                             binding.chatRoomSendBtn.isEnabled = true
 
                             binding.chatRoomSendRv.layoutManager = LinearLayoutManager(baseContext ,LinearLayoutManager.VERTICAL, false)
-                            var adapter = ChatMessageRVAdapter(chatRoomUid!!, baseContext)
+                            var adapter = ChatMessageRVAdapter(chatRoomUid!!, baseContext, destUid!!)
                             adapter.setMyItemClickListener(object: ChatMessageRVAdapter.uiInterface{
                                 override fun scrollRV(size: Int) {
                                     binding.chatRoomSendRv.scrollToPosition(size)
@@ -152,11 +155,4 @@ class ChatRoomActivity : AppCompatActivity() {
                 override fun onCancelled(error: DatabaseError) {}
             })
     }
-
-    private fun getJwt(): Int? {
-        val spf = getSharedPreferences("auth", MODE_PRIVATE)
-        var jwt = spf?.getInt("jwt", 0)
-        return jwt
-    }
-
 }
