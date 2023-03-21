@@ -94,6 +94,7 @@ class AddGalleryActivity : AppCompatActivity() {
             var mountainImageRef: StorageReference? = storage?.reference?.child("images")?.child(galleryPath)
             mountainImageRef?.putFile(imageURL!!)?.addOnSuccessListener {
                 mountainImageRef.downloadUrl.addOnSuccessListener { url ->
+                    galleryModel.galleryKey = galleryPath
                     galleryModel.uid = currentUser?.uid
                     galleryModel.title = title
                     galleryModel.info = info
