@@ -2,20 +2,13 @@ package com.example.sowoon
 
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
-import androidx.appcompat.app.AppCompatActivity
-import com.example.sowoon.data.entity.Gallery
-import com.example.sowoon.data.entity.GalleryModel
-import com.example.sowoon.data.entity.User
-import com.example.sowoon.data.entity.reference
 import com.example.sowoon.database.AppDatabase
 import com.example.sowoon.databinding.FragmentGalleryBinding
-import com.example.sowoon.databinding.FragmentMainBinding
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.database.DataSnapshot
