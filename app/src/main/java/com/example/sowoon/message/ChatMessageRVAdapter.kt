@@ -13,6 +13,8 @@ import com.bumptech.glide.Glide
 import com.example.sowoon.R
 import com.example.sowoon.TodayGalleryRV
 import com.example.sowoon.data.entity.ChatModel
+import com.example.sowoon.data.entity.User
+import com.example.sowoon.data.entity.UserModel
 import com.example.sowoon.database.AppDatabase
 import com.example.sowoon.databinding.ItemMessageBinding
 import com.google.firebase.database.DataSnapshot
@@ -24,17 +26,20 @@ import com.google.firebase.database.ktx.getValue
 class ChatMessageRVAdapter(): RecyclerView.Adapter<ChatMessageRVAdapter.ViewHolder>() {
 
     lateinit var comments: MutableList<ChatModel.Comment>
-    lateinit var database: AppDatabase
-    var jwt: Int = 0
     lateinit var Context: Context
+    var userModel: UserModel? = null
 
-    constructor(chatRoomUid: String, context: Context) : this() {
+    constructor(chatRoomUid: String, context: Context, desUid: String) : this() {
         Context = context
-        database = AppDatabase.getInstance(context)!!
         comments = ArrayList()
-        val spf = context.getSharedPreferences("auth", AppCompatActivity.MODE_PRIVATE)
-        jwt = spf?.getInt("jwt", 0)!!
-        getMessageList(chatRoomUid)
+        FirebaseDatabase.getInstance().getReference().child("users").child(desUid).addListenerForSingleValueEvent(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                userModel = snapshot.getValue(UserModel::class.java)
+                getMessageList(chatRoomUid)
+            }
+
+            override fun onCancelled(error: DatabaseError) {}
+        })
     }
 
     interface uiInterface{
@@ -67,19 +72,18 @@ class ChatMessageRVAdapter(): RecyclerView.Adapter<ChatMessageRVAdapter.ViewHold
 
     inner class ViewHolder(var binding: ItemMessageBinding): RecyclerView.ViewHolder(binding.root){
         fun bind(item: ChatModel.Comment){
-            var user = database.userDao().getUserProfile(item.userId!!)
             binding.messageItemTv.text = item.message.toString()
             binding.messageItemTimestamp.text = item.timestamp
 
-            if(item.userId!!.equals(jwt)){
+            if(item.userId!!.equals(userModel?.jwt)){
                 binding.messageItemTv.setBackgroundResource(R.drawable.rightbubble)
                 binding.messageItemLinear1.visibility = View.INVISIBLE
                 binding.messageItemContainer.gravity = Gravity.RIGHT
 
             }else{
-                Glide.with(Context).load(database.profileDao().getProfileImg(item.userId!!)).centerCrop().into(binding.messageItemIv)
+                Glide.with(Context).load(userModel?.profileImg).centerCrop().into(binding.messageItemIv)
                 binding.messageItemTv.setBackgroundResource(R.drawable.leftbubble)
-                binding.messageItemNameTv.text = user.name
+                binding.messageItemNameTv.text = userModel?.name
                 binding.messageItemLinear1.visibility = View.VISIBLE
                 binding.messageItemContainer.gravity = Gravity.LEFT
             }
