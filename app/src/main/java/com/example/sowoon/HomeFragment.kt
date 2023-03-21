@@ -1,7 +1,6 @@
 package com.example.sowoon
 
 import android.os.Bundle
-import android.provider.ContactsContract.Data
 import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -9,21 +8,15 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.sowoon.data.entity.GalleryModel
-import com.example.sowoon.data.entity.reference
 import com.example.sowoon.database.AppDatabase
 import com.example.sowoon.databinding.FragmentMainBinding
-import com.google.android.gms.tasks.OnSuccessListener
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 import com.google.firebase.storage.FirebaseStorage
-import com.google.firebase.storage.ListResult
-import com.google.firebase.storage.StorageReference
 import com.google.gson.Gson
-import java.io.Serializable
 
 class HomeFragment : Fragment() {
 
@@ -56,11 +49,14 @@ class HomeFragment : Fragment() {
 
         firebaseDatabase.getReference().child("images").addListenerForSingleValueEvent(object: ValueEventListener{
             override fun onDataChange(snapshot: DataSnapshot) {
-                var galleryModelList: ArrayList<DataSnapshot>? = ArrayList()
+                var galleryModelList: ArrayList<GalleryModel>? = ArrayList()
                 for(item in snapshot.children){
                     Log.d("item", item.toString())
                     Log.d("itemkey", item.key.toString())
-                    galleryModelList?.add(item)
+                    var galleryModel: GalleryModel? = item.getValue(GalleryModel::class.java)
+                    if (galleryModel != null) {
+                        galleryModelList?.add(galleryModel)
+                    }
                 }
                 if (galleryModelList != null) {
                     todayGalleryAdapter.addGallery(galleryModelList)
@@ -70,21 +66,19 @@ class HomeFragment : Fragment() {
         })
 
         todayGalleryAdapter.setMyItemClickListener(object: TodayGalleryRV.MyItemOnClickListener{
-            override fun galleryClick(gallery: DataSnapshot) {
+            override fun galleryClick(gallery: GalleryModel) {
                 galleryOnClick(gallery)
             }
         })
     }
 
-    private fun galleryOnClick(gallery: DataSnapshot){
-        var ref = reference(gallery)
+    private fun galleryOnClick(gallery: GalleryModel){
         (context as MainActivity).supportFragmentManager.beginTransaction()
             .replace(R.id.main_frame, GalleryInfoFragment().apply {
-                arguments = Bundle().apply {
-                   putSerializable("gallery", ref)
-//                    val galleryJson = gson.toJson(gallery)
-//                    putString("gallery", galleryJson)
-                }
+                var galleryJson = gson.toJson(gallery)
+                var bundle = Bundle()
+                bundle.putString("gallery", galleryJson)
+                arguments = bundle
             })
             .commitNowAllowingStateLoss()
     }
