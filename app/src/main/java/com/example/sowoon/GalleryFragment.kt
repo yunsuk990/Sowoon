@@ -7,6 +7,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import com.example.sowoon.data.entity.GalleryModel
 import com.example.sowoon.database.AppDatabase
 import com.example.sowoon.databinding.FragmentGalleryBinding
 import com.google.firebase.auth.FirebaseAuth
@@ -62,19 +63,22 @@ class GalleryFragment : Fragment() {
         //var expGallery: ArrayList<Gallery>? = database.galleryDao().getAllGallery() as? ArrayList<Gallery>
         firebaseDatabase.getReference().child("images").addListenerForSingleValueEvent(object: ValueEventListener{
             override fun onDataChange(snapshot: DataSnapshot) {
-                var galleryList: ArrayList<DataSnapshot>? = ArrayList()
+                var galleryList: ArrayList<GalleryModel>? = ArrayList()
                 for(item in snapshot.children){
-                    galleryList!!.add(item)
+                    var galleryModel = item.getValue(GalleryModel::class.java)
+                    if (galleryModel != null) {
+                        galleryList!!.add(galleryModel)
+                    }
                 }
-                galleryList?.let { gridViewAdapter.addGallery(it) }
+                if (galleryList != null) {
+                    gridViewAdapter.addGallery(galleryList)
+                }
+                gridView.adapter = gridViewAdapter
                 gridViewAdapter.itemClickListener(object: GalleryGVAdapter.MyItemClickListener{
-                    override fun artworkClick(gallery: DataSnapshot) {
+                    override fun artworkClick(gallery: GalleryModel) {
                         ArtworkClick(gallery)
                     }
                 })
-                gridView.adapter = gridViewAdapter
-
-
             }
 
             override fun onCancelled(error: DatabaseError) {
@@ -82,12 +86,13 @@ class GalleryFragment : Fragment() {
         })
     }
 
-    private fun ArtworkClick(gallery: DataSnapshot){
-        var ref = reference(gallery)
+    private fun ArtworkClick(gallery: GalleryModel){
         (context as MainActivity).supportFragmentManager.beginTransaction()
             .replace(R.id.main_frame, GalleryInfoFragment().apply {
                 arguments = Bundle().apply {
-                    putSerializable("gallery", ref)
+                    val gson = Gson()
+                    val galleryJson = gson.toJson(gallery)
+                    putString("gallery", galleryJson)
                 }
             })
             .commitNowAllowingStateLoss()
