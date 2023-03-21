@@ -9,8 +9,14 @@ import com.bumptech.glide.Glide
 import com.example.sowoon.data.entity.GalleryModel
 import com.example.sowoon.databinding.ItemArtistgalleryBinding
 
-class ArtistGalleryGVAdapter(var galleryList: ArrayList<GalleryModel>?, var context: Context): BaseAdapter() {
+class ArtistGalleryGVAdapter(var context: Context): BaseAdapter() {
 
+    var galleryList: ArrayList<GalleryModel>? = ArrayList()
+
+    fun addGalleryList(gallerys: ArrayList<GalleryModel>){
+        galleryList?.addAll(gallerys)
+        notifyDataSetChanged()
+    }
 
     interface MyItemClickListener {
         fun artworkClick(gallery: GalleryModel)
@@ -37,10 +43,8 @@ class ArtistGalleryGVAdapter(var galleryList: ArrayList<GalleryModel>?, var cont
         var gallery = galleryList?.get(p0)
         Glide.with(context).load(gallery?.imagePath).centerCrop().into(binding.galleryIv)
         binding.galleryIv.setOnClickListener {
-            mItemClickListener.artworkClick(galleryList!![p0])
+            mItemClickListener.artworkClick(gallery!!)
         }
         return binding.root
     }
-
-
 }
