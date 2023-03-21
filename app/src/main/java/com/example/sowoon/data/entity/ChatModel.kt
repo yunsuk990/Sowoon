@@ -7,7 +7,7 @@ class ChatModel {
 
     class Comment {
         var message: String? = null
-        var userId: Int? = 0
+        var userId: String? = null
         var timestamp: String? = null
     }
 
