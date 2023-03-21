@@ -14,10 +14,10 @@ import com.google.firebase.storage.StorageReference
 
 class TodayGalleryRV(var context: Context): RecyclerView.Adapter<TodayGalleryRV.ViewHolder>() {
 
-    private var galleryList = ArrayList<DataSnapshot>()
+    private var galleryList = ArrayList<GalleryModel>()
 
     interface MyItemOnClickListener{
-        fun galleryClick(gallery: DataSnapshot)
+        fun galleryClick(gallery: GalleryModel)
     }
 
     private lateinit var mItemClickListener: MyItemOnClickListener
@@ -26,7 +26,7 @@ class TodayGalleryRV(var context: Context): RecyclerView.Adapter<TodayGalleryRV.
         mItemClickListener = itemClickListener
     }
 
-    fun addGallery(gallerys: ArrayList<DataSnapshot>){
+    fun addGallery(gallerys: ArrayList<GalleryModel>){
         galleryList.clear()
         galleryList.addAll(gallerys)
         notifyDataSetChanged()
@@ -34,8 +34,7 @@ class TodayGalleryRV(var context: Context): RecyclerView.Adapter<TodayGalleryRV.
 
 
     inner class ViewHolder(val binding: ItemTodayalbumBinding): RecyclerView.ViewHolder(binding.root){
-        fun bind(snapshot: DataSnapshot){
-            var gallery = snapshot.getValue(GalleryModel::class.java)!!
+        fun bind(gallery: GalleryModel){
             Glide.with(context).load(gallery.imagePath).into(binding.todayAlbumIv)
             binding.todayAlbumTitle.text = gallery.title
             binding.todayAlbumArtist.text = gallery.artist
