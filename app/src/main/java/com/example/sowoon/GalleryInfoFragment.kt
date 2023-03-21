@@ -46,11 +46,14 @@ class GalleryInfoFragment : Fragment() {
 
         //이미지 모델 가져오기
         var bundle = arguments
-        var galleryGson= bundle?.getString("gallery")
+        var galleryGson = bundle?.getString("gallery")
         gallery = gson.fromJson(galleryGson, GalleryModel::class.java)
-            //이미지 모델 정보 삽입하기
+
+        //이미지 모델 정보 삽입하기
         setGallery(gallery!!)
-        setGridView(gallery!!, gallery!!.galleryKey)
+
+        //작가 다른 작품
+        setGridView(gallery!!)
         Log.d("gallery", gallery.toString())
 
         //대화방 이동
@@ -60,7 +63,6 @@ class GalleryInfoFragment : Fragment() {
             intent.putExtra("Artist", gallery?.artist.toString())
             startActivity(intent)
         }
-
 
         if(firebaseAuth.currentUser != null){
             Log.d("onStart CurrentUser", currentUser.toString())
@@ -76,26 +78,49 @@ class GalleryInfoFragment : Fragment() {
         return binding.root
     }
 
-    private fun setGridView(gallery: GalleryModel, key: String?) {
-        firebaseDatabase.getReference().child("images").orderByChild("artist").equalTo(gallery.artist).addListenerForSingleValueEvent(object: ValueEventListener{
+    @JvmName("setGallery1")
+    private fun setGallery(gallery: GalleryModel) {
+        Glide.with(requireContext()).load(gallery!!.imagePath).into(binding.galleryInfoIv)
+        binding.todayAlbumTitle.text = gallery?.title
+        binding.todayAlbumArtist.text = gallery?.artist
+        binding.todayAlbumInfo.text = gallery?.info
+        binding.galleryInfoLikeCountTv.text = gallery?.like.toString()
+
+        // 좋아요 유무
+        if(currentUser != null) {
+            if(gallery!!.likeUid.contains(currentUser!!.uid)){
+                binding.galleryInfoHeartIv.setImageResource(R.drawable.fullheart)
+            }
+            initClickListener(gallery!!.galleryKey)
+        }else{
+            binding.galleryInfoHeartIv.setImageResource(R.drawable.blankheart)
+            binding.galleryInfoHeartIv.setOnClickListener {
+                Toast.makeText(requireContext(), "로그인 후 이용하시길 바랍니다." , Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
+
+    fun setGridView(gallery: GalleryModel?) {
+        var gridView = binding.galleryInfoGv
+        var adapter = ArtistGalleryGVAdapter(requireContext())
+        adapter.itemClickListener(object: ArtistGalleryGVAdapter.MyItemClickListener{
+            override fun artworkClick(gallery: GalleryModel) {
+                ArtworkClick(gallery)
+            }
+        })
+        gridView.adapter = adapter
+        firebaseDatabase.getReference().child("images").orderByChild("artist").equalTo(gallery!!.artist).addListenerForSingleValueEvent(object: ValueEventListener{
             var galleryList = ArrayList<GalleryModel>()
             override fun onDataChange(snapshot: DataSnapshot) {
                 for( item in snapshot.children){
-//                    if(item.key != key){
-                    var galleryModel = item.getValue(GalleryModel::class.java)
-                    if (galleryModel != null) {
-                        galleryList.add(galleryModel)
+                    if(item.key != gallery!!.galleryKey){
+                        var galleryModel = item.getValue(GalleryModel::class.java)
+                        if (galleryModel != null) {
+                            galleryList.add(galleryModel)
+                        }
                     }
-                   // }
                 }
-                var gridView = binding.galleryInfoGv
-                var adapter = ArtistGalleryGVAdapter(galleryList, requireContext())
-                adapter.itemClickListener(object: ArtistGalleryGVAdapter.MyItemClickListener{
-                    override fun artworkClick(gallery: GalleryModel) {
-                        ArtworkClick(gallery)
-                    }
-                })
-                gridView.adapter = adapter
+                adapter.addGalleryList(galleryList)
             }
 
             override fun onCancelled(error: DatabaseError) {}
@@ -105,40 +130,15 @@ class GalleryInfoFragment : Fragment() {
     private fun ArtworkClick(gallery: GalleryModel) {
         (context as MainActivity).supportFragmentManager.beginTransaction()
             .replace(R.id.main_frame, GalleryInfoFragment().apply {
-                arguments = Bundle().apply {
-                    var galleryJson = gson.toJson(gallery)
-                    var bundle = Bundle()
-                    bundle.putString("gallery", galleryJson)
-                    arguments = bundle
-                }
+                var galleryJson = gson.toJson(gallery)
+                var bundle = Bundle()
+                bundle.putString("gallery", galleryJson)
+                arguments = bundle
             })
             .commitNowAllowingStateLoss()
     }
 
-    @JvmName("setGallery1")
-    fun setGallery(gallery: GalleryModel){
-        Log.d("setGallery", gallery.toString())
-        Glide.with(requireContext()).load(gallery.imagePath).into(binding.galleryInfoIv)
-        binding.todayAlbumTitle.text = gallery?.title
-        binding.todayAlbumArtist.text = gallery?.artist
-        binding.todayAlbumInfo.text = gallery?.info
-        binding.galleryInfoLikeCountTv.text = gallery?.like.toString()
-
-        // 좋아요 유무
-
-        if(currentUser != null) {
-            if(gallery.likeUid.contains(currentUser!!.uid)){
-                binding.galleryInfoHeartIv.setImageResource(R.drawable.fullheart)
-            }
-            initClickListener(gallery.galleryKey)
-        }else{
-            binding.galleryInfoHeartIv.setImageResource(R.drawable.blankheart)
-            binding.galleryInfoHeartIv.setOnClickListener {
-                Toast.makeText(requireContext(), "로그인 후 이용하시길 바랍니다." , Toast.LENGTH_SHORT).show()
-            }
-        }
-    }
-
+    // 좋아요 버튼 클릭 시
     private fun initClickListener(key: String?) {
         var ref = firebaseDatabase.getReference().child("images").child(key!!)
         ref.addListenerForSingleValueEvent(object: ValueEventListener{
