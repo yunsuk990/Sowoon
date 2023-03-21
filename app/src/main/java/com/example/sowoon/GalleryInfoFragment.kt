@@ -9,9 +9,6 @@ import androidx.fragment.app.Fragment
 import android.widget.Toast
 import com.bumptech.glide.Glide
 import com.example.sowoon.data.entity.GalleryModel
-import com.example.sowoon.data.entity.UserModel
-import com.example.sowoon.data.entity.reference
-import com.example.sowoon.database.AppDatabase
 import com.example.sowoon.databinding.FragmentGalleryInfoBinding
 import com.example.sowoon.message.ChatRoomActivity
 import com.google.firebase.auth.FirebaseAuth
@@ -29,13 +26,12 @@ import com.google.gson.Gson
 class GalleryInfoFragment : Fragment() {
 
     lateinit var binding: FragmentGalleryInfoBinding
-    lateinit var database: AppDatabase
     lateinit var firebaseStorage: FirebaseStorage
     lateinit var firebaseAuth: FirebaseAuth
     lateinit var firebaseDatabase: FirebaseDatabase
+    var gson: Gson = Gson()
     var currentUser: FirebaseUser? = null
     var gallery: GalleryModel? = null
-    var ref: reference? = null
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -43,52 +39,59 @@ class GalleryInfoFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         binding = FragmentGalleryInfoBinding.inflate(inflater, container, false)
-        //database = AppDatabase.getInstance(requireContext())!!
         firebaseDatabase = FirebaseDatabase.getInstance()
         firebaseAuth = FirebaseAuth.getInstance()
         firebaseStorage = Firebase.storage
-        //var ref = arguments?.getSerializable("gallery") as reference
-        ref = arguments?.getSerializable("gallery") as reference
-        gallery = ref!!.gallery.getValue(GalleryModel::class.java)!!
+        currentUser = firebaseAuth.currentUser
 
-        Log.d("currentuser", currentUser.toString())
-        return binding.root
-    }
+        //이미지 모델 가져오기
+        var bundle = arguments
+        var galleryGson= bundle?.getString("gallery")
+        gallery = gson.fromJson(galleryGson, GalleryModel::class.java)
+            //이미지 모델 정보 삽입하기
+        setGallery(gallery!!)
+        setGridView(gallery!!, gallery!!.galleryKey)
+        Log.d("gallery", gallery.toString())
 
-    override fun onStart() {
-        super.onStart()
+        //대화방 이동
+        binding.galleryInfoChatIv.setOnClickListener {
+            var intent = Intent(context, ChatRoomActivity::class.java)
+            intent.putExtra("userUid", gallery?.uid)
+            intent.putExtra("Artist", gallery?.artist.toString())
+            startActivity(intent)
+        }
+
+
         if(firebaseAuth.currentUser != null){
-            currentUser = firebaseAuth.currentUser
             Log.d("onStart CurrentUser", currentUser.toString())
-
-            setGallery(gallery!!, ref!!.gallery.key)
-
             if(currentUser?.uid == gallery?.uid) {
                 binding.galleryInfoChatIv.visibility = View.INVISIBLE
                 binding.galleryOption.visibility = View.VISIBLE
-                setOption(ref?.gallery?.key)
+                setOption(gallery!!.galleryKey)
             }else{
                 binding.galleryInfoChatIv.visibility = View.VISIBLE
                 binding.galleryOption.visibility = View.INVISIBLE
             }
         }
-        setGridView(gallery!!, ref?.gallery?.key)
-
+        return binding.root
     }
 
     private fun setGridView(gallery: GalleryModel, key: String?) {
         firebaseDatabase.getReference().child("images").orderByChild("artist").equalTo(gallery.artist).addListenerForSingleValueEvent(object: ValueEventListener{
-            var galleryList = ArrayList<DataSnapshot>()
+            var galleryList = ArrayList<GalleryModel>()
             override fun onDataChange(snapshot: DataSnapshot) {
                 for( item in snapshot.children){
-                    if(item.key != key){
-                        galleryList.add(item)
+//                    if(item.key != key){
+                    var galleryModel = item.getValue(GalleryModel::class.java)
+                    if (galleryModel != null) {
+                        galleryList.add(galleryModel)
                     }
+                   // }
                 }
                 var gridView = binding.galleryInfoGv
                 var adapter = ArtistGalleryGVAdapter(galleryList, requireContext())
                 adapter.itemClickListener(object: ArtistGalleryGVAdapter.MyItemClickListener{
-                    override fun artworkClick(gallery: DataSnapshot) {
+                    override fun artworkClick(gallery: GalleryModel) {
                         ArtworkClick(gallery)
                     }
                 })
@@ -99,20 +102,22 @@ class GalleryInfoFragment : Fragment() {
         })
     }
 
-    private fun ArtworkClick(gallery: DataSnapshot) {
-        var ref = reference(gallery)
+    private fun ArtworkClick(gallery: GalleryModel) {
         (context as MainActivity).supportFragmentManager.beginTransaction()
             .replace(R.id.main_frame, GalleryInfoFragment().apply {
                 arguments = Bundle().apply {
-                    putSerializable("gallery", ref)
-//                    val galleryJson = gson.toJson(gallery)
-//                    putString("gallery", galleryJson)
+                    var galleryJson = gson.toJson(gallery)
+                    var bundle = Bundle()
+                    bundle.putString("gallery", galleryJson)
+                    arguments = bundle
                 }
             })
             .commitNowAllowingStateLoss()
     }
 
-    private fun setGallery(gallery: GalleryModel, key: String?){
+    @JvmName("setGallery1")
+    fun setGallery(gallery: GalleryModel){
+        Log.d("setGallery", gallery.toString())
         Glide.with(requireContext()).load(gallery.imagePath).into(binding.galleryInfoIv)
         binding.todayAlbumTitle.text = gallery?.title
         binding.todayAlbumArtist.text = gallery?.artist
@@ -125,14 +130,13 @@ class GalleryInfoFragment : Fragment() {
             if(gallery.likeUid.contains(currentUser!!.uid)){
                 binding.galleryInfoHeartIv.setImageResource(R.drawable.fullheart)
             }
-            initClickListener(key)
+            initClickListener(gallery.galleryKey)
         }else{
             binding.galleryInfoHeartIv.setImageResource(R.drawable.blankheart)
             binding.galleryInfoHeartIv.setOnClickListener {
                 Toast.makeText(requireContext(), "로그인 후 이용하시길 바랍니다." , Toast.LENGTH_SHORT).show()
             }
         }
-
     }
 
     private fun initClickListener(key: String?) {
@@ -170,13 +174,6 @@ class GalleryInfoFragment : Fragment() {
             }
             override fun onCancelled(error: DatabaseError) {}
         })
-
-        binding.galleryInfoChatIv.setOnClickListener {
-            var intent = Intent(requireContext(), ChatRoomActivity::class.java)
-//            intent.putExtra("userId", gallery?.userId.toString())
-//            intent.putExtra("Artist", gallery?.artist.toString())
-            startActivity(intent)
-        }
     }
 
     private fun setOption(key: String?){
@@ -209,6 +206,5 @@ class GalleryInfoFragment : Fragment() {
             Log.d("DELETE", "FAIL")
             Toast.makeText(context, "삭제 실패", Toast.LENGTH_SHORT).show()
         }
-
     }
 }
