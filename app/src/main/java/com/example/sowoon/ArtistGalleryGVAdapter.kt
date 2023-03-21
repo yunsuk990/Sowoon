@@ -1,22 +1,19 @@
 package com.example.sowoon
 
 import android.content.Context
-import android.provider.ContactsContract.Data
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.BaseAdapter
 import com.bumptech.glide.Glide
-import com.example.sowoon.data.entity.Gallery
 import com.example.sowoon.data.entity.GalleryModel
 import com.example.sowoon.databinding.ItemArtistgalleryBinding
-import com.google.firebase.database.DataSnapshot
 
-class ArtistGalleryGVAdapter(var galleryList: ArrayList<DataSnapshot>?, var context: Context): BaseAdapter() {
+class ArtistGalleryGVAdapter(var galleryList: ArrayList<GalleryModel>?, var context: Context): BaseAdapter() {
 
 
     interface MyItemClickListener {
-        fun artworkClick(gallery: DataSnapshot)
+        fun artworkClick(gallery: GalleryModel)
     }
 
     private lateinit var mItemClickListener: MyItemClickListener
@@ -37,7 +34,7 @@ class ArtistGalleryGVAdapter(var galleryList: ArrayList<DataSnapshot>?, var cont
 
     override fun getView(p0: Int, p1: View?, p2: ViewGroup?): View {
         var binding = ItemArtistgalleryBinding.inflate(LayoutInflater.from(p2?.context), p2, false)
-        var gallery = galleryList?.get(p0)?.getValue(GalleryModel::class.java)
+        var gallery = galleryList?.get(p0)
         Glide.with(context).load(gallery?.imagePath).centerCrop().into(binding.galleryIv)
         binding.galleryIv.setOnClickListener {
             mItemClickListener.artworkClick(galleryList!![p0])
