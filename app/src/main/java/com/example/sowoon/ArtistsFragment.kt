@@ -7,6 +7,8 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.sowoon.data.entity.GalleryModel
+import com.example.sowoon.data.entity.UserModel
 import com.example.sowoon.database.AppDatabase
 import com.example.sowoon.databinding.FragmentArtistsBinding
 import com.google.firebase.database.DataSnapshot
@@ -33,9 +35,12 @@ class ArtistsFragment : Fragment() {
         binding.artistsRv.layoutManager = LinearLayoutManager(context, GridLayoutManager.VERTICAL, false)
         firebaseDatabase.getReference().child("users").orderByChild("ifArtist").equalTo(true).addListenerForSingleValueEvent(object: ValueEventListener{
             override fun onDataChange(snapshot: DataSnapshot) {
-                var userList: ArrayList<DataSnapshot> = ArrayList()
+                var userList: ArrayList<UserModel> = ArrayList()
                 for(item in snapshot.children){
-                    userList.add(item)
+                    var profileModel = item.getValue(UserModel::class.java)
+                    if (profileModel != null) {
+                        userList.add(profileModel)
+                    }
                 }
                 adapter.addProfile(userList)
             }
