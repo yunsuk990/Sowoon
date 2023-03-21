@@ -16,10 +16,10 @@ import com.google.firebase.database.DataSnapshot
 
 class GalleryGVAdapter(var context: Context): BaseAdapter() {
 
-    val galleryList = ArrayList<DataSnapshot>()
+    val galleryList = ArrayList<GalleryModel>()
 
     interface MyItemClickListener {
-        fun artworkClick(gallery: DataSnapshot)
+        fun artworkClick(gallery: GalleryModel)
     }
 
     private lateinit var mItemClickListener: MyItemClickListener
@@ -44,8 +44,7 @@ class GalleryGVAdapter(var context: Context): BaseAdapter() {
 
     override fun getView(p0: Int, p1: View?, p2: ViewGroup?): View {
         var binding = ItemArtistgalleryBinding.inflate(LayoutInflater.from(p2?.context), p2, false)
-        var gallery: GalleryModel? = galleryList[p0].getValue(GalleryModel::class.java)
-
+        var gallery: GalleryModel? = galleryList[p0]
         Glide.with(context).load(gallery?.imagePath).into(binding.galleryIv)
         binding.galleryIv.setOnClickListener {
             mItemClickListener.artworkClick(galleryList[p0])
@@ -53,7 +52,7 @@ class GalleryGVAdapter(var context: Context): BaseAdapter() {
         return binding.root
     }
 
-    fun addGallery(gallerys: ArrayList<DataSnapshot>){
+    fun addGallery(gallerys: ArrayList<GalleryModel>){
         galleryList.clear()
         galleryList.addAll(gallerys)
         notifyDataSetChanged()
