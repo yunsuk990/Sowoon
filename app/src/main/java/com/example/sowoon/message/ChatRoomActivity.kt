@@ -44,7 +44,8 @@ class ChatRoomActivity : AppCompatActivity() {
 
         uid = firebaseAuth.currentUser?.uid.toString()
         destUid = intent.getStringExtra("userUid").toString() //채팅을 당하는 유저 jwt
-        var artist = intent.getStringExtra("Artist").toString()
+        var artist = intent.getStringExtra("artist").toString()
+        Log.d("artist", artist)
 
         binding.chatRoomSendTitleTv.text = artist+ " 작가"
         binding.backBtn.setOnClickListener {
@@ -56,9 +57,8 @@ class ChatRoomActivity : AppCompatActivity() {
 
             binding.chatRoomSendBtn.setOnClickListener {
                 var chatModel = ChatModel()
-                chatModel.users.add(destUid.toString())
+                chatModel.users.add(destUid!!)
                 chatModel.users.add(uid!!)
-                Log.d("user", chatModel.users.toString())
 
                 if (chatRoomUid == null) {
                     binding.chatRoomSendBtn.isEnabled = false //요청 가기도 전에 버튼 누르는 것을 방지
@@ -81,23 +81,50 @@ class ChatRoomActivity : AppCompatActivity() {
             checkChatRoom()
     }
 
+    //유효성 검사
+    private fun checkChatRoom(){
+        firebaseDB.getReference().child("chatrooms").orderByChild("users/${uid}")
+            .addListenerForSingleValueEvent(object: ValueEventListener{
+                override fun onDataChange(snapshot: DataSnapshot) {
+
+                    for(item in snapshot.children){
+                        //ChatModel.user 를 Map으로 정의해도 가져올떄 배열로 가져와서 오류
+                        var chatModel: ChatModel = item.getValue<ChatModel>()!!
+
+                        if(chatModel.users?.contains(destUid)!!){
+                            chatRoomUid = item.key
+                            binding.chatRoomSendBtn.isEnabled = true
+                            binding.chatRoomSendRv.layoutManager = LinearLayoutManager(baseContext ,LinearLayoutManager.VERTICAL, false)
+
+                            var adapter = ChatMessageRVAdapter(chatRoomUid!!, baseContext, destUid!!)
+                            adapter.setMyItemClickListener(object: ChatMessageRVAdapter.uiInterface{
+                                override fun scrollRV(size: Int) {
+                                    binding.chatRoomSendRv.scrollToPosition(size)
+                                }
+                            })
+                            binding.chatRoomSendRv.adapter = adapter
+                        }
+                    }
+                }
+                override fun onCancelled(error: DatabaseError) {}
+            })
+    }
+
     private fun sendFCM(){
         var gson = Gson()
         var notificationModel: NotificationModel = NotificationModel()
-        firebaseDB.getReference().child("users").orderByChild("jwt").equalTo(destUid!!).addListenerForSingleValueEvent(object: ValueEventListener{
+        firebaseDB.getReference().child("users").child(destUid.toString()).addListenerForSingleValueEvent(object: ValueEventListener{
             override fun onDataChange(snapshot: DataSnapshot) {
-                for(item in snapshot.children){
-                    var userModel = item.getValue(UserModel::class.java)
-                    notificationModel.to = userModel?.pushToken.toString()
-                    notificationModel.notification.text = binding.chatRoomSendEt.text.toString()
-                    notificationModel.notification.title = "보낸이 아이디"
-                }
+                var userModel = snapshot.getValue(UserModel::class.java)
+//                    notificationModel.to = userModel?.pushToken.toString()
+                notificationModel.to = "cOOVJ76ARKq_SS_kDUhKEk:APA91bEuLKu9b9bIdvTFqJ_f51Scswo46sh3msYL57pOl-k6LIvPwcRY0qrDUfaM2Yqlmelw4iYcZM7lgKge6ARefsK-85RYCzLIOiC5rmTOog55AH-SKRjRtpTkh5Uxr0XrhQbgzv3M"
+                notificationModel.notification.text = binding.chatRoomSendEt.text.toString()
+                notificationModel.notification.title = "보낸이 아이디"
             }
 
             override fun onCancelled(error: DatabaseError) {
                 TODO("Not yet implemented")
             }
-
         })
 
         var requestBody: RequestBody = RequestBody.create("application/json; charset=utf8".toMediaTypeOrNull(), gson.toJson(notificationModel))
@@ -114,45 +141,9 @@ class ChatRoomActivity : AppCompatActivity() {
             }
 
             override fun onResponse(call: Call, response: Response) {
+                Log.d("Okhttp3", "fail")
             }
 
         })
-    }
-
-    //유효성 검사
-    private fun checkChatRoom(){
-        Log.d("checkChatRoom", "Start")
-        firebaseDB.getReference().child("chatrooms").orderByChild("users/${uid}")
-            .addListenerForSingleValueEvent(object: ValueEventListener{
-                override fun onDataChange(snapshot: DataSnapshot) {
-                    Log.d("item", snapshot.children.toString())
-                    for(item in snapshot.children){
-                        Log.d("desUid", destUid.toString())
-
-
-                        //ChatModel.user 를 Map으로 정의해도 가져올떄 배열로 가져와서 오류
-                        var chatModel: ChatModel = item.getValue<ChatModel>()!!
-                        Log.d("array", chatModel.users.toString())
-
-
-                        if(chatModel.users?.contains(destUid)!!){
-                            chatRoomUid = item.key
-                            binding.chatRoomSendBtn.isEnabled = true
-
-                            binding.chatRoomSendRv.layoutManager = LinearLayoutManager(baseContext ,LinearLayoutManager.VERTICAL, false)
-                            var adapter = ChatMessageRVAdapter(chatRoomUid!!, baseContext, destUid!!)
-                            adapter.setMyItemClickListener(object: ChatMessageRVAdapter.uiInterface{
-                                override fun scrollRV(size: Int) {
-                                    binding.chatRoomSendRv.scrollToPosition(size)
-                                }
-
-                            })
-                            binding.chatRoomSendRv.adapter = adapter
-
-                        }
-                    }
-                }
-                override fun onCancelled(error: DatabaseError) {}
-            })
     }
 }
