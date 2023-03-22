@@ -133,6 +133,7 @@ class GalleryInfoFragment : Fragment() {
                 var galleryJson = gson.toJson(gallery)
                 var bundle = Bundle()
                 bundle.putString("gallery", galleryJson)
+                bundle.putString("artist", gallery.artist)
                 arguments = bundle
             })
             .commitNowAllowingStateLoss()
