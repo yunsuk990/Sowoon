@@ -21,10 +21,6 @@ class MainActivity : AppCompatActivity() {
         initBottomNavgitaion()
     }
 
-    override fun onStart() {
-        super.onStart()
-    }
-
     private fun initBottomNavgitaion(){
         supportFragmentManager.beginTransaction()
             .replace(R.id.main_frame, HomeFragment())
