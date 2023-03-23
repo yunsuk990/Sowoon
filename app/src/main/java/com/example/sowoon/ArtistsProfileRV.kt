@@ -37,6 +37,7 @@ class ArtistsProfileRV(var context: Context): RecyclerView.Adapter<ArtistsProfil
                     Glide.with(context).load(bestGallery).into(binding.profileArtistArtworkIv)
                     binding.profileArtistAgeTv.text = profileModel?.school
                     binding.profileArtistNameTv.text = profile.name
+
                     binding.profileIv.setOnClickListener{
                         (context as MainActivity).supportFragmentManager.beginTransaction()
                             .replace(R.id.main_frame, ArtistProfileFragment().apply {
