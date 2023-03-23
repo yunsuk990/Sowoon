@@ -9,5 +9,6 @@ class UserModel {
 //    var password: String? = null
     var ifArtist: Boolean = false
     var profileImg: String? = null
+    var profieImgKey: String? = null
     var profileModel: ProfileModel? = null
 }
