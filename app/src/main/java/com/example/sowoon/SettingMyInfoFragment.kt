@@ -15,12 +15,17 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.net.toUri
 import com.bumptech.glide.Glide
-import com.example.sowoon.data.entity.Gallery
-import com.example.sowoon.data.entity.Profile
-import com.example.sowoon.data.entity.User
+import com.bumptech.glide.disklrucache.DiskLruCache.Value
+import com.example.sowoon.data.entity.*
 import com.example.sowoon.database.AppDatabase
 import com.example.sowoon.databinding.FragmentSettingBinding
 import com.example.sowoon.databinding.FragmentSettingMyInfoBinding
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseUser
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ValueEventListener
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
@@ -34,9 +39,14 @@ class SettingMyInfoFragment : Fragment() {
     lateinit var gson: Gson
     lateinit var database: AppDatabase
     lateinit var storage: FirebaseStorage
-    var GalleryId: String = ""
+    lateinit var firebaseDatabase: FirebaseDatabase
+    lateinit var firebaseAuth: FirebaseAuth
+    val REQ_ARTWORK = 11
     val REQ_GALLERY = 10
-    var URI: Uri? = null
+    var ProfileURI: Uri? = null
+    var ArtworkURI: Uri? = null
+    var currentUser: FirebaseUser? = null
+    var userModel: UserModel? = null
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -46,45 +56,68 @@ class SettingMyInfoFragment : Fragment() {
         binding = FragmentSettingMyInfoBinding.inflate(inflater, container, false)
         database = AppDatabase.getInstance(requireContext())!!
         storage = Firebase.storage
-        var user: User = User()
-        initInfo(user)
+        firebaseAuth = FirebaseAuth.getInstance()
+        firebaseDatabase = FirebaseDatabase.getInstance()
+        currentUser = firebaseAuth.currentUser
+        initInfo()
         return binding.root
     }
 
-    private fun User(): User {
-        gson = Gson()
-        val spf =
-            requireActivity().getSharedPreferences("userProfile", AppCompatActivity.MODE_PRIVATE)
-        var user = spf.getString("user", null)
-        return gson.fromJson(user, User::class.java)
+    private fun initInfo(){
+        firebaseDatabase.reference.child("users").child(currentUser!!.uid).addListenerForSingleValueEvent(object: ValueEventListener{
+            override fun onDataChange(snapshot: DataSnapshot) {
+                userModel = snapshot.getValue(UserModel::class.java)
+                binding.myInfoName.text = userModel!!.name
+                binding.myInfoAgeInput.text = userModel!!.age
+
+                //프로필 이미지 초기화
+                if(userModel!!.profileImg == null){
+//            binding.myInfoIv.scaleType = (ImageView.ScaleType.FIT_XY)
+                    binding.myInfoIv.setImageResource(R.drawable.add)
+                }else{
+//            binding.myInfoIv.scaleType = (ImageView.ScaleType.FIT_XY)
+                    Glide.with(requireContext()).load(userModel!!.profileImg).into(binding.myInfoIv)
+                }
+
+                //프로필 사진 수정
+                binding.myInfoIv.setOnClickListener {
+                    openGallery()
+                }
+
+                if(userModel?.ifArtist == true){
+                    var profile = userModel!!.profileModel
+                    binding.myInfoSchoolInput.text = profile?.school
+                    binding.myInfoAwardsInput.text = profile?.awards
+                    getBestArwork(userModel!!.profileModel?.bestArtwork)
+
+                    binding.myInfoBestArtworkIv.setOnClickListener {
+                        openArtworkGallery()
+                    }
+
+                    //업로드 버튼 클릭 시
+                    binding.uploadBtn.setOnClickListener {
+                        uploadGallery(ProfileURI, ArtworkURI)
+                    }
+
+                }else{
+                    binding.myInfoSchoolInput.visibility = View.INVISIBLE
+                    binding.myInfoAwardsInput.visibility = View.INVISIBLE
+                    binding.myInfoBestArtworkIv.visibility = View.INVISIBLE
+                    //업로드 버튼 클릭 시
+                    binding.uploadBtn.setOnClickListener {
+                        uploadGallery(ProfileURI)
+                    }
+                }
+            }
+
+            override fun onCancelled(error: DatabaseError) {}
+        })
     }
 
-    private fun initInfo(user: User){
-        var user = database.userDao().getUser(user.email, user.password)
-        var profile: Profile? = null
-        if(user?.ifArtist!!){
-            profile = database.profileDao().getProfile(user.id)!!
-            var bestartwork = profile?.bestArtwork
-            binding.myInfoName.text = user.name
-            binding.myInfoAgeInput.text = user.age
-            binding.myInfoSchoolInput.text = profile?.school.toString()
-            binding.myInfoAwardsInput.text = profile?.awards.toString()
-            getProfileImage()
-            getBestArwork(bestartwork)
-            initClickListener(profile)
-        }else{
-            binding.myInfoName.text = user?.name
-            binding.myInfoAgeInput.text = user?.age
-            binding.myInfoSchoolInput.setOnClickListener {
-                Toast.makeText(context, "화가 등록 후 설정하실 수 있습니다.", Toast.LENGTH_SHORT).show()
-            }
-            binding.myInfoAwardsInput.setOnClickListener{
-                Toast.makeText(context, "화가 등록 후 설정하실 수 있습니다.", Toast.LENGTH_SHORT).show()
-            }
-            binding.myInfoBestArtworkIv.setOnClickListener {
-                Toast.makeText(context, "화가 등록 후 설정하실 수 있습니다.", Toast.LENGTH_SHORT).show()
-            }
-        }
+    private fun openArtworkGallery() {
+        val intent = Intent(Intent.ACTION_PICK)
+        intent.type = MediaStore.Images.Media.CONTENT_TYPE
+        startActivityForResult(intent, REQ_ARTWORK)
     }
 
     private fun getBestArwork(bestartwork: String?) {
@@ -92,94 +125,110 @@ class SettingMyInfoFragment : Fragment() {
             binding.myInfoBestArtworkIv.setImageResource(R.drawable.add)
         } else {
             binding.myInfoBestArtworkIv.scaleType = (ImageView.ScaleType.FIT_XY)
-            var bestGallery = database.galleryDao().getBestArtwork(bestartwork)
-            Glide.with(requireContext()).load(bestGallery?.GalleryId)
-                .into(binding.myInfoBestArtworkIv)
+            Glide.with(requireContext()).load(bestartwork).into(binding.myInfoBestArtworkIv)
         }
     }
 
-    private fun getProfileImage() {
-        var profileImg = database.profileDao().getProfileImg(getJwt()!!)
-        if(profileImg != "") {
-            binding.myInfoIv.scaleType = (ImageView.ScaleType.FIT_XY)
-            Glide.with(requireContext()).load(profileImg).into(binding.myInfoIv)
-        }else {
-            binding.myInfoIv.scaleType = (ImageView.ScaleType.FIT_XY)
-            binding.myInfoIv.setImageResource(R.drawable.add)
-        }
-
-    }
-
-    private fun initClickListener(profile: Profile?) {
-        //대표 이미지 가져오기
-        binding.myInfoBestArtworkIv.setOnClickListener {
-            startActivityForResult(Intent(requireContext(), AddGalleryActivity::class.java), 0)
-        }
-        //업로드 버튼 클릭 시
-        binding.uploadBtn.setOnClickListener {
-            uploadGallery(profile!!)
-        }
-        //프로필 사진 가져오기
-        binding.myInfoIv.setOnClickListener {
-            openGallery()
-        }
-    }
-
-    private fun uploadGallery(profile: Profile) {
-        if(GalleryId != ""){
-            var gallery = database.galleryDao().getGallery(GalleryId)
-            var galleryPath = gallery.galleryPath
-            profile.bestArtwork = galleryPath
-            database.profileDao().updateProfile(profile)
-        }
-        registProfileImage()
+    private fun uploadGallery(ProfileUri: Uri?) {
+        registProfileImage(ProfileUri)
         (context as MainActivity).supportFragmentManager.beginTransaction()
             .replace(R.id.main_frame, SettingFragment())
             .commitNowAllowingStateLoss()
     }
 
-    private fun getJwt(): Int? {
-        val spf = activity?.getSharedPreferences("auth", AppCompatActivity.MODE_PRIVATE)
-        var jwt = spf?.getInt("jwt", 0)
-        return jwt
+    private fun uploadGallery(ProfileUri: Uri?, ArtworkUri: Uri?) {
+        registProfileImage(ProfileUri, ArtworkUri )
+        (context as MainActivity).supportFragmentManager.beginTransaction()
+            .replace(R.id.main_frame, SettingFragment())
+            .commitNowAllowingStateLoss()
     }
-
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         if (resultCode == RESULT_OK) {
             when (requestCode) {
-                0 -> {
-                    GalleryId = data?.getStringExtra("GalleryId")!!
-                    Log.d("GalleryId", GalleryId.toString())
-                    binding.myInfoBestArtworkIv.scaleType = ImageView.ScaleType.FIT_XY
-                    Glide.with(requireContext()).load(GalleryId).into(binding.myInfoBestArtworkIv)
-                }
+                //프로필
                 REQ_GALLERY -> {
                     data?.data?.let { uri ->
-                        URI = uri
+                        ProfileURI = uri
                         binding.myInfoIv.setImageURI(uri)
                         binding.myInfoIv.scaleType = ImageView.ScaleType.FIT_XY
                     }
                 }
 
+                // 대표작
+                REQ_ARTWORK -> {
+                    data?.data?.let { uri ->
+                        ArtworkURI = uri
+                        binding.myInfoBestArtworkIv.setImageURI(uri)
+                        binding.myInfoBestArtworkIv.scaleType = ImageView.ScaleType.FIT_XY
+                    }
+                }
+
             }
         }
     }
 
-    private fun registProfileImage(){
-        var mountainImageRef: StorageReference? = storage?.reference?.child("images")?.child(getJwt().toString())?.child("Profile")?.child("profile.png")
-        if(URI != null){
-            mountainImageRef?.delete()?.addOnSuccessListener {
-                mountainImageRef?.putFile(URI!!)?.addOnSuccessListener {
-                    mountainImageRef.downloadUrl.addOnSuccessListener {
-                        database.profileDao().updateProfileImg(getJwt()!!, it.toString())
-                    }
-                    Log.d("registProfileImage", "SUCCESS")
-                }?.addOnFailureListener{
-                    Log.d("registProfileImage", "FAIL", it)
+    private fun registProfileImage(ProfileUri: Uri?) {
+        var mountainImageRef: StorageReference? = storage?.reference?.child("images")
+        var path = ProfileUri?.lastPathSegment.toString()
+
+        //원래 사진 삭제
+        mountainImageRef?.child(userModel!!.profieImgKey!!)?.delete()
+        ProfileUri?.let {
+            mountainImageRef?.child(path)?.putFile(it)?.addOnCompleteListener {
+                mountainImageRef.downloadUrl.addOnSuccessListener { uri ->
+                    var map: MutableMap<String, Any> = HashMap()
+                    map.put("profieImgKey", path)
+                    map.put("profileImg", uri.toString())
+                    map.put("name", binding.myInfoName.text.toString())
+                    map.put("age", binding.myInfoAgeInput.text.toString())
+                    firebaseDatabase.reference.child("users").child(currentUser!!.uid)
+                        .updateChildren(map)
                 }
             }
         }
+    }
+
+    private fun registProfileImage(ProfileUri: Uri?, ArtworkUri: Uri?) {
+        var mountainImageRef: StorageReference? = storage?.reference?.child("images")
+        var path1 = ProfileUri?.lastPathSegment.toString()
+        var path2 = ArtworkUri?.lastPathSegment.toString()
+
+        //원래 사진 삭제
+        mountainImageRef?.child(userModel!!.profieImgKey!!)?.delete()
+        mountainImageRef?.child(userModel!!.profileModel?.key!!)?.delete()
+
+        //프로필 업로드
+        ProfileUri?.let {
+            mountainImageRef?.child(path1)?.putFile(it)?.addOnCompleteListener {
+                mountainImageRef.downloadUrl.addOnSuccessListener { uri ->
+                    var map: MutableMap<String, Any> = HashMap()
+                    map.put("profieImgKey", path1)
+                    map.put("profileImg", uri.toString())
+                    map.put("name", binding.myInfoName.text.toString())
+                    map.put("age", binding.myInfoAgeInput.text.toString())
+                    map.put("school", binding.myInfoSchoolInput.text.toString())
+                    map.put("awards", binding.myInfoAwardsInput.text.toString())
+                    firebaseDatabase.reference.child("users").child(currentUser!!.uid)
+                        .updateChildren(map)
+                }
+            }
+        }
+
+        //대표작 업로드
+        ArtworkUri?.let{
+            mountainImageRef?.child(path2)?.putFile(it)?.addOnCompleteListener {
+                mountainImageRef.downloadUrl.addOnSuccessListener { uri ->
+                    var map: MutableMap<String, Any> = HashMap()
+                    map.put("profileModel/bestArtwork", uri)
+                    map.put("profileModel/key", path2)
+                    firebaseDatabase.reference.child("users").child(currentUser!!.uid)
+                        .updateChildren(map)
+                }
+            }
+
+        }
+
 
     }
 
