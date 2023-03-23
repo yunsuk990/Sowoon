@@ -44,6 +44,12 @@ class GalleryInfoFragment : Fragment() {
         firebaseStorage = Firebase.storage
         currentUser = firebaseAuth.currentUser
 
+        binding.todayAlbumInfoCorrect.visibility = View.INVISIBLE
+        binding.todayAlbumTitleCorrect.visibility = View.INVISIBLE
+        binding.galleryButton.visibility = View.INVISIBLE
+        binding.todayAlbumTitle.isEnabled = false
+        binding.todayAlbumInfo.isEnabled = false
+
         //이미지 모델 가져오기
         var bundle = arguments
         var galleryGson = bundle?.getString("gallery")
@@ -60,7 +66,7 @@ class GalleryInfoFragment : Fragment() {
         binding.galleryInfoChatIv.setOnClickListener {
             var intent = Intent(context, ChatRoomActivity::class.java)
             intent.putExtra("userUid", gallery?.uid)
-            intent.putExtra("Artist", gallery?.artist.toString())
+            intent.putExtra("artist", gallery?.artist.toString())
             startActivity(intent)
         }
 
@@ -81,9 +87,9 @@ class GalleryInfoFragment : Fragment() {
     @JvmName("setGallery1")
     private fun setGallery(gallery: GalleryModel) {
         Glide.with(requireContext()).load(gallery!!.imagePath).into(binding.galleryInfoIv)
-        binding.todayAlbumTitle.text = gallery?.title
+        binding.todayAlbumTitle.setText(gallery?.title)
         binding.todayAlbumArtist.text = gallery?.artist
-        binding.todayAlbumInfo.text = gallery?.info
+        binding.todayAlbumInfo.setText(gallery?.info)
         binding.galleryInfoLikeCountTv.text = gallery?.like.toString()
 
         // 좋아요 유무
@@ -133,7 +139,6 @@ class GalleryInfoFragment : Fragment() {
                 var galleryJson = gson.toJson(gallery)
                 var bundle = Bundle()
                 bundle.putString("gallery", galleryJson)
-                bundle.putString("artist", gallery.artist)
                 arguments = bundle
             })
             .commitNowAllowingStateLoss()
@@ -185,7 +190,7 @@ class GalleryInfoFragment : Fragment() {
                 popup.setOnMenuItemClickListener { p0 ->
                     when (p0?.itemId) {
                         R.id.delete -> deleteGallery(key)
-                        R.id.correct -> Toast.makeText(context, "수정 클릭", Toast.LENGTH_SHORT).show()
+                        R.id.correct -> correctGallery(key)
                     }
                     true
                 }
@@ -193,6 +198,35 @@ class GalleryInfoFragment : Fragment() {
             }
 
         })
+    }
+
+    private fun correctGallery(key: String?) {
+        binding.galleryButton.visibility = View.VISIBLE
+        binding.todayAlbumInfoCorrect.visibility = View.VISIBLE
+        binding.todayAlbumTitleCorrect.visibility = View.VISIBLE
+        binding.todayAlbumInfoCorrect.setOnClickListener {
+            binding.todayAlbumInfo.isEnabled = true
+        }
+        binding.todayAlbumTitleCorrect.setOnClickListener {
+            binding.todayAlbumTitle.isEnabled = true
+        }
+
+        binding.galleryButton.setOnClickListener{
+            var info = binding.todayAlbumInfo.text.toString()
+            var title = binding.todayAlbumTitle.text.toString()
+            var map: MutableMap<String, Any> = HashMap()
+            map.put("info", info)
+            map.put("title", title)
+            firebaseDatabase.reference.child("images").child(key!!).updateChildren(map).addOnCompleteListener {
+                binding.todayAlbumInfoCorrect.visibility = View.INVISIBLE
+                binding.todayAlbumTitleCorrect.visibility = View.INVISIBLE
+                binding.todayAlbumTitle.isEnabled = false
+                binding.todayAlbumInfo.isEnabled = false
+                binding.galleryButton.visibility = View.INVISIBLE
+            }
+
+        }
+
     }
 
     private fun deleteGallery(key: String?){
