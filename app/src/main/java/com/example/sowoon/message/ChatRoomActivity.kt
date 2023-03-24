@@ -1,21 +1,25 @@
 package com.example.sowoon.message
 
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
+import android.view.Gravity
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
+import com.example.sowoon.R
 import com.example.sowoon.data.entity.ChatModel
 import com.example.sowoon.data.entity.UserModel
-import com.example.sowoon.database.AppDatabase
 import com.example.sowoon.databinding.ActivityChatRoomBinding
+import com.example.sowoon.databinding.ItemMessageBinding
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
-import com.google.firebase.database.FirebaseDatabase
-import com.google.firebase.database.ValueEventListener
+import com.google.firebase.database.*
 import com.google.firebase.database.ktx.getValue
-import com.google.firebase.ktx.Firebase
 import com.google.gson.Gson
 import okhttp3.*
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
@@ -33,7 +37,9 @@ class ChatRoomActivity : AppCompatActivity() {
     lateinit var firebaseAuth: FirebaseAuth
     var time = SimpleDateFormat("HH:mm")
     var uid: String? = null
-
+    var adapter: ChatMessageRVAdapter? = null
+    var databaseReference: DatabaseReference? = null
+    var valueEventListener: ValueEventListener? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -48,37 +54,31 @@ class ChatRoomActivity : AppCompatActivity() {
         Log.d("artist", artist)
 
         binding.chatRoomSendTitleTv.text = artist+ " 작가"
-        binding.backBtn.setOnClickListener {
-            finish()
-            var intent = Intent(this, MessageMenu::class.java)
-            intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
-            startActivity(intent)
-        }
 
-            binding.chatRoomSendBtn.setOnClickListener {
-                var chatModel = ChatModel()
-                chatModel.users.add(destUid!!)
-                chatModel.users.add(uid!!)
+        binding.chatRoomSendBtn.setOnClickListener {
+            var chatModel = ChatModel()
+            chatModel.users.add(destUid!!)
+            chatModel.users.add(uid!!)
 
-                if (chatRoomUid == null) {
-                    binding.chatRoomSendBtn.isEnabled = false //요청 가기도 전에 버튼 누르는 것을 방지
-                    firebaseDB.getReference().child("chatrooms").push().setValue(chatModel)
-                        .addOnSuccessListener {
-                            checkChatRoom()
-                        }
-                } else {
-                    var comment: ChatModel.Comment = ChatModel.Comment()
-                    comment.userId = uid
-                    comment.message = binding.chatRoomSendEt.text.toString()
-                    comment.timestamp = time.format(Date())
-                    firebaseDB.getReference().child("chatrooms").child(chatRoomUid!!).child("comments")
-                        .push().setValue(comment).addOnCompleteListener {
-                            sendFCM()
-                            binding.chatRoomSendEt.setText("")
-                        }
-                }
+            if (chatRoomUid == null) {
+                binding.chatRoomSendBtn.isEnabled = false //요청 가기도 전에 버튼 누르는 것을 방지
+                firebaseDB.getReference().child("chatrooms").push().setValue(chatModel)
+                    .addOnSuccessListener {
+                        checkChatRoom()
+                    }
+            } else {
+                var comment: ChatModel.Comment = ChatModel.Comment()
+                comment.userId = uid
+                comment.message = binding.chatRoomSendEt.text.toString()
+                comment.timestamp = time.format(Date())
+                firebaseDB.getReference().child("chatrooms").child(chatRoomUid!!).child("comments")
+                    .push().setValue(comment).addOnCompleteListener {
+                        sendFCM()
+                        binding.chatRoomSendEt.setText("")
+                    }
             }
-            checkChatRoom()
+        }
+        checkChatRoom()
     }
 
     //유효성 검사
@@ -95,14 +95,9 @@ class ChatRoomActivity : AppCompatActivity() {
                             chatRoomUid = item.key
                             binding.chatRoomSendBtn.isEnabled = true
                             binding.chatRoomSendRv.layoutManager = LinearLayoutManager(baseContext ,LinearLayoutManager.VERTICAL, false)
-
-                            var adapter = ChatMessageRVAdapter(chatRoomUid!!, baseContext, destUid!!)
-                            adapter.setMyItemClickListener(object: ChatMessageRVAdapter.uiInterface{
-                                override fun scrollRV(size: Int) {
-                                    binding.chatRoomSendRv.scrollToPosition(size)
-                                }
-                            })
+                            adapter = ChatMessageRVAdapter()
                             binding.chatRoomSendRv.adapter = adapter
+
                         }
                     }
                 }
@@ -116,14 +111,12 @@ class ChatRoomActivity : AppCompatActivity() {
         firebaseDB.getReference().child("users").child(destUid.toString()).addListenerForSingleValueEvent(object: ValueEventListener{
             override fun onDataChange(snapshot: DataSnapshot) {
                 var userModel = snapshot.getValue(UserModel::class.java)
-//                    notificationModel.to = userModel?.pushToken.toString()
-                notificationModel.to = "cOOVJ76ARKq_SS_kDUhKEk:APA91bEuLKu9b9bIdvTFqJ_f51Scswo46sh3msYL57pOl-k6LIvPwcRY0qrDUfaM2Yqlmelw4iYcZM7lgKge6ARefsK-85RYCzLIOiC5rmTOog55AH-SKRjRtpTkh5Uxr0XrhQbgzv3M"
+                notificationModel.to = userModel?.pushToken.toString()
                 notificationModel.notification.text = binding.chatRoomSendEt.text.toString()
                 notificationModel.notification.title = "보낸이 아이디"
+                Log.d("destToken: ", notificationModel.to.toString())
             }
-
             override fun onCancelled(error: DatabaseError) {
-                TODO("Not yet implemented")
             }
         })
 
@@ -138,12 +131,114 @@ class ChatRoomActivity : AppCompatActivity() {
         var okHttpClient = OkHttpClient()
         okHttpClient.newCall(request).enqueue(object: Callback{
             override fun onFailure(call: Call, e: IOException) {
+                Log.d("Okhttp3", "fail")
             }
 
             override fun onResponse(call: Call, response: Response) {
-                Log.d("Okhttp3", "fail")
+                Log.d("Okhttp3", response.message.toString())
             }
 
         })
     }
+
+
+    inner class ChatMessageRVAdapter(): RecyclerView.Adapter<ChatMessageRVAdapter.ViewHolder>() {
+
+        var comments: MutableList<ChatModel.Comment> = ArrayList()
+        var userModel: UserModel? = null //상대방 유저 정보
+
+        init {
+            FirebaseDatabase.getInstance().reference.child("users").child(destUid!!).addListenerForSingleValueEvent(object : ValueEventListener {
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    userModel = snapshot.getValue(UserModel::class.java)
+                    getMessageList(chatRoomUid!!)
+                }
+
+                override fun onCancelled(error: DatabaseError) {}
+            })
+        }
+
+        fun getMessageList(chatRoomUid: String){
+            databaseReference = FirebaseDatabase.getInstance().getReference().child("chatrooms").child(chatRoomUid).child("comments")
+            valueEventListener = databaseReference!!.addValueEventListener(object : ValueEventListener{
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    comments.clear()
+                    var readUsersMap: MutableMap<String, Any> = HashMap()
+                    for(item in snapshot.children){
+                        var key: String = item.key.toString()
+                        var comment: ChatModel.Comment = item.getValue<ChatModel.Comment>()!!
+                        comment.readUsers.put(uid!!, true)
+                        readUsersMap.put(key,comment)
+                        comments.add(comment)
+                        Log.d("Comment", comments.toString())
+                    }
+                    FirebaseDatabase.getInstance().reference.child("chatrooms").child(chatRoomUid).child("comments")
+                        .updateChildren(readUsersMap).addOnCompleteListener {
+                            notifyDataSetChanged()
+                            binding.chatRoomSendRv.scrollToPosition(comments.size - 1)
+                        }
+                }
+                override fun onCancelled(error: DatabaseError) {}
+            })
+        }
+
+        inner class ViewHolder(var binding: ItemMessageBinding): RecyclerView.ViewHolder(binding.root){
+            fun bind(item: ChatModel.Comment){
+                var readUser = item.readUsers.size
+                binding.messageItemTv.text = item.message.toString()
+                binding.messageItemTimestamp.text = item.timestamp
+
+                //내가 보낸 메시지
+                if(item.userId!!.equals(userModel?.jwt)){
+                    Glide.with(this@ChatRoomActivity).load(userModel?.profileImg).centerCrop().into(binding.messageItemIv)
+                    binding.messageItemTv.setBackgroundResource(R.drawable.leftbubble)
+                    binding.messageItemNameTv.text = userModel?.name
+                    binding.messageItemLinear1.visibility = View.VISIBLE
+                    binding.messageItemContainer.gravity = Gravity.LEFT
+                    binding.messageItemTimestamp.gravity = Gravity.LEFT
+                    if(readUser != 2){
+                        binding.messageItemRightReadUser.visibility = View.VISIBLE
+                    }else{
+                        binding.messageItemRightReadUser.visibility = View.INVISIBLE
+                    }
+
+                }else{
+                    //상대가 보낸 메시지
+                    binding.messageItemTv.setBackgroundResource(R.drawable.rightbubble)
+                    binding.messageItemLinear1.visibility = View.INVISIBLE
+                    binding.messageItemContainer.gravity = Gravity.RIGHT
+                    binding.messageItemTimestamp.gravity = Gravity.RIGHT
+                    if(readUser != 2){
+                        binding.messageItemLeftReadUser.visibility = View.VISIBLE
+                    }
+                    else{
+                        binding.messageItemLeftReadUser.visibility = View.INVISIBLE
+                    }
+                }
+
+                Log.d("CommentText", item.message.toString())
+            }
+        }
+
+        override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
+            val binding = ItemMessageBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+            return ViewHolder(binding)
+        }
+
+        override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+            holder.bind(comments[position])
+        }
+
+        override fun getItemCount(): Int = comments.size
+    }
+
+    override fun onBackPressed() {
+        databaseReference?.removeEventListener(valueEventListener!!)
+        finish()
+        var intent = Intent(this, MessageMenu::class.java)
+        intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
+        startActivity(intent)
+    }
+
+
 }
