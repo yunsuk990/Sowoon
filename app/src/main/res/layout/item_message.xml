@@ -36,30 +36,52 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:orientation="vertical"
-        android:layout_marginLeft="8dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content">
 
-
+        <TextView
+            android:id="@+id/messageItem_left_readUser"
+            android:text="1"
+            android:visibility="invisible"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintStart_toStartOf="parent"
+            android:textColor="@android:color/holo_orange_light"
+            app:layout_constraintTop_toTopOf="@+id/messageItem_tv"
+            app:layout_constraintBottom_toBottomOf="@+id/messageItem_tv"/>
         <TextView
             android:id="@+id/messageItem_tv"
             android:text="메세지"
             android:textSize="20sp"
+            android:layout_marginLeft="5dp"
             android:textColor="@color/black"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintStart_toStartOf="parent"/>
+            app:layout_constraintStart_toEndOf="@+id/messageItem_left_readUser"/>
+
+        <TextView
+            android:id="@+id/messageItem_right_readUser"
+            android:text="1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="5dp"
+            android:visibility="invisible"
+            android:textColor="@android:color/holo_orange_light"
+            app:layout_constraintStart_toEndOf="@+id/messageItem_tv"
+            app:layout_constraintTop_toTopOf="@+id/messageItem_tv"
+            app:layout_constraintBottom_toBottomOf="@+id/messageItem_tv"/>
 
         <TextView
             android:id="@+id/messageItem_timestamp"
-            android:text="21:25"
+            android:hint="21:25"
+            android:layout_marginTop="2dp"
             android:textSize="12sp"
             android:textColor="@android:color/darker_gray"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             app:layout_constraintTop_toBottomOf="@+id/messageItem_tv"
-            app:layout_constraintEnd_toEndOf="@+id/messageItem_tv"/>
+            app:layout_constraintEnd_toEndOf="@+id/messageItem_tv" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 
