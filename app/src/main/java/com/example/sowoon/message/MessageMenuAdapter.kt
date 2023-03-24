@@ -91,6 +91,7 @@ class MessageMenuAdapter(context: Context): RecyclerView.Adapter<MessageMenuAdap
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         holder.bind(chatModel?.get(position))
+
     }
 
     override fun getItemCount(): Int = chatModel!!.size
