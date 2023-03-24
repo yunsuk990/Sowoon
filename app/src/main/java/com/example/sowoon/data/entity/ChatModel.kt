@@ -9,6 +9,7 @@ class ChatModel {
         var message: String? = null
         var userId: String? = null
         var timestamp: String? = null
+        var readUsers: MutableMap<String, Any> = HashMap()
     }
 
 }
