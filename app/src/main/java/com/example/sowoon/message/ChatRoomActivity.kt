@@ -26,6 +26,7 @@ import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import java.io.IOException
 import java.text.SimpleDateFormat
 import java.util.*
+import kotlin.collections.ArrayList
 
 
 class ChatRoomActivity : AppCompatActivity() {
@@ -55,6 +56,7 @@ class ChatRoomActivity : AppCompatActivity() {
 
         binding.chatRoomSendTitleTv.text = artist+ " 작가"
 
+        //전송 버튼 클릭 시
         binding.chatRoomSendBtn.setOnClickListener {
             var chatModel = ChatModel()
             chatModel.users.add(destUid!!)
@@ -151,15 +153,16 @@ class ChatRoomActivity : AppCompatActivity() {
             FirebaseDatabase.getInstance().reference.child("users").child(destUid!!).addListenerForSingleValueEvent(object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
                     userModel = snapshot.getValue(UserModel::class.java)
-                    getMessageList(chatRoomUid!!)
+                    getMessageList()
                 }
 
                 override fun onCancelled(error: DatabaseError) {}
             })
         }
 
-        fun getMessageList(chatRoomUid: String){
-            databaseReference = FirebaseDatabase.getInstance().getReference().child("chatrooms").child(chatRoomUid).child("comments")
+        fun getMessageList(){
+            databaseReference = FirebaseDatabase.getInstance().getReference().child("chatrooms").child(
+                chatRoomUid!!).child("comments")
             valueEventListener = databaseReference!!.addValueEventListener(object : ValueEventListener{
                 override fun onDataChange(snapshot: DataSnapshot) {
                     comments.clear()
@@ -167,16 +170,26 @@ class ChatRoomActivity : AppCompatActivity() {
                     for(item in snapshot.children){
                         var key: String = item.key.toString()
                         var comment: ChatModel.Comment = item.getValue<ChatModel.Comment>()!!
-                        comment.readUsers.put(uid!!, true)
-                        readUsersMap.put(key,comment)
+                        var comment2: ChatModel.Comment = item.getValue<ChatModel.Comment>()!!
+
+                        comment2.readUsers.put(uid!!, true)
+                        readUsersMap.put(key,comment2)
                         comments.add(comment)
                         Log.d("Comment", comments.toString())
                     }
-                    FirebaseDatabase.getInstance().reference.child("chatrooms").child(chatRoomUid).child("comments")
-                        .updateChildren(readUsersMap).addOnCompleteListener {
+                    if(comments.size != 0){
+                        if(!(comments[comments.size-1].readUsers?.contains(uid))!!){
+                            FirebaseDatabase.getInstance().reference.child("chatrooms").child(
+                                chatRoomUid!!).child("comments")
+                                .updateChildren(readUsersMap).addOnCompleteListener {
+                                    notifyDataSetChanged()
+                                    binding.chatRoomSendRv.scrollToPosition(comments.size - 1)
+                                }
+                        }else{
                             notifyDataSetChanged()
                             binding.chatRoomSendRv.scrollToPosition(comments.size - 1)
                         }
+                    }
                 }
                 override fun onCancelled(error: DatabaseError) {}
             })
@@ -188,8 +201,21 @@ class ChatRoomActivity : AppCompatActivity() {
                 binding.messageItemTv.text = item.message.toString()
                 binding.messageItemTimestamp.text = item.timestamp
 
-                //내가 보낸 메시지
-                if(item.userId!!.equals(userModel?.jwt)){
+                if((item.userId!!.equals(uid))){
+                    //내가 보낸 메시지
+                    binding.messageItemTv.setBackgroundResource(R.drawable.rightbubble)
+                    binding.messageItemLinear1.visibility = View.INVISIBLE
+                    binding.messageItemContainer.gravity = Gravity.RIGHT
+                    binding.messageItemTimestamp.gravity = Gravity.RIGHT
+                    if(readUser != 2){
+                        binding.messageItemLeftReadUser.visibility = View.VISIBLE
+                    }
+                    else{
+                        binding.messageItemLeftReadUser.visibility = View.INVISIBLE
+                    }
+
+                }else{
+                    //상대가 보낸 메시지
                     Glide.with(this@ChatRoomActivity).load(userModel?.profileImg).centerCrop().into(binding.messageItemIv)
                     binding.messageItemTv.setBackgroundResource(R.drawable.leftbubble)
                     binding.messageItemNameTv.text = userModel?.name
@@ -202,18 +228,6 @@ class ChatRoomActivity : AppCompatActivity() {
                         binding.messageItemRightReadUser.visibility = View.INVISIBLE
                     }
 
-                }else{
-                    //상대가 보낸 메시지
-                    binding.messageItemTv.setBackgroundResource(R.drawable.rightbubble)
-                    binding.messageItemLinear1.visibility = View.INVISIBLE
-                    binding.messageItemContainer.gravity = Gravity.RIGHT
-                    binding.messageItemTimestamp.gravity = Gravity.RIGHT
-                    if(readUser != 2){
-                        binding.messageItemLeftReadUser.visibility = View.VISIBLE
-                    }
-                    else{
-                        binding.messageItemLeftReadUser.visibility = View.INVISIBLE
-                    }
                 }
 
                 Log.d("CommentText", item.message.toString())
