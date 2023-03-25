@@ -101,8 +101,10 @@ class SettingMyInfoFragment : Fragment() {
 
                 }else{
                     binding.myInfoSchoolInput.visibility = View.INVISIBLE
+                    binding.myInfoSchool.visibility = View.INVISIBLE
                     binding.myInfoAwardsInput.visibility = View.INVISIBLE
-                    binding.myInfoBestArtworkIv.visibility = View.INVISIBLE
+                    binding.myInfoAwards.visibility = View.INVISIBLE
+                    binding.myInfoBestArtworkContainer.visibility = View.INVISIBLE
                     //업로드 버튼 클릭 시
                     binding.uploadBtn.setOnClickListener {
                         uploadGallery(ProfileURI)
