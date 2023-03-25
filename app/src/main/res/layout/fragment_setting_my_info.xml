@@ -49,31 +49,43 @@
                 app:layout_constraintStart_toStartOf="@+id/myInfo_tv"
                 app:layout_constraintTop_toBottomOf="@+id/myInfo_name" />
 
-            <TextView
-                android:id="@+id/myInfo_bestArtwork_name"
+            <LinearLayout
+                android:id="@+id/myInfo_bestArtwork_container"
+                android:orientation="vertical"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="대표작"
-                android:textColor="@color/black"
-                android:textSize="18sp"
-                android:textStyle="bold"
-                app:layout_constraintStart_toStartOf="@+id/myInfo_bestArtwork_iv"
-                app:layout_constraintTop_toTopOf="@+id/myInfo_name"/>
-
-            <ImageView
-                android:id="@+id/myInfo_bestArtwork_iv"
-                android:layout_width="180dp"
-                android:layout_height="280dp"
-                android:layout_marginLeft="15dp"
-                android:layout_marginRight="20dp"
-                android:elevation="20dp"
-                android:scaleType="centerInside"
-                android:src="@drawable/add"
-                android:background="@color/white"
-                app:layout_constraintBottom_toBottomOf="@+id/myInfo_iv"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@+id/myInfo_iv"
-                app:layout_constraintTop_toTopOf="@+id/myInfo_iv" />
+                app:layout_constraintTop_toTopOf="@+id/myInfo_name">
+
+                <TextView
+                    android:id="@+id/myInfo_bestArtwork_name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="15dp"
+                    android:text="대표작"
+                    android:textColor="@color/black"
+                    android:textSize="18sp"
+                    android:textStyle="bold" />
+
+                <ImageView
+                    android:id="@+id/myInfo_bestArtwork_iv"
+                    android:layout_width="180dp"
+                    android:layout_height="280dp"
+                    android:layout_marginLeft="15dp"
+                    android:layout_marginRight="20dp"
+                    android:layout_marginTop="10dp"
+                    android:elevation="20dp"
+                    android:scaleType="centerInside"
+                    android:src="@drawable/add"
+                    android:background="@color/white"
+                    app:layout_constraintBottom_toBottomOf="@+id/myInfo_iv"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/myInfo_iv"
+                    app:layout_constraintTop_toTopOf="@+id/myInfo_iv" />
+
+
+            </LinearLayout>
 
 
             <TextView
