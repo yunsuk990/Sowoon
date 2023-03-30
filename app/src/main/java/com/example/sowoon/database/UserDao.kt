@@ -26,4 +26,7 @@ interface UserDao {
 
     @Query("UPDATE UserTable SET pushToken=:pushToken WHERE id=:userId")
     fun insertPushToken(userId: Int, pushToken: String)
+
+    @Query("SELECT pushToken FROM UserTable WHERE id=:userId")
+    fun getPushToken(userId: Int): String
 }
