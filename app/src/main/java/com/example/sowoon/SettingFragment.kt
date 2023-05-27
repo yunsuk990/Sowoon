@@ -37,6 +37,25 @@ class SettingFragment : Fragment() {
     lateinit var firebaseAuth: FirebaseAuth
     lateinit var firebaseDatabase: FirebaseDatabase
     var currentUser: FirebaseUser? = null
+    var user: UserModel? = null
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        database = AppDatabase.getInstance(requireContext())!!
+        storage = Firebase.storage
+        firebaseAuth = FirebaseAuth.getInstance()
+        firebaseDatabase = FirebaseDatabase.getInstance()
+
+        if(firebaseAuth.currentUser != null){
+            currentUser = firebaseAuth.currentUser!!
+            firebaseDatabase.getReference().child("users").child(currentUser!!.uid).get().addOnSuccessListener { snapshot ->
+                user = snapshot.getValue(UserModel::class.java)
+                Log.d("user", user.toString())
+                init()
+
+            }
+        }
+    }
 
 
     override fun onCreateView(
@@ -45,19 +64,8 @@ class SettingFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         binding = FragmentSettingBinding.inflate(inflater, container, false)
-        database = AppDatabase.getInstance(requireContext())!!
-        storage = Firebase.storage
-        firebaseAuth = FirebaseAuth.getInstance()
-        firebaseDatabase = FirebaseDatabase.getInstance()
         initClickListener()
         return binding.root
-    }
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        if(firebaseAuth.currentUser != null){
-            currentUser = firebaseAuth.currentUser!!
-        }
     }
 
     private fun initClickListener(){
@@ -108,13 +116,11 @@ class SettingFragment : Fragment() {
         //화가 등록
         binding.settingSignupArtistTv.setOnClickListener {
             if(currentUser != null){
-                firebaseDatabase.getReference().child("users").child(currentUser!!.uid).get().addOnSuccessListener { snapshot ->
-                    var ifArtist = snapshot.getValue(UserModel::class.java)?.ifArtist
-                    if (ifArtist == true) {
-                        Toast.makeText(context, "이미 화가 등록 되어있습니다.", Toast.LENGTH_SHORT).show()
-                    } else {
-                        startActivity(Intent(activity, RegistArtistActivity::class.java))
-                    }
+                var ifArtist = user?.ifArtist
+                if (ifArtist == true) {
+                    Toast.makeText(context, "이미 화가 등록 되어있습니다.", Toast.LENGTH_SHORT).show()
+                } else {
+                    startActivity(Intent(activity, RegistArtistActivity::class.java))
                 }
             }else{
                 Toast.makeText(context, "로그인 후 이용하시기 바랍니다.", Toast.LENGTH_SHORT).show()
@@ -151,6 +157,16 @@ class SettingFragment : Fragment() {
                 Toast.makeText(context, "로그인 후 이용하시기 바랍니다.", Toast.LENGTH_SHORT).show()
             }
         }
+    }
+
+    private fun init(){
+        if(currentUser!= null){
+            binding.settingNameTitle.text = user?.name
+            binding.settingAgeTitle.text = user?.age + "살"
+        }
+        Log.d("name", binding.settingNameTitle.text.toString())
+
+
     }
 
     private fun logOut(){
