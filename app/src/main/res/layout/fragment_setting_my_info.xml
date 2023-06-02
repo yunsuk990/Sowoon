@@ -4,11 +4,15 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context=".SettingMyInfoFragment">
+    tools:context=".view.SettingMyInfoFragment">
 
     <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
@@ -27,66 +31,120 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
-            <TextView
-                android:id="@+id/myInfo_name"
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/myInfo_bestArtwork_container1"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
-                android:text="이름"
-                android:textColor="@color/black"
-                android:textSize="18sp"
-                android:textStyle="bold"
                 app:layout_constraintStart_toStartOf="@+id/myInfo_tv"
-                app:layout_constraintTop_toBottomOf="@+id/myInfo_tv" />
+                app:layout_constraintTop_toBottomOf="@+id/myInfo_tv">
 
-            <ImageView
-                android:id="@+id/myInfo_iv"
-                android:layout_width="180dp"
-                android:layout_height="280dp"
-                android:layout_marginTop="10dp"
-                android:scaleType="fitXY"
-                android:src="@drawable/galleryexp1"
-                app:layout_constraintStart_toStartOf="@+id/myInfo_tv"
-                app:layout_constraintTop_toBottomOf="@+id/myInfo_name" />
+                <TextView
+                    android:id="@+id/myInfo_profile_tv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="프로필"
+                    android:textColor="@color/black"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    app:layout_constraintEnd_toEndOf="@+id/myInfo_cardview"
+                    app:layout_constraintStart_toStartOf="@+id/myInfo_cardview"
+                    app:layout_constraintTop_toTopOf="parent" />
 
-            <LinearLayout
-                android:id="@+id/myInfo_bestArtwork_container"
-                android:orientation="vertical"
+                <androidx.cardview.widget.CardView
+                    android:id="@+id/myInfo_cardview"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    app:cardCornerRadius="15dp"
+                    app:cardBackgroundColor="@color/lightwhite"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/myInfo_profile_tv">
+
+                    <ImageView
+                        android:id="@+id/myInfo_iv"
+                        android:layout_width="180dp"
+                        android:layout_height="280dp"
+                        android:scaleType="center"
+                        android:src="@drawable/add"/>
+
+                </androidx.cardview.widget.CardView>
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/myInfo_bestArtwork_container2"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toEndOf="@+id/myInfo_iv"
-                app:layout_constraintTop_toTopOf="@+id/myInfo_name">
+                android:visibility="invisible"
+                app:layout_constraintStart_toEndOf="@+id/myInfo_bestArtwork_container1"
+                app:layout_constraintTop_toTopOf="@+id/myInfo_bestArtwork_container1">
 
                 <TextView
                     android:id="@+id/myInfo_bestArtwork_name"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="15dp"
                     android:text="대표작"
                     android:textColor="@color/black"
                     android:textSize="18sp"
-                    android:textStyle="bold" />
+                    android:textStyle="bold"
+                    app:layout_constraintEnd_toEndOf="@+id/myInfo_bestArtwork_cardView"
+                    app:layout_constraintStart_toStartOf="@+id/myInfo_bestArtwork_cardView"
+                    app:layout_constraintTop_toTopOf="parent" />
 
-                <ImageView
-                    android:id="@+id/myInfo_bestArtwork_iv"
-                    android:layout_width="180dp"
-                    android:layout_height="280dp"
-                    android:layout_marginLeft="15dp"
-                    android:layout_marginRight="20dp"
+                <androidx.cardview.widget.CardView
+                    android:id="@+id/myInfo_bestArtwork_cardView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:layout_marginTop="10dp"
-                    android:elevation="20dp"
-                    android:scaleType="centerInside"
-                    android:src="@drawable/add"
-                    android:background="@color/white"
-                    app:layout_constraintBottom_toBottomOf="@+id/myInfo_iv"
+                    android:elevation="50dp"
+                    app:cardCornerRadius="15dp"
+                    app:cardBackgroundColor="@color/lightwhite"
+                    app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toEndOf="@+id/myInfo_iv"
-                    app:layout_constraintTop_toTopOf="@+id/myInfo_iv" />
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/myInfo_bestArtwork_name">
+
+                    <ImageView
+                        android:id="@+id/myInfo_bestArtwork_iv"
+                        android:layout_width="180dp"
+                        android:layout_height="280dp"
+                        android:background="@color/white"
+                        android:scaleType="centerInside"
+                        android:src="@drawable/add" />
 
 
-            </LinearLayout>
+                </androidx.cardview.widget.CardView>
 
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+            <TextView
+                android:id="@+id/myInfo_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:text="이름"
+                android:textColor="@color/black"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                app:layout_constraintStart_toStartOf="@+id/myInfo_bestArtwork_container1"
+                app:layout_constraintTop_toBottomOf="@+id/myInfo_bestArtwork_container1" />
+
+            <TextView
+                android:id="@+id/myInfo_name_input"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:text="이름"
+                app:layout_constraintBottom_toBottomOf="@+id/myInfo_name"
+                app:layout_constraintStart_toEndOf="@+id/myInfo_name"
+                app:layout_constraintTop_toTopOf="@+id/myInfo_name" />
 
             <TextView
                 android:id="@+id/myInfo_age"
@@ -97,17 +155,18 @@
                 android:textColor="@color/black"
                 android:textSize="16sp"
                 android:textStyle="bold"
-                app:layout_constraintStart_toStartOf="@+id/myInfo_iv"
-                app:layout_constraintTop_toBottomOf="@+id/myInfo_iv" />
+                app:layout_constraintStart_toStartOf="@+id/myInfo_bestArtwork_container1"
+                app:layout_constraintTop_toBottomOf="@+id/myInfo_name" />
 
             <TextView
                 android:id="@+id/myInfo_age_input"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="5dp"
+                android:layout_marginLeft="10dp"
                 android:hint="나이"
-                app:layout_constraintStart_toStartOf="@+id/myInfo_age"
-                app:layout_constraintTop_toBottomOf="@+id/myInfo_age" />
+                app:layout_constraintBottom_toBottomOf="@+id/myInfo_age"
+                app:layout_constraintStart_toEndOf="@+id/myInfo_age"
+                app:layout_constraintTop_toTopOf="@+id/myInfo_age" />
 
             <TextView
                 android:id="@+id/myInfo_school"
@@ -118,17 +177,18 @@
                 android:textColor="@color/black"
                 android:textSize="16sp"
                 android:textStyle="bold"
-                app:layout_constraintStart_toStartOf="@+id/myInfo_age_input"
+                app:layout_constraintStart_toStartOf="@+id/myInfo_age"
                 app:layout_constraintTop_toBottomOf="@+id/myInfo_age_input" />
 
             <TextView
                 android:id="@+id/myInfo_school_input"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="5dp"
+                android:layout_marginLeft="10dp"
                 android:hint="학력"
-                app:layout_constraintStart_toStartOf="@+id/myInfo_school"
-                app:layout_constraintTop_toBottomOf="@+id/myInfo_school" />
+                app:layout_constraintBottom_toBottomOf="@+id/myInfo_school"
+                app:layout_constraintStart_toEndOf="@+id/myInfo_school"
+                app:layout_constraintTop_toTopOf="@+id/myInfo_school" />
 
             <TextView
                 android:id="@+id/myInfo_awards"
@@ -139,7 +199,7 @@
                 android:textColor="@color/black"
                 android:textSize="16sp"
                 android:textStyle="bold"
-                app:layout_constraintStart_toStartOf="@+id/myInfo_school_input"
+                app:layout_constraintStart_toStartOf="@+id/myInfo_school"
                 app:layout_constraintTop_toBottomOf="@+id/myInfo_school_input" />
 
 
@@ -147,21 +207,21 @@
                 android:id="@+id/myInfo_awards_input"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="5dp"
+                android:layout_marginLeft="10dp"
                 android:hint="수상경력"
-                app:layout_constraintStart_toStartOf="@+id/myInfo_awards"
-                app:layout_constraintTop_toBottomOf="@+id/myInfo_awards" />
+                app:layout_constraintBottom_toBottomOf="@+id/myInfo_awards"
+                app:layout_constraintStart_toEndOf="@+id/myInfo_awards"
+                app:layout_constraintTop_toTopOf="@+id/myInfo_awards" />
 
+<!--            <androidx.appcompat.widget.AppCompatButton-->
+<!--                android:id="@+id/upload_btn"-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:text="변경하기"-->
+<!--                app:layout_constraintBottom_toBottomOf=""-->
+<!--                app:layout_constraintEnd_toEndOf="parent"-->
+<!--                app:layout_constraintStart_toStartOf="parent" />-->
 
-            <androidx.appcompat.widget.AppCompatButton
-                android:id="@+id/upload_btn"
-                android:text="변경하기"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="20dp"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/myInfo_awards_input"/>
         </androidx.constraintlayout.widget.ConstraintLayout>
     </ScrollView>
 
