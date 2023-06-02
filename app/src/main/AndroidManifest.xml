@@ -34,28 +34,28 @@
                 android:value="" />
         </activity>
         <activity
-            android:name=".AddGalleryActivity"
+            android:name=".view.AddGalleryActivity"
             android:exported="false">
             <meta-data
                 android:name="android.app.lib_name"
                 android:value="" />
         </activity>
         <activity
-            android:name=".RegistArtistActivity"
+            android:name=".view.RegistArtistActivity"
             android:exported="false">
             <meta-data
                 android:name="android.app.lib_name"
                 android:value="" />
         </activity>
         <activity
-            android:name=".SignUpActivity"
+            android:name=".view.SignUpActivity"
             android:exported="false">
             <meta-data
                 android:name="android.app.lib_name"
                 android:value="" />
         </activity>
         <activity
-            android:name=".LoginActivity"
+            android:name=".view.LoginActivity"
             android:exported="false">
             <meta-data
                 android:name="android.app.lib_name"
