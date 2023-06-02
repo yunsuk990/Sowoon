@@ -2,11 +2,11 @@ package com.example.sowoon
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
 import com.example.sowoon.databinding.ActivityMainBinding
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.database.FirebaseDatabase
-import com.google.firebase.messaging.FirebaseMessaging
+import com.example.sowoon.view.ArtistsFragment
+import com.example.sowoon.view.GalleryFragment
+import com.example.sowoon.view.HomeFragment
+import com.example.sowoon.view.SettingFragment
 
 class MainActivity : AppCompatActivity() {
 
