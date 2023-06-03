@@ -233,6 +233,31 @@
 <!--                app:layout_constraintEnd_toEndOf="parent"-->
 <!--                app:layout_constraintStart_toStartOf="parent" />-->
 
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="30dp"
+                android:orientation="vertical"
+                app:layout_constraintStart_toStartOf="@+id/myInfo_awards"
+                app:layout_constraintTop_toBottomOf="@+id/myInfo_awards">
+
+                <TextView
+                    android:id="@+id/myInfo_gallery_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="내가 좋아요 한 작품"
+                    android:textColor="@color/black"
+                    android:textSize="18sp"
+                    android:textStyle="bold" />
+
+                <GridView
+                    android:layout_marginTop="10dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:numColumns="3"
+                    tools:listitem="@layout/item_artistgallery"/>
+            </LinearLayout>
         </androidx.constraintlayout.widget.ConstraintLayout>
     </ScrollView>
 
