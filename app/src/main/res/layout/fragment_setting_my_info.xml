@@ -31,6 +31,17 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
+            <ImageView
+                android:id="@+id/myInfo_option_iv"
+                android:src="@drawable/more"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:scaleType="fitXY"
+                android:layout_marginRight="20dp"
+                app:layout_constraintTop_toTopOf="@+id/myInfo_tv"
+                app:layout_constraintBottom_toBottomOf="@+id/myInfo_tv"
+                app:layout_constraintEnd_toEndOf="parent"/>
+
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/myInfo_bestArtwork_container1"
