@@ -10,7 +10,10 @@ import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.AuthResult
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ValueEventListener
 import com.google.firebase.messaging.FirebaseMessaging
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
@@ -24,6 +27,7 @@ class FirebaseRepository {
     var loginSuccessLiveData: MutableLiveData<String>
     var currentUserLiveData: MutableLiveData<FirebaseUser>
     var userProfileLiveData: MutableLiveData<UserModel>
+    var artistsProfileLiveData: MutableLiveData<ArrayList<UserModel>>
 
     init {
         firebaseDatabase = FirebaseDatabase.getInstance()
@@ -33,6 +37,7 @@ class FirebaseRepository {
         loginSuccessLiveData = MutableLiveData()
         currentUserLiveData = MutableLiveData()
         userProfileLiveData = MutableLiveData()
+        artistsProfileLiveData = MutableLiveData()
         if(firebaseAuth.currentUser != null){
             currentUserLiveData.value = firebaseAuth.currentUser
         }
@@ -99,6 +104,7 @@ class FirebaseRepository {
         }
     }
 
+    //유저 프로필 모델 가져오기
     fun getUserProfile(uid: String) {
         firebaseDatabase.getReference().child("users").child(uid).get().addOnSuccessListener { snapshot ->
             var user = snapshot.getValue(UserModel::class.java)!!
@@ -107,10 +113,13 @@ class FirebaseRepository {
         }
     }
 
+    //로그아웃
     fun logOut(){
         firebaseAuth.signOut()
     }
 
+
+    //계정 탈퇴
     fun deleteAccount(uid: String, jwt: Int){
         firebaseDatabase.getReference().child("users").child(uid).removeValue()
         firebaseAuth.currentUser?.delete()
@@ -121,6 +130,27 @@ class FirebaseRepository {
             Log.d("DELETE", "FAIL")
         }
     }
+
+    fun getArtistProfile(){
+        firebaseDatabase.getReference().child("users").orderByChild("ifArtist").equalTo(true).addListenerForSingleValueEvent(object:
+            ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                var userList: ArrayList<UserModel> = ArrayList()
+                for(item in snapshot.children){
+                    var profileModel = item.getValue(UserModel::class.java)
+                    if (profileModel != null) {
+                        userList.add(profileModel)
+                    }
+                }
+                Log.d("userList", userList.toString())
+                artistsProfileLiveData.value = userList
+            }
+
+            override fun onCancelled(error: DatabaseError) {}
+        })
+    }
+
+
 
 
 }
