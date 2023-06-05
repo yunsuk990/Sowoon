@@ -38,10 +38,4 @@ class AuthViewModel: ViewModel() {
 
     fun deleteAccount(uid: String, jwt: Int) = firebaseRepository.deleteAccount(uid, jwt)
 
-
-
-
-
-
-
 }
