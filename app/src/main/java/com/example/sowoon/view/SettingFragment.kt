@@ -9,6 +9,7 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
+import com.bumptech.glide.Glide
 import com.example.sowoon.MainActivity
 import com.example.sowoon.R
 import com.example.sowoon.data.entity.UserModel
@@ -96,9 +97,7 @@ class SettingFragment : Fragment() {
         //내 정보
         binding.settingMyInfoTv.setOnClickListener {
             if(currentUser != null){
-                (context as MainActivity).supportFragmentManager.beginTransaction()
-                    .replace(R.id.main_frame, SettingMyInfoFragment())
-                    .commitNowAllowingStateLoss()
+                startActivity(Intent(context, SettingMyInfoActivity::class.java))
             }else{
                 Toast.makeText(context, "로그인 후 이용하시기 바랍니다.", Toast.LENGTH_SHORT).show()
             }
@@ -143,6 +142,7 @@ class SettingFragment : Fragment() {
     private fun init(){
         binding.settingNameTitle.text = user?.name
         binding.settingAgeTitle.text = user?.age + "살"
+        Glide.with(this).load(user!!.profileImg).into(binding.settingProfileIv)
     }
 
     private fun logOut(){
