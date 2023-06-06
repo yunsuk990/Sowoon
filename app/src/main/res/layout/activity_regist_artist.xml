@@ -8,7 +8,9 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        tools:layout_editor_absoluteX="0dp"
+        tools:layout_editor_absoluteY="0dp">
 
         <TextView
             android:id="@+id/myInfo_tv"
@@ -16,6 +18,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="20dp"
             android:layout_marginTop="30dp"
+            android:layout_marginRight="10dp"
             android:text="화가 등록"
             android:textColor="@color/black"
             android:textSize="20sp"
@@ -27,7 +30,7 @@
             android:id="@+id/myInfo_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
+            android:layout_marginTop="25dp"
             android:text="이름"
             android:textColor="@color/black"
             android:textSize="16sp"
@@ -39,27 +42,67 @@
             android:id="@+id/myInfo_bestArtwork_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
             android:text="대표작"
             android:textColor="@color/black"
             android:textSize="18sp"
             android:textStyle="bold"
-            android:layout_marginTop="20dp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/myInfo_tv"/>
+            app:layout_constraintStart_toStartOf="@+id/myInfo_tv"
+            app:layout_constraintTop_toBottomOf="@+id/myInfo_tv" />
 
         <ImageView
             android:id="@+id/myInfo_bestArtwork_iv"
             android:layout_width="180dp"
             android:layout_height="280dp"
             android:layout_marginTop="10dp"
+            android:background="@color/white"
             android:elevation="20dp"
             android:scaleType="centerInside"
             android:src="@drawable/add"
-            android:background="@color/white"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="@+id/myInfo_bestArtwork_name"
             app:layout_constraintTop_toBottomOf="@+id/myInfo_bestArtwork_name" />
+
+        <TextView
+            android:id="@+id/myInfo_title_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="10dp"
+            android:text="제목"
+            android:textColor="@color/black"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            app:layout_constraintStart_toEndOf="@+id/myInfo_bestArtwork_iv"
+            app:layout_constraintTop_toTopOf="@+id/myInfo_bestArtwork_iv" />
+
+        <EditText
+            android:id="@+id/myInfo_title_input"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="7dp"
+            android:layout_marginRight="10dp"
+            android:background="@null"
+            android:defaultFocusHighlightEnabled="true"
+            android:hint="제목"
+            android:textSize="16sp"
+            app:layout_constraintBottom_toBottomOf="@+id/myInfo_title_tv"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/myInfo_title_tv"
+            app:layout_constraintTop_toTopOf="@+id/myInfo_title_tv" />
+
+
+        <EditText
+            android:id="@+id/myInfo_info_input"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginTop="10dp"
+            android:background="@null"
+            android:hint="  문구 입력.."
+            android:textSize="16sp"
+            app:layout_constraintBottom_toBottomOf="@+id/myInfo_bestArtwork_iv"
+            app:layout_constraintEnd_toEndOf="@+id/myInfo_title_input"
+            app:layout_constraintStart_toStartOf="@+id/myInfo_title_tv"
+            app:layout_constraintTop_toBottomOf="@+id/myInfo_title_tv" />
 
         <TextView
             android:id="@+id/myInfo_school"
@@ -79,8 +122,8 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="5dp"
             android:background="@null"
-            android:textSize="14sp"
             android:hint="학력"
+            android:textSize="14sp"
             app:layout_constraintStart_toStartOf="@+id/myInfo_school"
             app:layout_constraintTop_toBottomOf="@+id/myInfo_school" />
 
@@ -103,8 +146,8 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="5dp"
             android:background="@null"
-            android:textSize="14sp"
             android:hint="수상경력"
+            android:textSize="14sp"
             app:layout_constraintStart_toStartOf="@+id/myInfo_awards"
             app:layout_constraintTop_toBottomOf="@+id/myInfo_awards" />
 
@@ -122,13 +165,13 @@
 
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/registBtn"
-            android:text="등록하기"
-            android:layout_width="150dp"
-            android:layout_marginTop="30dp"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:text="등록하기"
+            android:textStyle="bold"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/myInfo_file"/>
+            app:layout_constraintBottom_toBottomOf="parent"/>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
