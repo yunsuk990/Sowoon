@@ -6,6 +6,16 @@
     android:layout_height="match_parent"
     tools:context=".view.SignUpActivity">
 
+    <ProgressBar
+        android:id="@+id/signup_progressbar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="invisible"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"/>
+
     <ImageView
         android:id="@+id/signup_iv"
         android:src="@drawable/logo_horizontal"
