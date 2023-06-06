@@ -36,6 +36,6 @@ class AuthViewModel: ViewModel() {
 
     fun logOut() = firebaseRepository.logOut()
 
-    fun deleteAccount(uid: String, jwt: Int) = firebaseRepository.deleteAccount(uid, jwt)
+    fun deleteAccount(uid: String, jwt: String) = firebaseRepository.deleteAccount(uid, jwt)
 
 }
