@@ -39,12 +39,9 @@ class RegistArtistActivity : AppCompatActivity() {
         binding = ActivityRegistArtistBinding.inflate(layoutInflater)
         setContentView(binding.root)
         storage = Firebase.storage
-        database = AppDatabase.getInstance(this)!!
         firebaseAuth = FirebaseAuth.getInstance()
         firebaseDatabase = FirebaseDatabase.getInstance()
-
-
-        //binding.myInfoName.text = getName()
+//이름 설정        binding.myInfoName.text =
 
         binding.registBtn.setOnClickListener {
             registInfo()
