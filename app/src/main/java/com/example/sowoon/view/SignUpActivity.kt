@@ -5,6 +5,7 @@ import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.provider.MediaStore
+import android.view.View
 import android.widget.ImageView
 import android.widget.Toast
 import androidx.lifecycle.Observer
@@ -36,6 +37,7 @@ class SignUpActivity : AppCompatActivity() {
         authViewModel = AuthViewModel()
         authViewModel.signUpSuccessLiveData.observe(this, Observer {
             if(it == true) {
+                binding.signupProgressbar.visibility = View.INVISIBLE
                 Toast.makeText(this, "회원가입하셨습니다.", Toast.LENGTH_SHORT).show()
                 startActivity(Intent(applicationContext, LoginActivity::class.java))
             }else {
@@ -52,6 +54,7 @@ class SignUpActivity : AppCompatActivity() {
     }
 
     private fun signUp(){
+        binding.signupProgressbar.visibility = View.VISIBLE
         var email = binding.idEt.text.toString()
         var password = binding.passwordEt.text.toString()
         var name = binding.nameEt.text.toString()
