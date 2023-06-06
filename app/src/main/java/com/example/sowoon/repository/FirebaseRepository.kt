@@ -120,10 +120,10 @@ class FirebaseRepository {
 
 
     //계정 탈퇴
-    fun deleteAccount(uid: String, jwt: Int){
+    fun deleteAccount(uid: String, jwt: String){
         firebaseDatabase.getReference().child("users").child(uid).removeValue()
         firebaseAuth.currentUser?.delete()
-        val desertRef = firebaseStorage.reference.child("images/"+ jwt!!.toInt())
+        val desertRef = firebaseStorage.reference.child("images/"+ jwt)
         desertRef.delete().addOnSuccessListener {
             Log.d("DELETE", "SUCCESS")
         }.addOnFailureListener{
