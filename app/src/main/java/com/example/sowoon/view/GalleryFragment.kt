@@ -64,7 +64,7 @@ class GalleryFragment : Fragment() {
         var gridView = binding.galleryGv
         var gridViewAdapter = GalleryGVAdapter(requireContext())
         //var expGallery: ArrayList<Gallery>? = database.galleryDao().getAllGallery() as? ArrayList<Gallery>
-        firebaseDatabase.getReference().child("images").addListenerForSingleValueEvent(object: ValueEventListener{
+        firebaseDatabase.getReference().child("images").addValueEventListener(object: ValueEventListener{
             override fun onDataChange(snapshot: DataSnapshot) {
                 var galleryList: ArrayList<GalleryModel>? = ArrayList()
                 for(item in snapshot.children){
