@@ -47,6 +47,7 @@ class SettingFragment : Fragment() {
         authViewModel.userProfileLiveData.observe(this, Observer {
             user = it
             init()
+            initClickListener()
         })
     }
 
@@ -120,7 +121,7 @@ class SettingFragment : Fragment() {
         //회원탈퇴
         binding.settingQuitTv.setOnClickListener {
             if(currentUser != null){
-                var jwt = getJwt()
+                var jwt: String? = getJwt()
                 authViewModel.deleteAccount(currentUser!!.uid, jwt!!)
                 removeJwt()
 
@@ -154,10 +155,10 @@ class SettingFragment : Fragment() {
         }
     }
 
-    private fun getJwt(): Int? {
+    private fun getJwt(): String {
         val spf = activity?.getSharedPreferences("auth", AppCompatActivity.MODE_PRIVATE)
-        var jwt = spf?.getInt("jwt", 0)
-        return jwt
+        var jwt = spf?.getString("jwt", null)
+        return jwt!!
     }
 
     private fun removeJwt(){
