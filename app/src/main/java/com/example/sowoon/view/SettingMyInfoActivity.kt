@@ -124,12 +124,16 @@ class SettingMyInfoActivity : AppCompatActivity() {
 
     //수정하기 옵션
     private fun updateInfo() {
-        binding.myInfoAgeInputCorrect.visibility = View.VISIBLE
-        binding.myInfoAwardsInputCorrect.visibility = View.VISIBLE
-        binding.myInfoNameInputCorrect.visibility = View.VISIBLE
-        binding.myInfoNameSchoolCorrect.visibility = View.VISIBLE
+        if(userModel!!.ifArtist){
+            binding.myInfoAgeInputCorrect.visibility = View.VISIBLE
+            binding.myInfoAwardsInputCorrect.visibility = View.VISIBLE
+            binding.myInfoNameInputCorrect.visibility = View.VISIBLE
+            binding.myInfoNameSchoolCorrect.visibility = View.VISIBLE
+        }else{
+            binding.myInfoAgeInputCorrect.visibility = View.VISIBLE
+            binding.myInfoNameInputCorrect.visibility = View.VISIBLE
+        }
         binding.uploadBtn.visibility = View.VISIBLE
-        binding.myInfoFavoriteGalleryContainer.visibility = View.INVISIBLE
 
         binding.myInfoAgeInputCorrect.setOnClickListener {
             binding.myInfoAgeInput.isEnabled = true
