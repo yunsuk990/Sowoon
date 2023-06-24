@@ -43,7 +43,7 @@ class SettingFragment : Fragment() {
             }
         })
 
-        //프로필정보 가져오기
+        //프로필 정보 가져오기
         authViewModel.userProfileLiveData.observe(this, Observer {
             user = it
             init()
