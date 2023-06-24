@@ -236,6 +236,7 @@ class GalleryInfoFragment : Fragment() {
         var mountainImageRef: StorageReference? = firebaseStorage?.reference?.child("images")?.child(key!!)
         mountainImageRef?.delete()?.addOnSuccessListener {
             Log.d("DELETE", "SUCCESS")
+            firebaseDatabase.reference.child("images")?.child(key!!)?.removeValue()
             Toast.makeText(context, "삭제 성공", Toast.LENGTH_SHORT).show()
             (context as MainActivity).supportFragmentManager.beginTransaction()
                 .replace(R.id.main_frame, GalleryFragment())
