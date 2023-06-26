@@ -47,7 +47,7 @@ class ArtistProfileFragment : Fragment() {
     }
 
     private fun setGridView(profile: UserModel) {
-        firebaseDatabase.getReference().child("images").orderByChild("artist").equalTo(profile.name).addListenerForSingleValueEvent(object:
+        firebaseDatabase.reference.child("images").orderByChild("artist").equalTo(profile.name).addValueEventListener(object:
             ValueEventListener {
             var galleryList = ArrayList<GalleryModel>()
             override fun onDataChange(snapshot: DataSnapshot) {
