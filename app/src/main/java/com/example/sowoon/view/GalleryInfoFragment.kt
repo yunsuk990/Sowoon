@@ -118,7 +118,7 @@ class GalleryInfoFragment : Fragment() {
             }
         })
         gridView.adapter = adapter
-        firebaseDatabase.getReference().child("images").orderByChild("artist").equalTo(gallery!!.artist).addListenerForSingleValueEvent(object: ValueEventListener{
+        firebaseDatabase.reference.child("images").orderByChild("artist").equalTo(gallery!!.artist).addValueEventListener(object: ValueEventListener{
             var galleryList = ArrayList<GalleryModel>()
             override fun onDataChange(snapshot: DataSnapshot) {
                 for( item in snapshot.children){
