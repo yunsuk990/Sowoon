@@ -77,7 +77,9 @@ class FirebaseRepository {
                     }
                 }
             }
-        })
+        }).addOnFailureListener {
+            signUpSuccessLiveData.value = false
+        }
     }
 
     fun login(email: String, password: String){
