@@ -1,6 +1,7 @@
 package com.example.sowoon.view
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -47,24 +48,30 @@ class ArtistProfileFragment : Fragment() {
     }
 
     private fun setGridView(profile: UserModel) {
+        var gridView = binding.artistsProfileGv
+        var adapter = ArtistGalleryGVAdapter(requireContext())
         firebaseDatabase.reference.child("images").orderByChild("artist").equalTo(profile.name).addValueEventListener(object:
             ValueEventListener {
             var galleryList = ArrayList<GalleryModel>()
             override fun onDataChange(snapshot: DataSnapshot) {
                 for( item in snapshot.children){
-                    if(item.key != profile.profileModel?.key){
-                        var galleryModel = item.getValue(GalleryModel::class.java)
-                        galleryList.add(galleryModel!!)
+                    var galleryModel = item.getValue(GalleryModel::class.java)
+                    if (galleryModel != null) {
+                        galleryList!!.add(galleryModel)
                     }
+                    Log.d("galleryModel", galleryList.toString())
+
                 }
-                var gridView = binding.artistsProfileGv
-                var adapter = ArtistGalleryGVAdapter(requireContext())
+                if (galleryList != null) {
+                    adapter.addGalleryList(galleryList)
+                }
+                gridView.adapter = adapter
+
                 adapter.itemClickListener(object: ArtistGalleryGVAdapter.MyItemClickListener{
                     override fun artworkClick(gallery: GalleryModel) {
                         ArtworkClick(gallery)
                     }
                 })
-                gridView.adapter = adapter
             }
 
             override fun onCancelled(error: DatabaseError) {}
