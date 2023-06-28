@@ -58,8 +58,11 @@ class GalleryInfoFragment : Fragment() {
         var galleryGson = bundle?.getString("gallery")
         gallery = gson.fromJson(galleryGson, GalleryModel::class.java)
 
+        Log.d("gallery", gallery?.galleryKey.toString())
+        Log.d("gallery", gallery?.artist.toString())
+        Log.d("gallery", gallery?.info.toString())
         //이미지 모델 정보 삽입하기
-        setGallery(gallery!!)
+        setGallery(gallery)
 
         //작가 다른 작품
         setGridView(gallery!!)
@@ -88,8 +91,8 @@ class GalleryInfoFragment : Fragment() {
     }
 
     @JvmName("setGallery1")
-    private fun setGallery(gallery: GalleryModel) {
-        Glide.with(requireContext()).load(gallery!!.imagePath).into(binding.galleryInfoIv)
+    private fun setGallery(gallery: GalleryModel?) {
+        Glide.with(requireContext()).load(gallery?.imagePath).into(binding.galleryInfoIv)
         binding.todayAlbumTitle.setText(gallery?.title)
         binding.todayAlbumArtist.text = gallery?.artist
         binding.todayAlbumInfo.setText(gallery?.info)
@@ -97,10 +100,10 @@ class GalleryInfoFragment : Fragment() {
 
         // 좋아요 유무
         if(currentUser != null) {
-            if(gallery!!.likeUid.contains(currentUser!!.uid)){
+            if(gallery?.likeUid?.contains(currentUser!!.uid) == true){
                 binding.galleryInfoHeartIv.setImageResource(R.drawable.fullheart)
             }
-            initClickListener(gallery!!.galleryKey)
+            initClickListener(gallery?.galleryKey)
         }else{
             binding.galleryInfoHeartIv.setImageResource(R.drawable.blankheart)
             binding.galleryInfoHeartIv.setOnClickListener {
@@ -122,7 +125,7 @@ class GalleryInfoFragment : Fragment() {
             var galleryList = ArrayList<GalleryModel>()
             override fun onDataChange(snapshot: DataSnapshot) {
                 for( item in snapshot.children){
-                    if(item.key != gallery!!.galleryKey){
+                    if(item.key != gallery?.galleryKey){
                         var galleryModel = item.getValue(GalleryModel::class.java)
                         if (galleryModel != null) {
                             galleryList.add(galleryModel)
