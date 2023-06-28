@@ -61,7 +61,11 @@ class SignUpActivity : AppCompatActivity() {
         var passwordCheck = binding.passwordcheckEt.text.toString()
         var age = binding.ageEt.text.toString()
 
-        authViewModel.signUp(email, password, name, age, profileURL)
+        if(password != passwordCheck){
+            Toast.makeText(this, "비밀번호가 다릅니다.", Toast.LENGTH_SHORT).show()
+        }else{
+            authViewModel.signUp(email, password, name, age, profileURL)
+        }
     }
 
     private fun openGallery(){
