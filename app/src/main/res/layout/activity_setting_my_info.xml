@@ -329,6 +329,7 @@
                     android:textStyle="bold" />
 
                 <GridView
+                    android:id="@+id/myInfo_gallery_gridView"
                     android:layout_marginTop="10dp"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
