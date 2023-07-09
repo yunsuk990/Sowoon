@@ -37,12 +37,12 @@ class SignUpActivity : AppCompatActivity() {
         authViewModel = AuthViewModel()
         authViewModel.signUpSuccessLiveData.observe(this, Observer {
             if(it == true) {
-                binding.signupProgressbar.visibility = View.INVISIBLE
                 Toast.makeText(this, "회원가입하셨습니다.", Toast.LENGTH_SHORT).show()
                 startActivity(Intent(applicationContext, LoginActivity::class.java))
             }else {
                 Toast.makeText(this, "회원가입 오류입니다.", Toast.LENGTH_SHORT).show()
             }
+            binding.signupProgressbar.visibility = View.INVISIBLE
         })
 
         binding.signupProfileIv.setOnClickListener {
