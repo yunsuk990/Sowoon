@@ -29,11 +29,11 @@ class LoginActivity : AppCompatActivity() {
         authViewModel.loginSuccessLiveData.observe(this, Observer {
             if(it != null){
                 saveJwt(it)
-                binding.loginProgressbar.visibility = View.INVISIBLE
                 startActivity(Intent(this, MainActivity::class.java))
             }else{
                 Toast.makeText(this, "아이디나 비밀번호를 잘못 입력하셨습니다.", Toast.LENGTH_SHORT).show()
             }
+            binding.loginProgressbar.visibility = View.INVISIBLE
         })
         binding.loginBtn.setOnClickListener {
             login()
