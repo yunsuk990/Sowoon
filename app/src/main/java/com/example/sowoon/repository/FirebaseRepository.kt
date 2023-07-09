@@ -108,10 +108,10 @@ class FirebaseRepository {
 
     //유저 프로필 모델 가져오기
     fun getUserProfile(uid: String) {
-        firebaseDatabase.getReference().child("users").child(uid).addValueEventListener(object: ValueEventListener{
+        firebaseDatabase.reference.child("users").child(uid).addValueEventListener(object: ValueEventListener{
             override fun onDataChange(snapshot: DataSnapshot) {
-                var user = snapshot.getValue(UserModel::class.java)!!
-                Log.d("user", user.name.toString())
+                var user = snapshot.getValue(UserModel::class.java)
+                Log.d("user", user?.name.toString())
                 userProfileLiveData.value = user
             }
             override fun onCancelled(error: DatabaseError) {
