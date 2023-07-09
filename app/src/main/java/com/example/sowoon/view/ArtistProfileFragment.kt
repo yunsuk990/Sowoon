@@ -50,6 +50,12 @@ class ArtistProfileFragment : Fragment() {
     private fun setGridView(profile: UserModel) {
         var gridView = binding.artistsProfileGv
         var adapter = ArtistGalleryGVAdapter(requireContext())
+        adapter.itemClickListener(object: ArtistGalleryGVAdapter.MyItemClickListener{
+            override fun artworkClick(gallery: GalleryModel) {
+                ArtworkClick(gallery)
+            }
+        })
+        gridView.adapter = adapter
         firebaseDatabase.reference.child("images").orderByChild("artist").equalTo(profile.name).addValueEventListener(object:
             ValueEventListener {
             var galleryList = ArrayList<GalleryModel>()
@@ -59,21 +65,11 @@ class ArtistProfileFragment : Fragment() {
                     if (galleryModel != null) {
                         galleryList!!.add(galleryModel)
                     }
-                    Log.d("galleryModel", galleryList.toString())
-
                 }
                 if (galleryList != null) {
                     adapter.addGalleryList(galleryList)
                 }
-                gridView.adapter = adapter
-
-                adapter.itemClickListener(object: ArtistGalleryGVAdapter.MyItemClickListener{
-                    override fun artworkClick(gallery: GalleryModel) {
-                        ArtworkClick(gallery)
-                    }
-                })
             }
-
             override fun onCancelled(error: DatabaseError) {}
         })
     }
