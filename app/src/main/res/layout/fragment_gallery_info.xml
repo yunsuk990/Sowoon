@@ -175,6 +175,7 @@
                 android:id="@+id/gallery_button"
                 android:text="저장하기"
                 android:minHeight="0dp"
+                android:visibility="gone"
                 android:background="@color/chatroom"
                 android:layout_marginTop="15dp"
                 android:layout_width="wrap_content"
