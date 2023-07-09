@@ -11,7 +11,6 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import com.bumptech.glide.Glide
 import com.example.sowoon.MainActivity
-import com.example.sowoon.R
 import com.example.sowoon.data.entity.UserModel
 import com.example.sowoon.database.AppDatabase
 import com.example.sowoon.databinding.FragmentSettingBinding
@@ -45,9 +44,11 @@ class SettingFragment : Fragment() {
 
         //프로필 정보 가져오기
         authViewModel.userProfileLiveData.observe(this, Observer {
-            user = it
-            init()
-            initClickListener()
+            if(it != null){
+                user = it
+                init()
+                initClickListener()
+            }
         })
     }
 
@@ -124,15 +125,6 @@ class SettingFragment : Fragment() {
                 var jwt: String? = getJwt()
                 authViewModel.deleteAccount(currentUser!!.uid, jwt!!)
                 removeJwt()
-
-                //회원탈퇴시 좋아요 매커니즘 어떻게 할 것인지
-//                if (likeGallery != null) {
-//                    for( i in likeGallery){
-//                        var gallery = database.galleryDao().getGallery(i)
-//                        var likecount = gallery.like - 1
-//                        database.galleryDao().setlikeCount(i, likecount)
-//                    }
-//                }
                 startActivity(Intent(context, MainActivity::class.java))
             }else{
                 Toast.makeText(context, "로그인 후 이용하시기 바랍니다.", Toast.LENGTH_SHORT).show()
@@ -143,7 +135,7 @@ class SettingFragment : Fragment() {
     private fun init(){
         binding.settingNameTitle.text = user?.name
         binding.settingAgeTitle.text = user?.age + "살"
-        Glide.with(this).load(user!!.profileImg).into(binding.settingProfileIv)
+        Glide.with(this).load(user?.profileImg).into(binding.settingProfileIv)
     }
 
     private fun logOut(){
