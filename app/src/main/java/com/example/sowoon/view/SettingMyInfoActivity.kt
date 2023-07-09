@@ -12,14 +12,20 @@ import android.widget.ImageView
 import android.widget.PopupMenu
 import androidx.lifecycle.Observer
 import com.bumptech.glide.Glide
+import com.example.sowoon.MainActivity
 import com.example.sowoon.R
+import com.example.sowoon.data.entity.GalleryModel
 import com.example.sowoon.data.entity.UserModel
 import com.example.sowoon.database.AppDatabase
 import com.example.sowoon.databinding.ActivitySettingMyInfoBinding
+import com.example.sowoon.view.adapter.ArtistGalleryGVAdapter
 import com.example.sowoon.viewmodel.AuthViewModel
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ValueEventListener
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
@@ -59,6 +65,7 @@ class SettingMyInfoActivity : AppCompatActivity() {
         authViewModel.userProfileLiveData.observe(this, Observer {
             userModel = it
             initInfo(it)
+            setGridView(it)
         })
     }
 
@@ -77,6 +84,11 @@ class SettingMyInfoActivity : AppCompatActivity() {
         if(userModel?.ifArtist == true){
             var profile = userModel!!.profileModel
             binding.myInfoBestArtworkContainer2.visibility = View.VISIBLE
+
+            binding.myInfoSchool.visibility = View.VISIBLE
+            binding.myInfoAwards.visibility = View.VISIBLE
+            binding.myInfoSchoolInput.visibility = View.VISIBLE
+            binding.myInfoAwardsInput.visibility = View.VISIBLE
             binding.myInfoSchoolInput.setText(profile?.school)
             binding.myInfoAwardsInput.setText(profile?.awards)
             getBestArwork(userModel!!.profileModel?.bestArtwork)
@@ -120,6 +132,45 @@ class SettingMyInfoActivity : AppCompatActivity() {
                 popup.show()
             }
         })
+    }
+
+
+    fun setGridView(user: UserModel) {
+        var gridView = binding.myInfoGalleryGridView
+        var adapter = ArtistGalleryGVAdapter(this)
+        adapter.itemClickListener(object: ArtistGalleryGVAdapter.MyItemClickListener{
+            override fun artworkClick(gallery: GalleryModel) {
+                ArtworkClick(gallery)
+            }
+        })
+        gridView.adapter = adapter
+        var arr = ArrayList<String>().add(user.jwt!!)
+        firebaseDatabase.reference.child("images").orderByChild("likeUid").equalTo(arr).addListenerForSingleValueEvent(object:
+            ValueEventListener {
+            var galleryList = ArrayList<GalleryModel>()
+            override fun onDataChange(snapshot: DataSnapshot) {
+                for( item in snapshot.children){
+                    var galleryModel = item.getValue(GalleryModel::class.java)
+                    if (galleryModel != null) {
+                        galleryList.add(galleryModel)
+                    }
+                }
+                adapter.addGalleryList(galleryList)
+            }
+
+            override fun onCancelled(error: DatabaseError) {}
+        })
+    }
+
+    private fun ArtworkClick(gallery: GalleryModel) {
+        supportFragmentManager.beginTransaction()
+            .replace(R.id.main_frame, GalleryInfoFragment().apply {
+                var galleryJson = gson.toJson(gallery)
+                var bundle = Bundle()
+                bundle.putString("gallery", galleryJson)
+                arguments = bundle
+            })
+            .commitNowAllowingStateLoss()
     }
 
     //수정하기 옵션
