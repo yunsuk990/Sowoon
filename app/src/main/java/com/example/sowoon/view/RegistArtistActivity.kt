@@ -48,8 +48,10 @@ class RegistArtistActivity : AppCompatActivity() {
 
         artistViewModel = ArtistViewModel()
         artistViewModel.userProfileLiveData.observe(this, Observer{
-            binding.myInfoName.text = it.name
-            userModel = it
+            if(it != null){
+                binding.myInfoName.text = it.name
+                userModel = it
+            }
         })
         binding.registBtn.setOnClickListener {
             if(bestImageURL == null){
