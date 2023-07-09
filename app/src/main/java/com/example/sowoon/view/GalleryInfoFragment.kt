@@ -121,7 +121,7 @@ class GalleryInfoFragment : Fragment() {
             }
         })
         gridView.adapter = adapter
-        firebaseDatabase.reference.child("images").orderByChild("artist").equalTo(gallery!!.artist).addValueEventListener(object: ValueEventListener{
+        firebaseDatabase.reference.child("images").orderByChild("artist").equalTo(gallery!!.artist).addListenerForSingleValueEvent(object: ValueEventListener{
             var galleryList = ArrayList<GalleryModel>()
             override fun onDataChange(snapshot: DataSnapshot) {
                 for( item in snapshot.children){
@@ -153,34 +153,28 @@ class GalleryInfoFragment : Fragment() {
     // 좋아요 버튼 클릭 시
     private fun initClickListener(key: String?) {
         var ref = firebaseDatabase.getReference().child("images").child(key!!)
-        ref.addListenerForSingleValueEvent(object: ValueEventListener{
+        ref.addValueEventListener(object: ValueEventListener{
             override fun onDataChange(snapshot: DataSnapshot) {
                 var userList: ArrayList<String>? = ArrayList()
-                var galleryModel: GalleryModel? = null
-                    galleryModel = snapshot.getValue(GalleryModel::class.java)
-                    userList?.addAll(galleryModel!!.likeUid)
+                var galleryModel: GalleryModel? = snapshot.getValue(GalleryModel::class.java)
+                userList?.addAll(galleryModel?.likeUid!!)
 
                 var galleryLikeCount = galleryModel!!.like
+                var map = HashMap<String, Any>()
 
                 binding.galleryInfoHeartIv.setOnClickListener {
                     if(userList!!.contains(currentUser!!.uid)){
                         galleryLikeCount -= 1
                         binding.galleryInfoHeartIv.setImageResource(R.drawable.blankheart)
-
-                        var map = HashMap<String, Any>()
                         userList.remove(currentUser!!.uid)
-                        map.put("likeUid", userList)
-                        ref.updateChildren(map)
                     }else{
                         galleryLikeCount += 1
                         binding.galleryInfoHeartIv.setImageResource(R.drawable.fullheart)
-
-                        var map = HashMap<String, Any>()
                         userList.add(currentUser!!.uid)
-                        map.put("likeUid", userList)
-                        map.put("like", galleryLikeCount)
-                        ref.updateChildren(map)
                     }
+                    map.put("likeUid", userList)
+                    map.put("like", galleryLikeCount)
+                    ref.updateChildren(map)
                     binding.galleryInfoLikeCountTv.text = galleryLikeCount.toString()
                 }
             }
