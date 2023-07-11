@@ -29,7 +29,7 @@
 
 #
 
-### 💁🏻‍♂️ 홈 화면
+### 💁🏻‍♂️ Home 메뉴
 <p align="center">
     <img width="230" src="https://github.com/yunsuk990/Sowoon/assets/45827567/a6cd05ac-7f95-4219-9643-25e6089a384d">
     <img width="230" src="https://github.com/yunsuk990/Sowoon/assets/45827567/2975db18-d9fa-405f-8cb6-5c1a48d89086">
@@ -48,22 +48,18 @@
 
 #
 
-### 💁🏻‍♂️ 동작 인식
+### 💁🏻‍♂️ Artist 메뉴
 <p align="center">
-  <img width="230" alt="스크린샷 2022-11-05 오후 4 38 17" src="https://user-images.githubusercontent.com/45827567/200346190-b71192a6-d610-4553-b9a6-bd8d9bbd12e2.png">
-  <img width="230" alt="스크린샷 2022-11-05 오후 4 38 17" src="https://user-images.githubusercontent.com/45827567/200346244-cfa1e904-b241-4582-8547-1de6f5dc8a01.png">
-  <img width="230" alt="스크린샷 2022-11-05 오후 4 38 17" src="https://user-images.githubusercontent.com/45827567/200346979-1237f65d-53dc-48ff-bd3f-db14c2e9bf86.png">
-</p>
-<p align="center">
-  <img width="230" alt="스크린샷 2022-11-05 오후 4 38 17" src="https://user-images.githubusercontent.com/45827567/200347318-d06e5258-744b-46e6-b3d0-7b57a0040b46.png">
-  <img width="230" alt="스크린샷 2022-11-05 오후 4 38 17" src="https://user-images.githubusercontent.com/45827567/200347108-9cb56b66-dea5-4fa6-a397-8a503f7813c6.png">
-  <img width="230" alt="스크린샷 2022-11-05 오후 4 38 17" src="https://user-images.githubusercontent.com/45827567/200347119-31a171ba-9d42-414b-b9ad-8dada68fcf3a.png">
+  <img width="230" src="https://github.com/yunsuk990/Sowoon/assets/45827567/8324312c-908c-43fe-b0cf-fcdcd347b1e5">
+  <img width="230" src="https://github.com/yunsuk990/Sowoon/assets/45827567/a41b4903-3a12-45c3-8fbf-5f18b339a5bb">
+  <img width="230" src="https://github.com/yunsuk990/Sowoon/assets/45827567/1f4ef511-1741-402f-8afb-b1bb3b194f41">
 </p>
 
-#### 1. 동작인식 버튼 누르면 8가지 맨몸운동 중 선택
-#### 2. 해당 운동을 하는 운동자세 촬영
-#### 3. 운동자세 사진을 AI모델이 예측
-#### 4. 운동자세에 대한 3가지 평가 제공
+
+#### 1. 화가 정보 게시
+#### 2. 화가 프로필 열람 가능
+#### 3. 화가 대표작 게시
+#### 4. 화가 대표작 열람 가능
 
 #
 
