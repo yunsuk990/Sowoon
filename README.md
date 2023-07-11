@@ -70,7 +70,7 @@
   <img width="230" src="https://github.com/yunsuk990/Sowoon/assets/45827567/238f937a-16ba-415e-81d7-2a2e5724c465">
   <img width="230" src="https://github.com/yunsuk990/Sowoon/assets/45827567/bc1e6e8a-c8d0-4782-9f23-af7cb349cac4">
 </p>
-<p>
+<p align="center">
   <img width="230" src="https://github.com/yunsuk990/Sowoon/assets/45827567/85e7103d-9049-41ad-b786-602d77d5b41a">
   <img width="230" src="https://github.com/yunsuk990/Sowoon/assets/45827567/23bc2081-1829-47fd-b3d4-0975f4183716">
 </p>
@@ -88,41 +88,24 @@
   <img width="230" src="https://github.com/yunsuk990/Sowoon/assets/45827567/91f5cc2b-368e-4aad-873a-c21c574266ae">
   <img width="230" src="https://github.com/yunsuk990/Sowoon/assets/45827567/e3145697-56fd-4cc5-b4d4-c572d8920ece">
 </p>
-<p>
+<p align="center">
   <img width="230" src="https://github.com/yunsuk990/Sowoon/assets/45827567/971ec32b-adfa-475a-b6d8-e46d17909732">
+  <img width="230" src="https://github.com/yunsuk990/Sowoon/assets/45827567/7a2ab2a2-f46b-407b-81c1-92d900b2edfb">
 </p>
 
 #### 1. 사용자 정보 게시
 #### 2. 내 정보 클릭시 사용자 정보 확인 및 수정 가능
 #### 3. 일반 사용자는 화가 등록 창을 통해 화가 등록 가능
-#### 4. 운동 계획이 있는 날은 빨간색 점으로 표시
-
-#
-
-### 💁🏻‍♂️ 설 정
-
-<p align="center">
-  <img width="230" alt="스크린샷 2022-11-05 오후 4 38 17" src="https://user-images.githubusercontent.com/45827567/200357379-6a4e641b-3d63-499a-bab0-25cf36c157be.png">
-  <img width="230" alt="스크린샷 2022-11-05 오후 4 38 17" src="https://user-images.githubusercontent.com/45827567/200357466-f52b1813-c7af-4be2-9902-7689568151a3.png">
-</p>
-<p align="center">
-   <img width="230" alt="스크린샷 2022-11-05 오후 4 38 17" src="https://user-images.githubusercontent.com/45827567/200355269-a7c6d45a-0694-4fbb-b781-f04ae2c02781.png">
-    <img width="230" alt="스크린샷 2022-11-05 오후 4 38 17" src="https://user-images.githubusercontent.com/45827567/200355295-a8af62c8-9169-4444-8540-763ae5eca9ce.png">
-</p>
-
-#### 1. 서비스 이용약관, 개인정보처리방침, 오픈소스 라이선스 제공
-#### 2. 비밀변호 재설정 기능
-#### 3. 로그아웃 기능
-#### 4. 회원탈퇴 기능
+#### 4. 오른쪽 상단 메시지 클릭시 대화목록 확인 가능
+#### 5. 로그아웃 기능
+#### 6. 회원탈퇴 기능
 
 #
 
 ### 🔨 사용 라이브러리
 
-#### 1. CameraX
-#### 2. <a href="https://square.github.io/retrofit/">Retrofit</a>
-#### 3. <a href="https://teachablemachine.withgoogle.com/">Teachable-Machine</a>
-#### 4. TensorflowLite
-#### 5. Coroutine
-#### 6. <a href="https://github.com/prolificinteractive/material-calendarview">prolificinteractive/material-calendarview</a>
-#### 7. <a href="https://github.com/bumptech/glide">Glide</a>
+#### 1. <a href="https://firebase.google.com/docs/database?hl=ko">Firebase Realtime Database</a>
+#### 2. <a href="https://firebase.google.com/docs/auth?hl=ko">Firebase Authentication</a>
+#### 3. <a href="https://firebase.google.com/docs/storage?hl=ko">Firebase Storage</a>
+#### 4. <a href="https://firebase.google.com/docs/cloud-messaging/?hl=ko">Firebase Messaging</a>
+#### 5. <a href="https://github.com/bumptech/glide">Glide</a>
