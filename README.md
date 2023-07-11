@@ -1,7 +1,7 @@
 # Sowoon
 # 🏋 화가들을 위한 미술 작품 전시 및 소통 앱
 
-<p align="center"><img width="230" alt="스크린샷 2022-11-05 오후 4 38 17" src="https://github.com/yunsuk990/Sowoon/assets/45827567/2f8d335f-50d7-46a8-9c26-e5c259ca53a8"></p>
+<p align="center"><img width="230" src="https://github.com/yunsuk990/Sowoon/assets/45827567/2f8d335f-50d7-46a8-9c26-e5c259ca53a8"></p>
 
 ### <p align="center">화가들이 자신의 미술 작품들을 전시하고 일반인들과 소통할 수 있는 "Sowoon 앱"입니다.</p>
 <br>
@@ -19,8 +19,8 @@
 
 ### 💁🏻‍♂️ 로그인 및 회원가입
 <p align="center">
-    <img width="230" alt="스크린샷 2022-11-05 오후 4 38 17" src="https://github.com/yunsuk990/Sowoon/assets/45827567/0eafd954-bdbd-47f6-858e-d25186776564">
-     <img width="230" alt="스크린샷 2022-11-05 오후 4 38 17" src="https://github.com/yunsuk990/Sowoon/assets/45827567/f03fbdb9-a24f-4dd3-84d5-70110ca6839a">
+    <img width="230" src="https://github.com/yunsuk990/Sowoon/assets/45827567/0eafd954-bdbd-47f6-858e-d25186776564">
+     <img width="230" src="https://github.com/yunsuk990/Sowoon/assets/45827567/f03fbdb9-a24f-4dd3-84d5-70110ca6839a">
 </p>
 
 #### 1. 사용자 이메일, 비밀번호로 로그인 진행
@@ -34,11 +34,16 @@
     <img width="230" src="https://github.com/yunsuk990/Sowoon/assets/45827567/a6cd05ac-7f95-4219-9643-25e6089a384d">
     <img width="230" src="https://github.com/yunsuk990/Sowoon/assets/45827567/2975db18-d9fa-405f-8cb6-5c1a48d89086">
 </p>
-
+<p align="center">
+    <img width="230" src="https://github.com/yunsuk990/Sowoon/assets/45827567/cfecd526-828a-4b04-b854-8424d03bc044">
+    <img width="230" src="https://github.com/yunsuk990/Sowoon/assets/45827567/de68502e-52b8-48cc-9d58-fdb8cc1fc91e">
+</p>
 
 #### 1. 오늘 올라온 작품들 중 인기 작품들 게시
-#### 2. 옆으로 스크롤 
-#### 3. 클릭시 해당 작품 정보 확인 가능
+#### 2. 클릭시 해당 작품 정보 확인 가능
+#### 3. 좋아요 기능
+#### 4. 채팅 기능
+
 
 
 #
