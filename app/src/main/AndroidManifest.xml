@@ -25,14 +25,14 @@
                 android:value="" />
         </activity>
         <activity
-            android:name=".message.ChatRoomActivity"
+            android:name=".view.ChatRoomActivity"
             android:exported="false">
             <meta-data
                 android:name="android.app.lib_name"
                 android:value="" />
         </activity>
         <activity
-            android:name=".message.MessageMenu"
+            android:name=".view.MessageMenu"
             android:exported="false">
             <meta-data
                 android:name="android.app.lib_name"
