@@ -9,6 +9,8 @@ import com.example.sowoon.data.entity.Gallery
 import com.example.sowoon.data.entity.Profile
 import com.example.sowoon.data.entity.User
 
+//Firebase Realtime Database로 대신 사용
+
 @Database(entities = [User::class, Profile::class, Gallery::class], version = 13)
 @TypeConverters(RoomConverter::class)
 abstract class AppDatabase(): RoomDatabase() {
