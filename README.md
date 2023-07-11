@@ -3,25 +3,24 @@
 
 <p align="center"><img width="230" alt="스크린샷 2022-11-05 오후 4 38 17" src="https://github.com/yunsuk990/Sowoon/assets/45827567/2f8d335f-50d7-46a8-9c26-e5c259ca53a8"></p>
 
-### <p align="center">헬스 초보자들이 쉽게 운동을 익힐 수 있도록 만들어진 "헬스 운동 가이드 앱"입니다.</p>
+### <p align="center">화가들이 자신의 미술 작품들을 전시하고 일반인들과 소통할 수 있는 "Sowoon 앱"입니다.</p>
 <br>
 
 # 제공되는 서비스
 
-#### 1. 궁금한 운동 기구 촬영시 해당 운동기구에 대한 운동가이드 제공
-#### 2. 맨몸 운동에 대한 자세 평가 기능
-#### 3. 라이브러리를 통한 운동가이드 제공
-#### 4. 즐겨찾기 등록, 삭제, 조회 기능
-#### 5. 캘린더를 통한 운동계획
-#### 6. 자체 회원 관리 기능
+#### 1. 오늘 올라온 인기 미술 작품 게시
+#### 2. 화가들에 대한 프로필
+#### 3. 마음에 드는 작품 저장 기능
+#### 4. 화가와의 실시간 연락 시스템
+#### 5. 미술 작품 등록, 수정, 삭제 기능
 <br>
 
 # 화면 구성
 
 ### 💁🏻‍♂️ 로그인 및 회원가입
 <p align="center">
-    <img width="230" alt="스크린샷 2022-11-05 오후 4 38 17" src="https://user-images.githubusercontent.com/45827567/200335578-9c661429-2904-40a1-944a-b23989eaed59.png">
-     <img width="230" alt="스크린샷 2022-11-05 오후 4 38 17" src="https://user-images.githubusercontent.com/45827567/200337074-5e2f96f5-6120-48b2-9553-abc7737560ae.png">
+    <img width="230" alt="스크린샷 2022-11-05 오후 4 38 17" src="https://github.com/yunsuk990/Sowoon/assets/45827567/0eafd954-bdbd-47f6-858e-d25186776564">
+     <img width="230" alt="스크린샷 2022-11-05 오후 4 38 17" src="https://github.com/yunsuk990/Sowoon/assets/45827567/f03fbdb9-a24f-4dd3-84d5-70110ca6839a">
 </p>
 <p align="center">
      <img width="230" alt="스크린샷 2022-11-05 오후 4 38 17" src="https://user-images.githubusercontent.com/45827567/200338992-b811b9b2-cd03-4138-b6ae-e71a654300cf.png">
