@@ -22,32 +22,24 @@
     <img width="230" alt="스크린샷 2022-11-05 오후 4 38 17" src="https://github.com/yunsuk990/Sowoon/assets/45827567/0eafd954-bdbd-47f6-858e-d25186776564">
      <img width="230" alt="스크린샷 2022-11-05 오후 4 38 17" src="https://github.com/yunsuk990/Sowoon/assets/45827567/f03fbdb9-a24f-4dd3-84d5-70110ca6839a">
 </p>
-<p align="center">
-     <img width="230" alt="스크린샷 2022-11-05 오후 4 38 17" src="https://user-images.githubusercontent.com/45827567/200338992-b811b9b2-cd03-4138-b6ae-e71a654300cf.png">
-     <img width="230" alt="스크린샷 2022-11-05 오후 4 38 17" src="https://user-images.githubusercontent.com/45827567/200338691-870ede1f-6f65-44f1-9e08-020fd9be2f00.png">
-</p>
 
-#### 1. 사용자 이메일, 비밀번호로 각각 로그인 및 회원가입 진행
-#### 2. 이용약관 확인 가능
-#### 3. 사용자 이메일로 보내진 인증번호를 인증해야 회원가입 가능
-#### 4. 자동로그인 및 비밀번호 찾기 기능
+#### 1. 사용자 이메일, 비밀번호로 로그인 진행
+#### 2. 사용자 이메일, 비밀번호, 이름, 나이, 프로필 사진으로 회원가입 진행
+
 
 #
 
-### 💁🏻‍♂️ 홈 화면(기구 인식)
+### 💁🏻‍♂️ 홈 화면
 <p align="center">
-  <img width="230" alt="스크린샷 2022-11-05 오후 4 38 17" src="https://user-images.githubusercontent.com/45827567/200343108-eaba427f-5fbc-4692-b37a-b5859d709f14.png">
-  <img width="230" alt="스크린샷 2022-11-05 오후 4 38 17" src="https://user-images.githubusercontent.com/45827567/200344785-b785b89d-630f-430c-8a60-30d975bd4ddd.png">
-</p>
-<p align="center">
-  <img width="230" alt="스크린샷 2022-11-05 오후 4 38 17" src="https://user-images.githubusercontent.com/45827567/200344941-e19423a8-f873-48e1-bf8d-491101e7ab76.png">
-  <img width="230" alt="스크린샷 2022-11-05 오후 4 38 17" src="https://user-images.githubusercontent.com/45827567/200345062-ea3b0aa8-54bb-45ba-911d-ed78f863565f.png">
+    <img width="230" src="https://github.com/yunsuk990/Sowoon/assets/45827567/a6cd05ac-7f95-4219-9643-25e6089a384d">
+    <img width="230" src="https://github.com/yunsuk990/Sowoon/assets/45827567/2975db18-d9fa-405f-8cb6-5c1a48d89086">
 </p>
 
-#### 1. 기구인식 버튼 누르면 촬영 또는 갤러리 선택 가능
-#### 2. 운동기구 사진을 AI모델이 예측
-#### 3. 예측한 운동기구에 대한 운동 가이드를 제공
-#### 4. 사진, 자극부위, 설명, 동작GiF, 유튜브 영상을 확인 가능
+
+#### 1. 오늘 올라온 작품들 중 인기 작품들 게시
+#### 2. 옆으로 스크롤 
+#### 3. 클릭시 해당 작품 정보 확인 가능
+
 
 #
 
