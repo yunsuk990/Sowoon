@@ -12,7 +12,6 @@ import com.example.sowoon.MainActivity
 import com.example.sowoon.R
 import com.example.sowoon.data.entity.GalleryModel
 import com.example.sowoon.databinding.FragmentGalleryInfoBinding
-import com.example.sowoon.message.ChatRoomActivity
 import com.example.sowoon.view.adapter.ArtistGalleryGVAdapter
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
