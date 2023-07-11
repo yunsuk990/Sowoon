@@ -69,27 +69,32 @@
 <p align="center">
   <img width="230" src="https://github.com/yunsuk990/Sowoon/assets/45827567/238f937a-16ba-415e-81d7-2a2e5724c465">
   <img width="230" src="https://github.com/yunsuk990/Sowoon/assets/45827567/bc1e6e8a-c8d0-4782-9f23-af7cb349cac4">
+</p>
+<p>
   <img width="230" src="https://github.com/yunsuk990/Sowoon/assets/45827567/85e7103d-9049-41ad-b786-602d77d5b41a">
   <img width="230" src="https://github.com/yunsuk990/Sowoon/assets/45827567/23bc2081-1829-47fd-b3d4-0975f4183716">
 </p>
 
 #### 1. 미술 작품 게시
-#### 2. 클릭시 작품 정보 확인 가능
+#### 2. 클릭시 해당 작품 정보 확인 가능
 #### 3. 해당 작가 다른 작품 게시
 #### 4. + 클릭시 작품 등록 가능. 작품 제목 및 작품 정보 등록
 
 #
 
-### 💁🏻‍♂️ 캘 린 더
+### 💁🏻‍♂️ Setting 메뉴
 
 <p align="center">
-  <img width="230" alt="스크린샷 2022-11-05 오후 4 38 17" src="https://user-images.githubusercontent.com/45827567/200349250-96cbd3e9-1f29-48e8-9864-1664d3539adb.png">
-  <img width="230" alt="스크린샷 2022-11-05 오후 4 38 17" src="https://user-images.githubusercontent.com/45827567/200349327-68c11fc7-d059-47fc-a3c1-9c4e98094f05.png">
+  <img width="230" src="https://github.com/yunsuk990/Sowoon/assets/45827567/91f5cc2b-368e-4aad-873a-c21c574266ae">
+  <img width="230" src="https://github.com/yunsuk990/Sowoon/assets/45827567/e3145697-56fd-4cc5-b4d4-c572d8920ece">
+</p>
+<p>
+  <img width="230" src="https://github.com/yunsuk990/Sowoon/assets/45827567/971ec32b-adfa-475a-b6d8-e46d17909732">
 </p>
 
-#### 1. 운동 계획하기를 누르면 운동계획 가능
-#### 2. 운동 부위, 시작시간, 종료 시간, 메모를 기록 가능
-#### 3. 운동 계획을 저장, 수정, 삭제 가능
+#### 1. 사용자 정보 게시
+#### 2. 내 정보 클릭시 사용자 정보 확인 및 수정 가능
+#### 3. 일반 사용자는 화가 등록 창을 통해 화가 등록 가능
 #### 4. 운동 계획이 있는 날은 빨간색 점으로 표시
 
 #
