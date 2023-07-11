@@ -14,7 +14,6 @@ import com.example.sowoon.MainActivity
 import com.example.sowoon.data.entity.UserModel
 import com.example.sowoon.database.AppDatabase
 import com.example.sowoon.databinding.FragmentSettingBinding
-import com.example.sowoon.message.MessageMenu
 import com.example.sowoon.viewmodel.AuthViewModel
 import com.google.firebase.auth.FirebaseUser
 import com.google.gson.Gson
