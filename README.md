@@ -52,7 +52,7 @@
 <p align="center">
   <img width="230" src="https://github.com/yunsuk990/Sowoon/assets/45827567/8324312c-908c-43fe-b0cf-fcdcd347b1e5">
   <img width="230" src="https://github.com/yunsuk990/Sowoon/assets/45827567/a41b4903-3a12-45c3-8fbf-5f18b339a5bb">
-  <img width="230" src="https://github.com/yunsuk990/Sowoon/assets/45827567/1f4ef511-1741-402f-8afb-b1bb3b194f41">
+  <img width="230" src="https://github.com/yunsuk990/Sowoon/assets/45827567/3f9caed8-9074-416e-9fc7-eafc711bf1eb">
 </p>
 
 
@@ -63,19 +63,20 @@
 
 #
 
-### 💁🏻‍♂️ 라이브러리
+### 💁🏻‍♂️ Gallery 메뉴
 
 
 <p align="center">
-  <img width="230" alt="스크린샷 2022-11-05 오후 4 38 17" src="https://user-images.githubusercontent.com/45827567/200353162-d69b8a4d-bd14-41a4-8b0a-a872779cc8e4.png">
-  <img width="230" alt="스크린샷 2022-11-05 오후 4 38 17" src="https://user-images.githubusercontent.com/45827567/200353142-d465af7d-37b2-4968-b6b5-3a887feb7ca6.png">
-  <img width="230" alt="스크린샷 2022-11-05 오후 4 38 17" src="https://user-images.githubusercontent.com/45827567/200351423-1f83655b-6066-4a54-87c6-12469b9fe672.png">
+  <img width="230" src="https://github.com/yunsuk990/Sowoon/assets/45827567/238f937a-16ba-415e-81d7-2a2e5724c465">
+  <img width="230" src="https://github.com/yunsuk990/Sowoon/assets/45827567/bc1e6e8a-c8d0-4782-9f23-af7cb349cac4">
+  <img width="230" src="https://github.com/yunsuk990/Sowoon/assets/45827567/85e7103d-9049-41ad-b786-602d77d5b41a">
+  <img width="230" src="https://github.com/yunsuk990/Sowoon/assets/45827567/23bc2081-1829-47fd-b3d4-0975f4183716">
 </p>
 
-#### 1. 각 운동부위 별 카테고리 클릭시 해당 부위 운동목록 제공
-#### 2. 운동 클릭 시 운동 가이드를 확인 가능
-#### 3. 운동 가이드에서 운동기구 사진, 자극부위, 설명, 동작GIF, 유튜브 영상을 확인 가능
-#### 4 . 운동을 즐겨찾기에 등록, 삭제, 조회 가능
+#### 1. 미술 작품 게시
+#### 2. 클릭시 작품 정보 확인 가능
+#### 3. 해당 작가 다른 작품 게시
+#### 4. + 클릭시 작품 등록 가능. 작품 제목 및 작품 정보 등록
 
 #
 
