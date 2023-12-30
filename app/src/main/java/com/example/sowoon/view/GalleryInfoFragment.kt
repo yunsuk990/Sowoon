@@ -54,8 +54,7 @@ class GalleryInfoFragment : Fragment() {
 
         //이미지 모델 가져오기
         var bundle = arguments
-        var galleryGson = bundle?.getString("gallery")
-        gallery = gson.fromJson(galleryGson, GalleryModel::class.java)
+        gallery = gson.fromJson(bundle?.getString("gallery"), GalleryModel::class.java)
 
         Log.d("gallery", gallery?.galleryKey.toString())
         Log.d("gallery", gallery?.artist.toString())
@@ -64,7 +63,7 @@ class GalleryInfoFragment : Fragment() {
         setGallery(gallery)
 
         //작가 다른 작품
-        setGridView(gallery!!)
+        setGridView(gallery)
         Log.d("gallery", gallery.toString())
 
         //대화방 이동
@@ -88,7 +87,6 @@ class GalleryInfoFragment : Fragment() {
         }
         return binding.root
     }
-
     @JvmName("setGallery1")
     private fun setGallery(gallery: GalleryModel?) {
         Glide.with(requireContext()).load(gallery?.imagePath).into(binding.galleryInfoIv)

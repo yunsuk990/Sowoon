@@ -207,6 +207,7 @@
                 android:horizontalSpacing="10dp"
                 android:verticalSpacing="10dp"
                 android:orientation="horizontal"
+                app:layout_constraintHeight_default="spread"
                 tools:listitem="@layout/item_artistgallery"
                 app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
                 app:layout_constraintTop_toBottomOf="@+id/galleryInfo_tv"

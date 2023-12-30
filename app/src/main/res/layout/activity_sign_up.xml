@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:theme="@style/TextInputlayout"
     android:background="@color/white"
     tools:context=".view.SignUpActivity">
 
@@ -43,22 +44,23 @@
 
     <androidx.cardview.widget.CardView
         android:id="@+id/signup_profile_cardview"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:cardCornerRadius="10dp"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
         android:layout_marginEnd="15dp"
-        app:layout_constraintTop_toTopOf="@+id/signup_tv"
+        app:cardCornerRadius="10dp"
+        app:layout_constraintBottom_toBottomOf="@+id/signup_age_et"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/signup_name_et"
-        app:layout_constraintEnd_toEndOf="parent">
+        app:layout_constraintTop_toTopOf="@+id/signup_tv">
 
         <ImageView
             android:id="@+id/signup_profile_iv"
-            android:layout_width="180dp"
-            android:layout_height="250dp"
-            android:elevation="20dp"
-            android:scaleType="centerInside"
-            android:src="@drawable/add"
-            android:background="@color/white"/>
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:background="@color/white"
+            android:scaleType="fitXY"
+            android:layout_gravity="center"
+            android:src="@drawable/add" />
 
     </androidx.cardview.widget.CardView>
 
@@ -69,7 +71,7 @@
         android:text="프로필"
         android:layout_marginTop="5dp"
         android:textColor="@color/black"
-        android:textSize="18sp"
+        android:textSize="16sp"
         android:textStyle="bold"
         app:layout_constraintTop_toBottomOf="@+id/signup_profile_cardview"
         app:layout_constraintEnd_toEndOf="@+id/signup_profile_cardview"
@@ -79,8 +81,15 @@
         android:id="@+id/signup_id_et"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="-20dp"
         android:layout_marginEnd="15dp"
+        android:layout_marginTop="10dp"
+        app:boxStrokeWidth="0.5dp"
+        app:boxStrokeWidthFocused="1dp"
+        app:boxStrokeColor="@color/black"
+        app:hintTextColor="@color/black"
+        app:errorEnabled="true"
+        app:errorTextColor="@color/red"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
         app:layout_constraintStart_toStartOf="@+id/signup_passwordverify_et"
         app:layout_constraintTop_toBottomOf="@+id/signup_profile_tv"
         app:layout_constraintEnd_toEndOf="parent">
@@ -96,13 +105,18 @@
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/signup_name_et"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="25dp"
         android:layout_marginEnd="15dp"
-        app:layout_constraintBottom_toTopOf="@+id/signup_age_et"
+        android:layout_marginTop="20dp"
+        app:boxStrokeWidth="0.5dp"
+        app:boxStrokeWidthFocused="1dp"
+        app:boxStrokeColor="@color/black"
+        app:hintTextColor="@color/black"
         app:layout_constraintEnd_toStartOf="@+id/signup_profile_cardview"
-        app:layout_constraintStart_toStartOf="@+id/signup_tv">
+        app:layout_constraintStart_toStartOf="@+id/signup_tv"
+        app:layout_constraintTop_toBottomOf="@+id/signup_tv">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/name_et"
@@ -115,12 +129,17 @@
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/signup_age_et"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="40dp"
-        app:layout_constraintBottom_toTopOf="@+id/signup_id_et"
+        android:layout_marginTop="20dp"
+        app:boxStrokeWidth="0.5dp"
+        app:boxStrokeWidthFocused="1dp"
+        app:boxStrokeColor="@color/black"
+        app:hintTextColor="@color/black"
         app:layout_constraintEnd_toEndOf="@+id/signup_name_et"
-        app:layout_constraintStart_toStartOf="@+id/signup_name_et">
+        app:layout_constraintStart_toStartOf="@+id/signup_name_et"
+        app:layout_constraintTop_toBottomOf="@+id/signup_name_et">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/age_et"
@@ -136,7 +155,13 @@
         android:id="@+id/signup_password_et"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="30dp"
+        android:layout_marginTop="20dp"
+        app:boxStrokeWidth="0.5dp"
+        app:boxStrokeWidthFocused="1dp"
+        app:boxStrokeColor="@color/black"
+        app:hintTextColor="@color/black"
+        app:passwordToggleEnabled="true"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
         app:layout_constraintEnd_toEndOf="@+id/signup_id_et"
         app:layout_constraintStart_toStartOf="@+id/signup_age_et"
         app:layout_constraintTop_toBottomOf="@+id/signup_id_et">
@@ -154,7 +179,14 @@
         android:id="@+id/signup_passwordverify_et"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="30dp"
+        android:layout_marginTop="20dp"
+        app:passwordToggleEnabled="true"
+        app:boxStrokeWidth="0.5dp"
+        app:boxStrokeWidthFocused="1dp"
+        app:boxStrokeColor="@color/black"
+        app:hintTextColor="@color/black"
+        android:pointerIcon="none"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
         app:layout_constraintStart_toStartOf="@+id/signup_password_et"
         app:layout_constraintEnd_toEndOf="@+id/signup_password_et"
         app:layout_constraintTop_toBottomOf="@+id/signup_password_et">
@@ -168,13 +200,17 @@
 
     </com.google.android.material.textfield.TextInputLayout>
 
-    <Button
+    <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/signup_btn"
-        android:text="회원가입"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent" />
+        android:text="회원가입"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        android:layout_marginTop="30dp"
+        android:background="@drawable/btn_outline"
+        app:layout_constraintEnd_toEndOf="  @+id/signup_passwordverify_et"
+        app:layout_constraintStart_toStartOf="@+id/signup_passwordverify_et"
+        app:layout_constraintTop_toBottomOf="@+id/signup_passwordverify_et" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

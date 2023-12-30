@@ -27,7 +27,6 @@ class HomeFragment : Fragment() {
     lateinit var firebaseAuth: FirebaseAuth
     lateinit var firebaseDatabase: FirebaseDatabase
     lateinit var firebaseStorage: FirebaseStorage
-    private var gson = Gson()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -45,10 +44,6 @@ class HomeFragment : Fragment() {
 
 
     private fun initRecyclerView(){
-        val todayGalleryAdapter = TodayGalleryRV(requireContext()!!)
-        binding.mainTodayAlbumRv.adapter = todayGalleryAdapter
-        binding.mainTodayAlbumRv.layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL,false )
-
         firebaseDatabase.getReference().child("images").addListenerForSingleValueEvent(object: ValueEventListener{
             override fun onDataChange(snapshot: DataSnapshot) {
                 var galleryModelList: ArrayList<GalleryModel>? = ArrayList()
@@ -61,27 +56,11 @@ class HomeFragment : Fragment() {
                     }
                 }
                 if (galleryModelList != null) {
-                    todayGalleryAdapter.addGallery(galleryModelList)
+                    var homeVPAdapter = HomeVPAdapter(this@HomeFragment, galleryModelList)
+                    binding.mainTodayAlbumVp.adapter = homeVPAdapter
                 }
             }
             override fun onCancelled(error: DatabaseError) {}
         })
-
-        todayGalleryAdapter.setMyItemClickListener(object: TodayGalleryRV.MyItemOnClickListener {
-            override fun galleryClick(gallery: GalleryModel) {
-                galleryOnClick(gallery)
-            }
-        })
-    }
-
-    private fun galleryOnClick(gallery: GalleryModel){
-        (context as MainActivity).supportFragmentManager.beginTransaction()
-            .replace(R.id.main_frame, GalleryInfoFragment().apply {
-                var galleryJson = gson.toJson(gallery)
-                var bundle = Bundle()
-                bundle.putString("gallery", galleryJson)
-                arguments = bundle
-            })
-            .commitNowAllowingStateLoss()
     }
 }

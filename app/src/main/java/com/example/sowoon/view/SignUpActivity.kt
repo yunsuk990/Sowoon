@@ -5,6 +5,8 @@ import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.provider.MediaStore
+import android.text.Editable
+import android.text.TextWatcher
 import android.view.View
 import android.widget.ImageView
 import android.widget.Toast
@@ -51,19 +53,36 @@ class SignUpActivity : AppCompatActivity() {
         binding.signupBtn.setOnClickListener {
             signUp()
         }
+
+        textWatcher()
     }
 
     private fun signUp(){
-        binding.signupProgressbar.visibility = View.VISIBLE
         var email = binding.idEt.text.toString()
         var password = binding.passwordEt.text.toString()
         var name = binding.nameEt.text.toString()
         var passwordCheck = binding.passwordcheckEt.text.toString()
         var age = binding.ageEt.text.toString()
 
-        if(password != passwordCheck){
+
+        if(name.isEmpty()){
+            Toast.makeText(this, "이름을 입력해주세요.", Toast.LENGTH_SHORT).show()
+        }else if (age.isEmpty()){
+            Toast.makeText(this, "나이를 입력해주세요.", Toast.LENGTH_SHORT).show()
+        }else if(email.isEmpty()){
+            Toast.makeText(this, "이메일을 입력해주세요.", Toast.LENGTH_SHORT).show()
+        }else if(password.isEmpty()){
+            Toast.makeText(this, "비밀번호를 입력해주세요.", Toast.LENGTH_SHORT).show()
+        }else if(passwordCheck.isEmpty()){
+            Toast.makeText(this, "비밀번호 확인을 입력해주세요.", Toast.LENGTH_SHORT).show()
+        }else if(password != passwordCheck){
             Toast.makeText(this, "비밀번호가 다릅니다.", Toast.LENGTH_SHORT).show()
         }else{
+            if(!email.contains('@')){
+                Toast.makeText(this, "이메일 형식으로 작성해주세요.", Toast.LENGTH_SHORT).show()
+                return
+            }
+            binding.signupProgressbar.visibility = View.VISIBLE
             authViewModel.signUp(email, password, name, age, profileURL)
         }
     }
@@ -87,5 +106,19 @@ class SignUpActivity : AppCompatActivity() {
                 }
             }
         }
+    }
+
+    private fun textWatcher(){
+        binding.idEt.addTextChangedListener(object: TextWatcher{
+            override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
+            override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
+            override fun afterTextChanged(p0: Editable?) {
+                if(binding.idEt.text?.contains('@') == false){
+                    binding.signupIdEt.error = "이메일 형식으로 작성해주세요."
+                }else{
+                    binding.signupIdEt.error = null
+                }
+            }
+        })
     }
 }
